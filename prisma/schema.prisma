@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Marchands (clients PayLoop)
+model Merchant {
+  id          String   @id @default(uuid())
+  name        String
+  email       String   @unique
+  phone       String
+  address     String?
+  nui         String?
+  rccm        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  products    Product[]
+  customers   Customer[]
+  invoices    Invoice[]
+  payments    Payment[]
+  entries     AccountingEntry[]
+}
+
+// Produits du marchand
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  price       Float
+  stock       Int      @default(0)
+  minStock    Int      @default(5)
+  merchantId  String
+  merchant    Merchant @relation(fields: [merchantId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  invoiceItems InvoiceItem[]
+}
+
+// Clients du marchand
+model Customer {
+  id          String   @id @default(uuid())
+  name        String
+  phone       String
+  email       String?
+  merchantId  String
+  merchant    Merchant @relation(fields: [merchantId], references: [id])
+  createdAt   DateTime @default(now())
+  
+  invoices    Invoice[]
+}
+
+// Factures générées
+model Invoice {
+  id            String   @id @default(uuid())
+  invoiceNumber String   @unique
+  amount        Float
+  tva           Float
+  totalAmount   Float
+  status        String   @default("paid")
+  merchantId    String
+  merchant      Merchant @relation(fields: [merchantId], references: [id])
+  customerId    String?
+  customer      Customer? @relation(fields: [customerId], references: [id])
+  paymentId     String?  @unique
+  payment       Payment? @relation(fields: [paymentId], references: [id])
+  createdAt     DateTime @default(now())
+  
+  items         InvoiceItem[]
+}
+
+// Lignes de facture
+model InvoiceItem {
+  id          String   @id @default(uuid())
+  quantity    Int
+  unitPrice   Float
+  totalPrice  Float
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  invoiceId   String
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id])
+}
+
+// Paiements reçus via DOHONE
+model Payment {
+  id              String   @id @default(uuid())
+  dohoneRef       String   @unique
+  amount          Float
+  currency        String   @default("XAF")
+  payerPhone      String
+  payerName       String?
+  status          String   @default("success")
+  merchantId      String
+  merchant        Merchant @relation(fields: [merchantId], references: [id])
+  createdAt       DateTime @default(now())
+  
+  invoice         Invoice?
+}
+
+// Écritures comptables SYSCOHADA
+model AccountingEntry {
+  id          String   @id @default(uuid())
+  date        DateTime @default(now())
+  journal     String
+  account     String
+  label       String
+  debit       Float    @default(0)
+  credit      Float    @default(0)
+  merchantId  String
+  merchant    Merchant @relation(fields: [merchantId], references: [id])
+}

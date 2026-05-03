@@ -1,0 +1,2687 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payloop — Démo DOHONE</title>
+    <script type="text/javascript" src="https://me.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=1150Im9RAKwJBSQDeF5Va18GGPhbzt3BAf1xxMJjsK4_714hUiMr_Udi9dTmI7BcOFQ-AEd2wdxehyNPJJ19W0mUVIXScb4rznDsthQzm1IYdZeg8S3ANU7ix_dPOhOWPjOzUzHOTQw9p8yTbqzW9dSb1zjTH5h29oR0xvaUP6y5LySoQl6CoU1yZNLrfrMPxX82dmfikPuqyRcEL2De6VyWzS5fr3uQYB__1y6y7HOrqTy5PjnNpglC8kOTwjk077UetbBEY-1XRE2mASu-JCrqav1RWVLpb5C1ZEdrEOJgKaraF6tXLbAJk0HoVRhA0RZdlux9VStDsQvOkpLSaCtVfXgdi6gw3ZF7jpHBVr0al_nDpWBx4jj6wz1QiPdlnWxov68ceDy_X0yWirYz6Fo-dm32dHOwNK3Tzp2Th6KN067u9-7aRwR-S7kZ3oYLQZWNigMrFbFQscB2yq9NA1lGnTYWFnP7F1quFDe_vxo2rS1uCAO67bPaMOJ9bpDZPcVPKGbeafcXioMoEHxAiIKOVH9NFwxPFIK6dF6QtgMr1eD-PLG2Fg2MUBpCqBrIC5pu6RVlBCnFR0-U-wc6GoG6HH1NuJmSXTDIsWvme_XFOTJWZ0XazUkDYD87TQtQROA-8n3STMHUEELnvkMVxLzXuIYeZ44Iiu4gvTtyBjLBteRF8yFKgz0skQywyKmfXJCuLKi9B5VzFC7S8CyCDXW0Va0a0x-39kNfrJtCljiqWwbHh6STGHtmwvRMfZIVzc_DJ-OoiSXeDTY4KG8kBZuii-NbIj00JAp30_34n5f-lhdMtgYQ79on_IOFWqYyCLAbjXxxMacyPTC-zCuLTHDPqwub9hvzluefHiovoWUWKu6612b0-GrplBLwhEJkE_ovBvhB9XRhnYImcb0_M6nx08AvrfNyLwRLKYEl4S7q0aYUmsBMU6CGZx5q5Th80nfyvDPL8pqfbCCPPBnKVy2DyVqbTDIbdjPjFRj1hiFpg9V95ehfsZAe31bHkqIf6Xz-6gBhceaXf4VTU0j6xu4-YoBL2DBTGH4aR96K-bAkECsz1eUMa2UNCycoZR7rOmsRxDwviJ8Q-oEIVmASWP_WfIEbxN2iwKE8g0wzDGeyG1ssLg6WEbB74THHvcFIKsj5NblEhDudguknpTSKG6xt0XsmgbnOYA1accF-8zd0GXGlkZtbiINPaXLlXQLtphOw4dFnRJRPYYNIhaO1ZqzsR3RpvR5529OxBkD8Mu9G1OvGRUlPNflPizBHt9KNXQfmkkiY5Zcu9ttnQdZ7sZO4QcBgOMxxRCtuOyK7xjkHXm1BUOTN3Jq8YuwyHpWNec4qpb5qJfAPJG0_sRczAhO_bAtqhUJtAcbdQxroS1pXUTnb7eytKDqmuEn1WiLj7qeL-pXhqJjGuj62uVKV2hjtUTxAx9ijzwSGeT2XaHTf2lTL8_wPK4oXqVM1N0k0NDB1ojV1FZ7z6WjY6jDjfLbBgvn_HZ3WrHu-e-JzrOo7bdq5yzWVkC9e_T0PS2dOuj04qlBhyKWUbJ0QrIC7ofA2dbgw2KTuzKbpL5IdlAGYUDyYgUIpIx8mdKZ8m5WMWeWH-Dfyxd7EpbJottFGZ1pVb-4flXwDFhNdxPlLtdbHNzJlxbbMtAjNFZ13sPOqg09kMKKMIX9ckfH-PUq7Ug" nonce="8f0de803c3f951d597646373ef4a51d3" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .lucide { width: 20px; height: 20px; }
+        .chart-container { position: relative; height: 250px; }
+        .pie-chart-container { position: relative; height: 300px; }
+        .status-indicator { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .sidebar-item:hover { transform: translateX(4px); transition: transform 0.2s ease; }
+        .stat-card { transition: all 0.3s ease; }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        
+        .view { display: none; }
+        .view.active { display: block; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-in { animation: slideIn 0.5s ease-out; }
+
+        .brand-gradient { background: linear-gradient(135deg, #FF6B35, #FFD700); }
+        .mtn-yellow { background-color: #FFD700; }
+        .orange-orange { background-color: #FF6B35; }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 60%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            80% { transform: translateY(-5px); }
+        }
+        .animate-bounce { animation: bounce 1s; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+<!-- Sidebar -->
+<div id="sidebar" class="w-64 bg-gray-900 text-white h-screen fixed left-0 top-0 z-10">
+    <div class="p-6">
+        <h1 class="text-2xl font-bold text-blue-400">Payloop</h1>
+    </div>
+    
+    <nav class="mt-8">
+        <div data-view="dashboard" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800">
+            <i data-lucide="bar-chart" class="mr-3"></i>
+            <span>Dashboard</span>
+        </div>
+        <div data-view="invoices" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800">
+            <i data-lucide="file-text" class="mr-3"></i>
+            <span>Factures</span>
+        </div>
+        <div data-view="payments" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800">
+            <i data-lucide="smartphone" class="mr-3"></i>
+            <span>Paiements</span>
+        </div>
+        <div data-view="clients" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800">
+            <i data-lucide="users" class="mr-3"></i>
+            <span>Clients</span>
+        </div>
+        <div data-view="inventory" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800">
+            <i data-lucide="package" class="mr-3"></i>
+            <span>Stock & Produits</span>
+        </div>
+        <div data-view="migration" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800">
+            <i data-lucide="database" class="mr-3"></i>
+            <span>Migration</span>
+            <span class="ml-auto bg-green-500 text-xs px-2 py-1 rounded-full">New</span>
+        </div>
+        <div data-view="taxes" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800">
+            <i data-lucide="file-text" class="mr-3"></i>
+            <span>Fiscalité</span>
+        </div>
+        <div data-view="reports" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800">
+            <i data-lucide="trending-up" class="mr-3"></i>
+            <span>Rapports</span>
+        </div>
+    </nav>
+
+    <!-- Data Management -->
+    <div class="absolute bottom-4 left-4 right-4">
+        <button onclick="exportData()" class="w-full mb-2 py-2 bg-green-600 text-white rounded text-sm hover:bg-green-700">
+            <i data-lucide="download" class="inline mr-1 w-4 h-4"></i>
+            Exporter données
+        </button>
+        <button onclick="importData()" class="w-full py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">
+            <i data-lucide="upload" class="inline mr-1 w-4 h-4"></i>
+            Importer données
+        </button>
+        <input type="file" id="import-file" accept=".json" style="display: none;" onchange="handleImport(event)">
+    </div>
+</div>
+
+<!-- Top Bar -->
+<div id="topbar" class="bg-white border-b border-gray-200 px-6 py-4 ml-64">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 id="page-title" class="text-xl font-semibold text-gray-900">Dashboard</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2 bg-green-50 px-3 py-1 rounded-full">
+                <div class="w-2 h-2 bg-green-500 rounded-full status-indicator"></div>
+                <span class="text-green-700 text-sm font-medium">Système opérationnel</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                    <span class="text-white text-sm font-medium">U</span>
+                </div>
+                <span class="text-gray-700 font-medium">Utilisateur</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<main id="main-content" class="ml-64 p-6 pt-2">
+    <!-- App Banner -->
+    <div class="brand-gradient text-white p-4 rounded-lg mb-6 animate-slide-in">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="font-bold text-lg">Payloop — Démo DOHONE</h2>
+                <p class="text-orange-100">Gestion commerciale complète avec données persistantes — Mode démo DOHONE</p>
+            </div>
+            <div class="text-right">
+                <div class="text-sm opacity-90">Version test</div>
+                <div class="text-xs opacity-75" id="data-status">Données chargées</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Views Container -->
+    <div id="view-container">
+        <!-- Dashboard View -->
+        <div id="dashboard-view" class="view active">
+            <div class="space-y-6">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="stat-card bg-white rounded-lg p-6 shadow-sm border">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm font-medium">Chiffre d'affaires</p>
+                                <p class="text-2xl font-bold text-gray-900 mt-2" id="total-revenue">0 FCFA</p>
+                                <div class="text-sm text-gray-500">Ce mois</div>
+                            </div>
+                            <div class="p-3 rounded-full bg-blue-100">
+                                <i data-lucide="dollar-sign" class="text-blue-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card bg-white rounded-lg p-6 shadow-sm border">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm font-medium">Factures payées</p>
+                                <p class="text-2xl font-bold text-gray-900 mt-2" id="paid-invoices-count">0</p>
+                                <div class="text-sm text-gray-500">Total</div>
+                            </div>
+                            <div class="p-3 rounded-full bg-green-100">
+                                <i data-lucide="check-circle" class="text-green-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card bg-white rounded-lg p-6 shadow-sm border">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm font-medium">Clients actifs</p>
+                                <p class="text-2xl font-bold text-gray-900 mt-2" id="active-clients-count">0</p>
+                                <div class="text-sm text-gray-500">Total</div>
+                            </div>
+                            <div class="p-3 rounded-full bg-purple-100">
+                                <i data-lucide="users" class="text-purple-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card bg-white rounded-lg p-6 shadow-sm border">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm font-medium">Produits en stock</p>
+                                <p class="text-2xl font-bold text-gray-900 mt-2" id="products-count">0</p>
+                                <div class="text-sm text-gray-500">Articles</div>
+                            </div>
+                            <div class="p-3 rounded-full bg-yellow-100">
+                                <i data-lucide="package" class="text-yellow-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-lg shadow-sm border">
+                    <div class="p-6 border-b">
+                        <h3 class="text-lg font-semibold">Activité récente</h3>
+                    </div>
+                    <div id="recent-activity" class="p-6">
+                        <p class="text-gray-500 text-center">Aucune activité récente</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clients View -->
+        <div id="clients-view" class="view">
+            <div class="space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">Gestion Clients</h2>
+                    <button onclick="openClientModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
+                        <i data-lucide="plus" class="mr-2"></i>
+                        Nouveau client
+                    </button>
+                    <button onclick="openDohoneDemo()" class="ml-3 bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
+        <i data-lucide="credit-card" class="mr-2"></i>
+        Encaisser via DOHONE
+    </button>
+</div>
+
+                <div class="bg-white rounded-lg shadow-sm border">
+                    <div class="p-6 border-b">
+                        <div class="flex items-center space-x-4">
+                            <input type="text" id="client-search" placeholder="Rechercher un client..." 
+                                   class="flex-1 px-4 py-2 border rounded-lg" onkeyup="searchClients()">
+                            <button onclick="searchClients()" class="px-4 py-2 bg-blue-600 text-white rounded-lg">
+                                Rechercher
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left">Nom</th>
+                                    <th class="px-6 py-3 text-left">Email</th>
+                                    <th class="px-6 py-3 text-left">Téléphone</th>
+                                    <th class="px-6 py-3 text-left">CA Total</th>
+                                    <th class="px-6 py-3 text-left">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clients-table">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory View -->
+        <div id="inventory-view" class="view">
+            <div class="space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">Stock & Produits</h2>
+                    <div class="flex space-x-3">
+                        <button onclick="openProductModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
+                            <i data-lucide="plus" class="mr-2"></i>
+                            Nouveau produit
+                        </button>
+                        <button onclick="openStockAdjustmentModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700">
+                            <i data-lucide="package" class="mr-2"></i>
+                            Ajuster stock
+                        </button>
+                        <button onclick="generateInventoryReport()" class="bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-purple-700">
+                            <i data-lucide="file-text" class="mr-2"></i>
+                            Rapport stock
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Inventory Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-gray-600">Articles en stock</span>
+                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                        </div>
+                        <div class="text-2xl font-bold" id="total-products-stat">0</div>
+                        <div class="text-sm text-green-600">Produits actifs</div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-sm border">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-gray-600">Valeur du stock</span>
+                            <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                        </div>
+                        <div class="text-2xl font-bold" id="stock-value">0 FCFA</div>
+                        <div class="text-sm text-gray-500">Valeur totale</div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-sm border">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-gray-600">Stock faible</span>
+                            <div class="w-3 h-3 bg-yellow-500 rounded-full status-indicator"></div>
+                        </div>
+                        <div class="text-2xl font-bold text-yellow-600" id="low-stock-count">0</div>
+                        <div class="text-sm text-yellow-600">Alerte réappro</div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-sm border">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-gray-600">Ruptures</span>
+                            <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                        </div>
+                        <div class="text-2xl font-bold text-red-600" id="out-of-stock-count">0</div>
+                        <div class="text-sm text-red-600">Stock épuisé</div>
+                    </div>
+                </div>
+
+                <!-- Stock Alerts -->
+                <div id="stock-alerts" class="bg-yellow-50 border border-yellow-200 rounded-lg p-4" style="display: none;">
+                    <div class="flex items-center">
+                        <i data-lucide="alert-triangle" class="text-yellow-600 mr-3"></i>
+                        <div>
+                            <h4 class="font-semibold text-yellow-800">Alertes de stock</h4>
+                            <p class="text-yellow-700" id="alerts-text">Produits nécessitant un réapprovisionnement</p>
+                        </div>
+                        <button onclick="viewStockAlerts()" class="ml-auto px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">
+                            Voir détails
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Products Table -->
+                <div class="bg-white rounded-lg shadow-sm border">
+                    <div class="p-6 border-b">
+                        <div class="flex items-center space-x-4">
+                            <input type="text" id="product-search" placeholder="Rechercher un produit..." 
+                                   class="flex-1 px-4 py-2 border rounded-lg" onkeyup="searchProducts()">
+                            <select id="category-filter" class="border rounded-lg px-3 py-2" onchange="filterProducts()">
+                                <option value="">Toutes catégories</option>
+                                <option value="Services">Services</option>
+                                <option value="Produits">Produits</option>
+                                <option value="Formation">Formation</option>
+                                <option value="Autre">Autre</option>
+                            </select>
+                            <select id="stock-filter" class="border rounded-lg px-3 py-2" onchange="filterProducts()">
+                                <option value="">Tous les stocks</option>
+                                <option value="in-stock">En stock</option>
+                                <option value="low-stock">Stock faible</option>
+                                <option value="out-of-stock">Rupture</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left">Produit</th>
+                                    <th class="px-6 py-3 text-left">Catégorie</th>
+                                    <th class="px-6 py-3 text-left">Prix</th>
+                                    <th class="px-6 py-3 text-left">Stock</th>
+                                    <th class="px-6 py-3 text-left">Valeur</th>
+                                    <th class="px-6 py-3 text-left">Statut</th>
+                                    <th class="px-6 py-3 text-left">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Migration View -->
+        <div id="migration-view" class="view">
+            <div class="space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">Migration & Import de données</h2>
+                    <div class="flex space-x-3">
+                        <button onclick="downloadTemplate()" class="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700">
+                            <i data-lucide="download" class="mr-2"></i>
+                            Template Excel
+                        </button>
+                        <button onclick="openMigrationModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
+                            <i data-lucide="upload" class="mr-2"></i>
+                            Importer données
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Migration Status -->
+                <div class="bg-white rounded-lg shadow-sm border p-6">
+                    <h3 class="text-lg font-semibold mb-4">État des données</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <div class="text-2xl font-bold text-blue-600" id="migration-clients-count">0</div>
+                            <div class="text-blue-800 font-medium">Clients</div>
+                            <div class="text-sm text-blue-600 mt-1">Importés</div>
+                        </div>
+                        <div class="text-center p-4 bg-green-50 rounded-lg">
+                            <div class="text-2xl font-bold text-green-600" id="migration-products-count">0</div>
+                            <div class="text-green-800 font-medium">Produits</div>
+                            <div class="text-sm text-green-600 mt-1">En catalogue</div>
+                        </div>
+                        <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                            <div class="text-2xl font-bold text-yellow-600" id="migration-invoices-count">0</div>
+                            <div class="text-yellow-800 font-medium">Factures</div>
+                            <div class="text-sm text-yellow-600 mt-1">Créées</div>
+                        </div>
+                        <div class="text-center p-4 bg-purple-50 rounded-lg">
+                            <div class="text-2xl font-bold text-purple-600" id="migration-payments-count">0</div>
+                            <div class="text-purple-800 font-medium">Paiements</div>
+                            <div class="text-sm text-purple-600 mt-1">Enregistrés</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Migration Tools -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-lg shadow-sm border p-6">
+                        <h3 class="text-lg font-semibold mb-4">Import depuis Excel/CSV</h3>
+                        <div class="space-y-4">
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                                <div class="mx-auto w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                                    <i data-lucide="upload-cloud" class="text-blue-600 w-6 h-6"></i>
+                                </div>
+                                <h4 class="font-medium mb-2">Glissez vos fichiers ici</h4>
+                                <p class="text-sm text-gray-600 mb-4">Ou cliquez pour sélectionner</p>
+                                <input type="file" id="migration-file" accept=".xlsx,.xls,.csv" multiple class="hidden">
+                                <button onclick="document.getElementById('migration-file').click()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                                    Sélectionner fichiers
+                                </button>
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                <p><strong>Formats supportés:</strong> Excel (.xlsx, .xls), CSV</p>
+                                <p><strong>Types de données:</strong> Clients, Produits, Factures</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm border p-6">
+                        <h3 class="text-lg font-semibold mb-4">Outils de migration</h3>
+                        <div class="space-y-3">
+                            <button onclick="validateImportData()" class="w-full p-3 border border-green-300 text-green-700 rounded-lg hover:bg-green-50">
+                                <i data-lucide="check-circle" class="w-4 h-4 mx-auto mb-1"></i>
+                                <div class="text-sm">Valider données</div>
+                            </button>
+                            <button onclick="cleanupData()" class="w-full p-3 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50">
+                                <i data-lucide="refresh-cw" class="w-4 h-4 mx-auto mb-1"></i>
+                                <div class="text-sm">Nettoyer doublons</div>
+                            </button>
+                            <button onclick="backupData()" class="w-full p-3 border border-purple-300 text-purple-700 rounded-lg hover:bg-purple-50">
+                                <i data-lucide="download" class="w-4 h-4 mx-auto mb-1"></i>
+                                <div class="text-sm">Sauvegarder</div>
+                            </button>
+                            <button onclick="resetAllData()" class="w-full p-3 border border-red-300 text-red-700 rounded-lg hover:bg-red-50">
+                                <i data-lucide="trash-2" class="w-4 h-4 mx-auto mb-1"></i>
+                                <div class="text-sm">Réinitialiser tout</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Migration History -->
+                <div class="bg-white rounded-lg shadow-sm border">
+                    <div class="p-6 border-b">
+                        <h3 class="text-lg font-semibold">Historique des imports</h3>
+                    </div>
+                    <div id="migration-history" class="p-6">
+                        <p class="text-gray-500 text-center">Aucun import effectué</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Taxes View -->
+        <div id="taxes-view" class="view">
+            <div class="space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">Gestion Fiscale</h2>
+                    <div class="flex space-x-3">
+                        <button onclick="generateTaxDeclaration()" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
+                            <i data-lucide="file-text" class="mr-2"></i>
+                            Déclaration TVA
+                        </button>
+                        <button onclick="calculateTaxes()" class="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700">
+                            <i data-lucide="calculator" class="mr-2"></i>
+                            Calculer impôts
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tax Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border">
+                        <h3 class="font-semibold text-gray-700 mb-4">TVA collectée (19.25%)</h3>
+                        <div class="text-2xl font-bold text-blue-600" id="vat-collected">0 FCFA</div>
+                        <div class="text-sm text-gray-600 mt-1">Sur CA facturé</div>
+                        <div class="mt-4">
+                            <div class="text-xs text-gray-500 mb-1">Période actuelle</div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1" id="tax-period">Mois en cours</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-sm border">
+                        <h3 class="font-semibold text-gray-700 mb-4">CA mensuel HT</h3>
+                        <div class="text-2xl font-bold text-green-600" id="monthly-revenue-ht">0 FCFA</div>
+                        <div class="text-sm text-gray-600 mt-1">Chiffre d'affaires HT</div>
+                        <div class="mt-4 space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span>Factures payées:</span>
+                                <span class="font-medium" id="paid-invoices-tax">0</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span>En attente:</span>
+                                <span class="font-medium" id="pending-invoices-tax">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-sm border">
+                        <h3 class="font-semibold text-gray-700 mb-4">Obligations fiscales</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-2 bg-yellow-50 border border-yellow-200 rounded">
+                                <div class="text-sm">
+                                    <div class="font-medium">TVA mensuelle</div>
+                                    <div class="text-gray-600">À déclarer avant le 15</div>
+                                </div>
+                                <div class="text-yellow-600 font-bold">Due</div>
+                            </div>
+                            <div class="flex items-center justify-between p-2 bg-green-50 border border-green-200 rounded">
+                                <div class="text-sm">
+                                    <div class="font-medium">IRPP</div>
+                                    <div class="text-gray-600">Déclaration annuelle</div>
+                                </div>
+                                <div class="text-green-600 font-bold">OK</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tax Calculator -->
+                <div class="bg-white rounded-lg shadow-sm border p-6">
+                    <h3 class="text-lg font-semibold mb-4">Calculateur fiscal</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Chiffre d'affaires HT (FCFA)</label>
+                            <input type="number" id="tax-calc-revenue" class="w-full border border-gray-300 rounded-lg px-3 py-2" 
+                                   placeholder="Entrez votre CA HT" onchange="calculateTaxEstimate()">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Période</label>
+                            <select id="tax-calc-period" class="w-full border border-gray-300 rounded-lg px-3 py-2" onchange="calculateTaxEstimate()">
+                                <option value="monthly">Mensuel</option>
+                                <option value="quarterly">Trimestriel</option>
+                                <option value="annual">Annuel</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 bg-blue-50 rounded-lg">
+                            <div class="text-sm text-blue-600">TVA à payer (19.25%)</div>
+                            <div class="text-xl font-bold text-blue-600" id="calc-vat">0 FCFA</div>
+                        </div>
+                        <div class="p-4 bg-green-50 rounded-lg">
+                            <div class="text-sm text-green-600">CA TTC</div>
+                            <div class="text-xl font-bold text-green-600" id="calc-ttc">0 FCFA</div>
+                        </div>
+                        <div class="p-4 bg-purple-50 rounded-lg">
+                            <div class="text-sm text-purple-600">IRPP estimé (20%)</div>
+                            <div class="text-xl font-bold text-purple-600" id="calc-irpp">0 FCFA</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tax Reports -->
+                <div class="bg-white rounded-lg shadow-sm border">
+                    <div class="p-6 border-b">
+                        <h3 class="text-lg font-semibold">Rapports fiscaux</h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-medium mb-3">Déclaration TVA actuelle</h4>
+                                <div id="current-tax-report" class="space-y-2 text-sm">
+                                    <!-- Populated by JavaScript -->
+                                </div>
+                                <button onclick="generateTaxReport()" class="mt-4 w-full py-2 bg-blue-600 text-white rounded">
+                                    Générer rapport TVA
+                                </button>
+                            </div>
+                            <div>
+                                <h4 class="font-medium mb-3">Actions recommandées</h4>
+                                <div class="space-y-2 text-sm">
+                                    <div class="p-3 bg-yellow-50 border border-yellow-200 rounded">
+                                        <div class="font-medium">Déclaration mensuelle</div>
+                                        <div class="text-gray-600">Préparer votre déclaration TVA</div>
+                                    </div>
+                                    <div class="p-3 bg-blue-50 border border-blue-200 rounded">
+                                        <div class="font-medium">Sauvegarde fiscale</div>
+                                        <div class="text-gray-600">Archiver vos documents</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Invoices View -->
+        <div id="invoices-view" class="view">
+            <div class="space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">Gestion Factures</h2>
+                    <button onclick="openInvoiceModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
+                        <i data-lucide="plus" class="mr-2"></i>
+                        Nouvelle facture
+                    </button>
+                    <button onclick="openDohoneDemo()" class="ml-3 bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
+        <i data-lucide="credit-card" class="mr-2"></i>
+        Encaisser via DOHONE
+    </button>
+</div>
+
+                <div class="bg-white rounded-lg shadow-sm border">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left">N° Facture</th>
+                                    <th class="px-6 py-3 text-left">Client</th>
+                                    <th class="px-6 py-3 text-left">Montant HT</th>
+                                    <th class="px-6 py-3 text-left">TVA</th>
+                                    <th class="px-6 py-3 text-left">Total TTC</th>
+                                    <th class="px-6 py-3 text-left">Statut</th>
+                                    <th class="px-6 py-3 text-left">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoices-table">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payments View -->
+        <div id="payments-view" class="view">
+            <div class="space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">Gestion Paiements</h2>
+                    <button onclick="openPaymentModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700">
+                        <i data-lucide="plus" class="mr-2"></i>
+                        Enregistrer paiement
+                    </button>
+                    <button onclick="openDohoneDemo()" class="ml-3 bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
+        <i data-lucide="credit-card" class="mr-2"></i>
+        Encaisser via DOHONE
+    </button>
+</div>
+
+                <div class="bg-white rounded-lg shadow-sm border">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left">Date</th>
+                                    <th class="px-6 py-3 text-left">Facture</th>
+                                    <th class="px-6 py-3 text-left">Client</th>
+                                    <th class="px-6 py-3 text-left">Montant</th>
+                                    <th class="px-6 py-3 text-left">Méthode</th>
+                                    <th class="px-6 py-3 text-left">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payments-table">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports View -->
+        <div id="reports-view" class="view">
+            <div class="space-y-6">
+                <h2 class="text-2xl font-bold">Rapports</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border">
+                        <h3 class="text-lg font-semibold mb-4">Rapport mensuel</h3>
+                        <div id="monthly-report" class="space-y-2">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                        <button onclick="generateMonthlyReport()" class="mt-4 w-full py-2 bg-blue-600 text-white rounded">
+                            Générer rapport
+                        </button>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-sm border">
+                        <h3 class="text-lg font-semibold mb-4">Statistiques fiscales</h3>
+                        <div id="tax-report" class="space-y-2">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                        <button onclick="generateTaxReport()" class="mt-4 w-full py-2 bg-green-600 text-white rounded">
+                            Calculer TVA
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Client Modal -->
+<div id="client-modal" class="modal">
+    <div class="modal-content w-full max-w-md">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Nouveau Client</h3>
+            <button onclick="closeClientModal()" class="text-gray-500 hover:text-gray-700">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <form id="client-form" onsubmit="saveClient(event)">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Nom *</label>
+                    <input type="text" name="name" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" name="email" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Téléphone</label>
+                    <input type="tel" name="phone" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Adresse</label>
+                    <textarea name="address" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2"></textarea>
+                </div>
+            </div>
+            <div class="mt-6 flex space-x-3">
+                <button type="submit" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                    Enregistrer
+                </button>
+                <button type="button" onclick="closeClientModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">
+                    Annuler
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Product Modal -->
+<div id="product-modal" class="modal">
+    <div class="modal-content w-full max-w-md">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Nouveau Produit</h3>
+            <button onclick="closeProductModal()" class="text-gray-500 hover:text-gray-700">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <form id="product-form" onsubmit="saveProduct(event)">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Nom *</label>
+                    <input type="text" name="name" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Prix (FCFA) *</label>
+                    <input type="number" name="price" required min="0" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Stock initial</label>
+                    <input type="number" name="stock" min="0" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Catégorie</label>
+                    <select name="category" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="Services">Services</option>
+                        <option value="Produits">Produits</option>
+                        <option value="Formation">Formation</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Description</label>
+                    <textarea name="description" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2"></textarea>
+                </div>
+            </div>
+            <div class="mt-6 flex space-x-3">
+                <button type="submit" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                    Enregistrer
+                </button>
+                <button type="button" onclick="closeProductModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">
+                    Annuler
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Invoice Modal -->
+<div id="invoice-modal" class="modal">
+    <div class="modal-content w-full max-w-2xl">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Nouvelle Facture</h3>
+            <button onclick="closeInvoiceModal()" class="text-gray-500 hover:text-gray-700">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <form id="invoice-form" onsubmit="saveInvoice(event)">
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Client *</label>
+                        <select name="clientId" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                            <option value="">Sélectionner un client</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Date d'échéance</label>
+                        <input type="date" name="dueDate" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Articles</label>
+                    <div id="invoice-items" class="space-y-2 mt-2">
+                        <div class="invoice-item grid grid-cols-4 gap-2">
+                            <select name="productId" class="border border-gray-300 rounded px-2 py-1" onchange="updateItemPrice(this)">
+                                <option value="">Sélectionner produit</option>
+                            </select>
+                            <input type="number" name="quantity" placeholder="Qté" min="1" value="1" class="border border-gray-300 rounded px-2 py-1" onchange="calculateItemTotal(this)">
+                            <input type="number" name="price" placeholder="Prix" min="0" class="border border-gray-300 rounded px-2 py-1" onchange="calculateItemTotal(this)">
+                            <input type="number" name="total" placeholder="Total" readonly class="border border-gray-300 rounded px-2 py-1 bg-gray-100">
+                        </div>
+                    </div>
+                    <button type="button" onclick="addInvoiceItem()" class="mt-2 text-blue-600 text-sm">+ Ajouter article</button>
+                </div>
+                
+                <div class="border-t pt-4">
+                    <div class="grid grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <label class="block font-medium">Total HT</label>
+                            <input type="number" id="invoice-subtotal" readonly class="mt-1 block w-full border border-gray-300 rounded px-2 py-1 bg-gray-100">
+                        </div>
+                        <div>
+                            <label class="block font-medium">TVA (19.25%)</label>
+                            <input type="number" id="invoice-tax" readonly class="mt-1 block w-full border border-gray-300 rounded px-2 py-1 bg-gray-100">
+                        </div>
+                        <div>
+                            <label class="block font-medium">Total TTC</label>
+                            <input type="number" id="invoice-total" readonly class="mt-1 block w-full border border-gray-300 rounded px-2 py-1 bg-gray-100 font-bold">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 flex space-x-3">
+                <button type="submit" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                    Créer facture
+                </button>
+                <button type="button" onclick="closeInvoiceModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">
+                    Annuler
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Payment Modal -->
+<div id="payment-modal" class="modal">
+    <div class="modal-content w-full max-w-md">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Enregistrer Paiement</h3>
+            <button onclick="closePaymentModal()" class="text-gray-500 hover:text-gray-700">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <form id="payment-form" onsubmit="savePayment(event)">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Facture *</label>
+                    <select name="invoiceId" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="">Sélectionner une facture</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Montant (FCFA) *</label>
+                    <input type="number" name="amount" required min="0" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Méthode de paiement</label>
+                    <select name="method" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="MTN Mobile Money">MTN Mobile Money</option>
+                        <option value="Orange Money">Orange Money</option>
+                        <option value="Dohone">Dohone (démo)</option>
+                        <option value="Espèces">Espèces</option>
+                        <option value="Virement">Virement bancaire</option>
+                        <option value="Chèque">Chèque</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Date</label>
+                    <input type="date" name="date" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Référence</label>
+                    <input type="text" name="reference" placeholder="Numéro de transaction" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+            </div>
+            <div class="mt-6 flex space-x-3">
+                <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                    Enregistrer
+                </button>
+                <button type="button" onclick="closePaymentModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">
+                    Annuler
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Stock Adjustment Modal -->
+<div id="stock-modal" class="modal">
+    <div class="modal-content w-full max-w-md">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Ajuster Stock</h3>
+            <button onclick="closeStockModal()" class="text-gray-500 hover:text-gray-700">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <form id="stock-form" onsubmit="saveStockAdjustment(event)">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Produit *</label>
+                    <select name="productId" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="">Sélectionner un produit</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Stock actuel</label>
+                    <input type="number" id="current-stock" readonly class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-100">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Type d'ajustement</label>
+                    <select name="adjustmentType" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="add">Ajouter stock</option>
+                        <option value="remove">Retirer stock</option>
+                        <option value="set">Définir stock</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Quantité *</label>
+                    <input type="number" name="quantity" required min="0" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Motif</label>
+                    <select name="reason" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="restock">Réapprovisionnement</option>
+                        <option value="sale">Vente</option>
+                        <option value="damage">Produit endommagé</option>
+                        <option value="inventory">Inventaire</option>
+                        <option value="other">Autre</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Commentaire</label>
+                    <textarea name="comment" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2"></textarea>
+                </div>
+            </div>
+            <div class="mt-6 flex space-x-3">
+                <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                    Ajuster stock
+                </button>
+                <button type="button" onclick="closeStockModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">
+                    Annuler
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Migration Modal -->
+<div id="migration-modal" class="modal">
+    <div class="modal-content w-full max-w-lg">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Import de données</h3>
+            <button onclick="closeMigrationModal()" class="text-gray-500 hover:text-gray-700">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Type de données</label>
+                <select id="import-type" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                    <option value="clients">Clients</option>
+                    <option value="products">Produits</option>
+                    <option value="invoices">Factures</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Fichier</label>
+                <input type="file" id="import-data-file" accept=".xlsx,.xls,.csv,.json" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+            </div>
+            <div class="bg-blue-50 border border-blue-200 rounded p-3">
+                <h4 class="font-medium text-blue-800">Format requis:</h4>
+                <div class="text-sm text-blue-700 mt-1" id="format-info">
+                    Pour les clients: Nom, Email, Téléphone, Adresse
+                </div>
+            </div>
+        </div>
+        <div class="mt-6 flex space-x-3">
+            <button onclick="processImport()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                Importer
+            </button>
+            <button onclick="closeMigrationModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">
+                Annuler
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Container -->
+<div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+<script>
+// ============================================
+// CONFIGURATION API PAYLOOP
+// ============================================
+const API_URL = 'http://localhost:3000';
+const MERCHANT_ID = localStorage.getItem('merchantId');
+
+// Redirection si pas connecté
+if (!MERCHANT_ID && !window.location.pathname.includes('login')) {
+    // On laisse la démo fonctionner sans connexion pour l'instant
+}
+
+// Fonctions API
+async function apiGetDashboard() {
+    try {
+        const res = await fetch(`${API_URL}/dashboard/${MERCHANT_ID}`);
+        return await res.json();
+    } catch (e) { console.error('API Error:', e); return null; }
+}
+
+async function apiGetInvoices() {
+    try {
+        const res = await fetch(`${API_URL}/invoices/${MERCHANT_ID}`);
+        return await res.json();
+    } catch (e) { console.error('API Error:', e); return null; }
+}
+
+async function apiGetProducts() {
+    try {
+        const res = await fetch(`${API_URL}/products/${MERCHANT_ID}`);
+        return await res.json();
+    } catch (e) { console.error('API Error:', e); return null; }
+}
+
+async function apiGetAccounting() {
+    try {
+        const res = await fetch(`${API_URL}/accounting/${MERCHANT_ID}`);
+        return await res.json();
+    } catch (e) { console.error('API Error:', e); return null; }
+}
+
+async function apiGetMerchant() {
+    try {
+        const res = await fetch(`${API_URL}/merchants`);
+        const merchants = await res.json();
+        return merchants.find(m => m.id === MERCHANT_ID);
+    } catch (e) { console.error('API Error:', e); return null; }
+}
+
+async function apiAddProduct(product) {
+    try {
+        const res = await fetch(`${API_URL}/products`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...product, merchantId: MERCHANT_ID })
+        });
+        return await res.json();
+    } catch (e) { console.error('API Error:', e); return null; }
+}
+// Application State Management
+class PayloopApp {
+    constructor() {
+        this.currentView = 'dashboard';
+        this.data = {
+            clients: [],
+            products: [],
+            invoices: [],
+            payments: [],
+            stockAdjustments: [],
+            migrationHistory: [],
+            settings: {
+                taxRate: 19.25,
+                currency: 'FCFA',
+                companyName: 'Mon Entreprise',
+                lowStockThreshold: 5
+            }
+        };
+        this.init();
+    }
+
+    init() {
+    this.loadData();
+    this.initEventListeners();
+    this.updateUI();
+    this.loadFromAPI(); // <-- Nouvelle ligne
+    this.showNotification('Application Payloop chargée avec succès!', 'success');
+}
+
+    // Data Management
+    loadData() {
+        try {
+            const savedData = localStorage.getItem('payloop_data');
+            if (savedData) {
+                this.data = { ...this.data, ...JSON.parse(savedData) };
+                document.getElementById('data-status').textContent = `${this.data.clients.length} clients, ${this.data.invoices.length} factures`;
+            } else {
+                this.loadSampleData();
+            }
+        } catch (error) {
+            console.error('Erreur chargement données:', error);
+            this.loadSampleData();
+        }
+    }
+
+    saveData() {
+        try {
+            localStorage.setItem('payloop_data', JSON.stringify(this.data));
+            document.getElementById('data-status').textContent = `Données sauvegardées - ${this.data.clients.length} clients, ${this.data.invoices.length} factures`;
+        } catch (error) {
+            console.error('Erreur sauvegarde:', error);
+            this.showNotification('Erreur lors de la sauvegarde', 'error');
+        }
+    }
+
+    loadSampleData() {
+        this.data.clients = [
+            {
+                id: 1,
+                name: 'Boutique Sara',
+                email: 'contact@boutiquesara.cm',
+                phone: '+237 677 123 456',
+                address: 'Douala, Cameroun',
+                totalRevenue: 0,
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 2,
+                name: 'Restaurant Délice',
+                email: 'admin@restaurantdelice.cm', 
+                phone: '+237 694 567 890',
+                address: 'Yaoundé, Cameroun',
+                totalRevenue: 0,
+                createdAt: new Date().toISOString()
+            }
+        ];
+
+        this.data.products = [
+            {
+                id: 1,
+                name: 'Consultation',
+                price: 25000,
+                stock: null,
+                category: 'Services',
+                description: 'Consultation professionnelle'
+            },
+            {
+                id: 2,
+                name: 'Formation digitale',
+                price: 50000,
+                stock: 10,
+                category: 'Formation',
+                description: 'Formation aux outils digitaux'
+            }
+        ];
+
+        
+        // ---- Démo DOHONE: facture + paiement auto ----
+        try {
+            const demoClientId = this.data.clients[0]?.id;
+            const demoProduct = this.data.products[0];
+            if (demoClientId && demoProduct) {
+                const demoInvoice = this.addInvoice({
+                    clientId: demoClientId,
+                    items: [{
+                        productId: demoProduct.id,
+                        quantity: 1,
+                        price: parseFloat(demoProduct.price)
+                    }]
+                });
+                this.addPayment({
+                    invoiceId: demoInvoice.id,
+                    amount: demoInvoice.total,
+                    method: 'Dohone',
+                    reference: 'DOH-DEMO-' + String(Date.now()).slice(-6),
+                    date: new Date().toISOString().split('T')[0]
+                });
+            }
+        } catch (e) { console.warn('Seed DOHONE demo failed:', e); }
+this.saveData();
+    }
+
+    // CRUD Operations
+    addClient(clientData) {
+        const client = {
+            id: Date.now(),
+            ...clientData,
+            totalRevenue: 0,
+            createdAt: new Date().toISOString()
+        };
+        this.data.clients.push(client);
+        this.saveData();
+        this.updateUI();
+        return client;
+    }
+
+    addProduct(productData) {
+        const product = {
+            id: Date.now(),
+            ...productData,
+            price: parseFloat(productData.price),
+            stock: productData.stock ? parseInt(productData.stock) : null,
+            createdAt: new Date().toISOString()
+        };
+        this.data.products.push(product);
+        this.saveData();
+        this.updateUI();
+        return product;
+    }
+
+    addInvoice(invoiceData) {
+        const invoice = {
+            id: Date.now(),
+            number: `INV-${new Date().getFullYear()}-${String(this.data.invoices.length + 1).padStart(3, '0')}`,
+            ...invoiceData,
+            status: 'pending',
+            createdAt: new Date().toISOString()
+        };
+        
+        // Calculate totals
+        let subtotal = 0;
+        invoice.items.forEach(item => {
+            subtotal += item.quantity * item.price;
+        });
+        
+        invoice.subtotal = subtotal;
+        invoice.tax = subtotal * (this.data.settings.taxRate / 100);
+        invoice.total = subtotal + invoice.tax;
+        
+        this.data.invoices.push(invoice);
+        this.saveData();
+        this.updateUI();
+        return invoice;
+    }
+
+    addPayment(paymentData) {
+        const payment = {
+            id: Date.now(),
+            ...paymentData,
+            amount: parseFloat(paymentData.amount),
+            date: paymentData.date || new Date().toISOString().split('T')[0],
+            createdAt: new Date().toISOString()
+        };
+
+        // Update invoice status
+        const invoice = this.data.invoices.find(inv => inv.id == paymentData.invoiceId);
+        if (invoice) {
+            const totalPaid = this.data.payments
+                .filter(p => p.invoiceId == invoice.id)
+                .reduce((sum, p) => sum + p.amount, 0) + payment.amount;
+            
+            if (totalPaid >= invoice.total) {
+                invoice.status = 'paid';
+            } else {
+                invoice.status = 'partial';
+            }
+
+            // Update client revenue
+            const client = this.data.clients.find(c => c.id == invoice.clientId);
+            if (client) {
+                client.totalRevenue += payment.amount;
+            }
+        }
+
+        this.data.payments.push(payment);
+        this.saveData();
+        this.updateUI();
+        return payment;
+    }
+
+    deleteItem(type, id) {
+        this.data[type] = this.data[type].filter(item => item.id != id);
+        this.saveData();
+        this.updateUI();
+    }
+
+    // UI Management
+    initEventListeners() {
+        // Navigation
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const view = item.dataset.view;
+                if (view) this.showView(view);
+            });
+        });
+
+        // Set default date for payment form
+        const today = new Date().toISOString().split('T')[0];
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateInput = document.querySelector('#payment-form input[name="date"]');
+            if (dateInput) dateInput.value = today;
+        });
+    }
+
+    showView(viewName) {
+        // Hide all views
+        document.querySelectorAll('.view').forEach(view => {
+            view.classList.remove('active');
+        });
+
+        // Show target view
+        const targetView = document.getElementById(viewName + '-view');
+        if (targetView) {
+            targetView.classList.add('active');
+        }
+
+        // Update navigation state
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.classList.remove('bg-blue-600');
+            if (item.dataset.view === viewName) {
+                item.classList.add('bg-blue-600');
+            }
+        });
+
+        // Update page title
+        const titles = {
+            'dashboard': 'Dashboard',
+            'clients': 'Gestion Clients',
+            'inventory': 'Stock & Produits',
+            'invoices': 'Gestion Factures',
+            'payments': 'Gestion Paiements',
+            'migration': 'Migration & Import',
+            'taxes': 'Gestion Fiscale',
+            'reports': 'Rapports'
+        };
+        document.getElementById('page-title').textContent = titles[viewName] || 'Dashboard';
+
+        this.currentView = viewName;
+        this.updateViewContent(viewName);
+    }
+
+    updateUI() {
+        this.updateDashboard();
+        this.updateClientsTable();
+        this.updateProductsTable();
+        this.updateInvoicesTable();
+        this.updatePaymentsTable();
+        this.updateInventoryStats();
+        this.updateTaxData();
+        this.updateMigrationStats();
+        this.updateFormSelects();
+    }
+
+    updateDashboard() {
+        // Calculate stats
+        const totalRevenue = this.data.invoices
+            .filter(inv => inv.status === 'paid')
+            .reduce((sum, inv) => sum + inv.total, 0);
+        
+        const paidInvoicesCount = this.data.invoices.filter(inv => inv.status === 'paid').length;
+        const activeClientsCount = this.data.clients.length;
+        const productsCount = this.data.products.length;
+
+        // Update dashboard stats
+        document.getElementById('total-revenue').textContent = this.formatCurrency(totalRevenue);
+        document.getElementById('paid-invoices-count').textContent = paidInvoicesCount;
+        document.getElementById('active-clients-count').textContent = activeClientsCount;
+        document.getElementById('products-count').textContent = productsCount;
+
+        // Update recent activity
+        this.updateRecentActivity();
+    }
+// Charger les données depuis l'API PayLoop
+    async loadFromAPI() {
+        if (!MERCHANT_ID) {
+            console.log('Mode démo - pas de connexion API');
+            return;
+        }
+
+        try {
+            // Charger les données du marchand
+            const merchant = await apiGetMerchant();
+            if (merchant) {
+                document.getElementById('page-title').textContent = 'Dashboard - ' + merchant.name;
+            }
+
+            // Charger les stats du dashboard
+            const dashboard = await apiGetDashboard();
+            if (dashboard) {
+                document.getElementById('total-revenue').textContent = this.formatCurrency(dashboard.total.revenue);
+                document.getElementById('paid-invoices-count').textContent = dashboard.total.invoices;
+            }
+
+            // Charger les factures depuis l'API
+            const apiInvoices = await apiGetInvoices();
+            if (apiInvoices && apiInvoices.length > 0) {
+                // Convertir au format de la démo
+                const convertedInvoices = apiInvoices.map(inv => ({
+                    id: inv.id,
+                    number: inv.invoiceNumber,
+                    clientId: inv.customerId,
+                    clientName: 'Client API',
+                    items: inv.items || [],
+                    subtotal: inv.amount,
+                    tax: inv.tva,
+                    total: inv.totalAmount,
+                    status: inv.status || 'paid',
+                    date: inv.createdAt,
+                    paymentMethod: 'mobile_money'
+                }));
+                
+                // Fusionner avec les données existantes (éviter les doublons)
+                convertedInvoices.forEach(apiInv => {
+                    if (!this.data.invoices.find(i => i.number === apiInv.number)) {
+                        this.data.invoices.push(apiInv);
+                    }
+                });
+            }
+
+            // Charger les produits depuis l'API
+            const apiProducts = await apiGetProducts();
+            if (apiProducts && apiProducts.length > 0) {
+                const convertedProducts = apiProducts.map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    price: p.price,
+                    stock: p.stock,
+                    minStock: p.minStock,
+                    category: 'Produits'
+                }));
+                
+                convertedProducts.forEach(apiProd => {
+                    if (!this.data.products.find(p => p.name === apiProd.name)) {
+                        this.data.products.push(apiProd);
+                    }
+                });
+            }
+
+            // Mettre à jour l'interface
+            this.updateUI();
+            this.showNotification('Données synchronisées avec le serveur', 'success');
+
+        } catch (error) {
+            console.error('Erreur chargement API:', error);
+        }
+    }
+    updateRecentActivity() {
+        const container = document.getElementById('recent-activity');
+        const activities = [];
+
+        // Add recent invoices
+        this.data.invoices
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 3)
+            .forEach(invoice => {
+                const client = this.data.clients.find(c => c.id == invoice.clientId);
+                activities.push({
+                    type: 'invoice',
+                    text: `Facture ${invoice.number} créée pour ${client?.name || 'Client inconnu'}`,
+                    date: invoice.createdAt,
+                    amount: invoice.total
+                });
+            });
+
+        // Add recent payments
+        this.data.payments
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 3)
+            .forEach(payment => {
+                const invoice = this.data.invoices.find(inv => inv.id == payment.invoiceId);
+                const client = this.data.clients.find(c => c.id == invoice?.clientId);
+                activities.push({
+                    type: 'payment',
+                    text: `Paiement reçu de ${client?.name || 'Client inconnu'}`,
+                    date: payment.createdAt,
+                    amount: payment.amount
+                });
+            });
+
+        // Sort by date and display
+        activities.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        if (activities.length === 0) {
+            container.innerHTML = '<p class="text-gray-500 text-center">Aucune activité récente</p>';
+        } else {
+            container.innerHTML = activities.slice(0, 5).map(activity => `
+                <div class="flex items-center justify-between py-2 border-b last:border-b-0">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 ${activity.type === 'invoice' ? 'bg-blue-100' : 'bg-green-100'} rounded-full flex items-center justify-center mr-3">
+                            <i data-lucide="${activity.type === 'invoice' ? 'file-text' : 'dollar-sign'}" class="w-4 h-4 ${activity.type === 'invoice' ? 'text-blue-600' : 'text-green-600'}"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium">${activity.text}</p>
+                            <p class="text-xs text-gray-500">${this.formatDate(activity.date)}</p>
+                        </div>
+                    </div>
+                    <span class="font-medium ${activity.type === 'invoice' ? 'text-blue-600' : 'text-green-600'}">
+                        ${this.formatCurrency(activity.amount)}
+                    </span>
+                </div>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+    }
+
+    updateClientsTable() {
+        const tbody = document.getElementById('clients-table');
+        if (!tbody) return;
+
+        if (this.data.clients.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Aucun client enregistré</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = this.data.clients.map(client => `
+            <tr>
+                <td class="px-6 py-4 font-medium">${client.name}</td>
+                <td class="px-6 py-4">${client.email || '-'}</td>
+                <td class="px-6 py-4">${client.phone || '-'}</td>
+                <td class="px-6 py-4 font-bold">${this.formatCurrency(client.totalRevenue)}</td>
+                <td class="px-6 py-4">
+                    <button onclick="app.deleteItem('clients', ${client.id})" class="text-red-600 hover:text-red-800">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+
+        lucide.createIcons();
+    }
+
+    updateProductsTable() {
+        const tbody = document.getElementById('products-table');
+        if (!tbody) return;
+
+        if (this.data.products.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Aucun produit enregistré</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = this.data.products.map(product => `
+            <tr>
+                <td class="px-6 py-4 font-medium">${product.name}</td>
+                <td class="px-6 py-4">${this.formatCurrency(product.price)}</td>
+                <td class="px-6 py-4">${product.stock !== null ? product.stock : 'N/A'}</td>
+                <td class="px-6 py-4">${product.category}</td>
+                <td class="px-6 py-4">
+                    <button onclick="app.deleteItem('products', ${product.id})" class="text-red-600 hover:text-red-800">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+
+        lucide.createIcons();
+    }
+
+    updateInvoicesTable() {
+        const tbody = document.getElementById('invoices-table');
+        if (!tbody) return;
+
+        if (this.data.invoices.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">Aucune facture créée</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = this.data.invoices.map(invoice => {
+            const client = this.data.clients.find(c => c.id == invoice.clientId);
+            const statusColors = {
+                'pending': 'bg-yellow-100 text-yellow-800',
+                'paid': 'bg-green-100 text-green-800',
+                'partial': 'bg-blue-100 text-blue-800',
+                'overdue': 'bg-red-100 text-red-800'
+            };
+            
+            return `
+                <tr>
+                    <td class="px-6 py-4 font-mono text-sm">${invoice.number}</td>
+                    <td class="px-6 py-4">${client?.name || 'Client supprimé'}</td>
+                    <td class="px-6 py-4">${this.formatCurrency(invoice.subtotal)}</td>
+                    <td class="px-6 py-4">${this.formatCurrency(invoice.tax)}</td>
+                    <td class="px-6 py-4 font-bold">${this.formatCurrency(invoice.total)}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded-full text-xs ${statusColors[invoice.status] || statusColors.pending}">
+                            ${this.getStatusText(invoice.status)}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex space-x-2">
+                            <button onclick="app.viewInvoice(${invoice.id})" class="text-blue-600 hover:text-blue-800">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="app.deleteItem('invoices', ${invoice.id})" class="text-red-600 hover:text-red-800">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        lucide.createIcons();
+    }
+
+    updatePaymentsTable() {
+        const tbody = document.getElementById('payments-table');
+        if (!tbody) return;
+
+        if (this.data.payments.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">Aucun paiement enregistré</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = this.data.payments.map(payment => {
+            const invoice = this.data.invoices.find(inv => inv.id == payment.invoiceId);
+            const client = this.data.clients.find(c => c.id == invoice?.clientId);
+            
+            return `
+                <tr>
+                    <td class="px-6 py-4">${this.formatDate(payment.date)}</td>
+                    <td class="px-6 py-4 font-mono text-sm">${invoice?.number || 'Facture supprimée'}</td>
+                    <td class="px-6 py-4">${client?.name || 'Client inconnu'}</td>
+                    <td class="px-6 py-4 font-bold">${this.formatCurrency(payment.amount)}</td>
+                    <td class="px-6 py-4">${payment.method}</td>
+                    <td class="px-6 py-4">
+                        <button onclick="app.deleteItem('payments', ${payment.id})" class="text-red-600 hover:text-red-800">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        lucide.createIcons();
+    }
+
+    updateFormSelects() {
+        // Update client selects
+        const clientSelects = document.querySelectorAll('select[name="clientId"]');
+        clientSelects.forEach(select => {
+            select.innerHTML = '<option value="">Sélectionner un client</option>' + 
+                this.data.clients.map(client => 
+                    `<option value="${client.id}">${client.name}</option>`
+                ).join('');
+        });
+
+        // Update product selects  
+        const productSelects = document.querySelectorAll('select[name="productId"]');
+        productSelects.forEach(select => {
+            select.innerHTML = '<option value="">Sélectionner produit</option>' + 
+                this.data.products.map(product => 
+                    `<option value="${product.id}" data-price="${product.price}">${product.name}</option>`
+                ).join('');
+        });
+
+        // Update invoice selects (unpaid invoices only)
+        const invoiceSelects = document.querySelectorAll('#payment-form select[name="invoiceId"]');
+        const unpaidInvoices = this.data.invoices.filter(inv => inv.status !== 'paid');
+        invoiceSelects.forEach(select => {
+            select.innerHTML = '<option value="">Sélectionner une facture</option>' + 
+                unpaidInvoices.map(invoice => {
+                    const client = this.data.clients.find(c => c.id == invoice.clientId);
+                    return `<option value="${invoice.id}">${invoice.number} - ${client?.name} (${this.formatCurrency(invoice.total)})</option>`;
+                }).join('');
+        });
+    }
+
+    updateViewContent(viewName) {
+        // View-specific updates can be added here
+        if (viewName === 'reports') {
+            this.updateReports();
+        } else if (viewName === 'inventory') {
+            this.updateInventoryStats();
+        } else if (viewName === 'taxes') {
+            this.updateTaxData();
+        } else if (viewName === 'migration') {
+            this.updateMigrationStats();
+        }
+    }
+
+    updateInventoryStats() {
+        const totalProducts = this.data.products.length;
+        const stockValue = this.data.products.reduce((sum, product) => {
+            return sum + (product.price * (product.stock || 0));
+        }, 0);
+        const lowStockProducts = this.data.products.filter(p => 
+            p.stock !== null && p.stock <= this.data.settings.lowStockThreshold
+        ).length;
+        const outOfStockProducts = this.data.products.filter(p => 
+            p.stock !== null && p.stock === 0
+        ).length;
+
+        // Update stats
+        const elements = {
+            'total-products-stat': totalProducts,
+            'stock-value': this.formatCurrency(stockValue),
+            'low-stock-count': lowStockProducts,
+            'out-of-stock-count': outOfStockProducts
+        };
+
+        Object.entries(elements).forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value;
+            }
+        });
+
+        // Show/hide stock alerts
+        const alertsDiv = document.getElementById('stock-alerts');
+        if (lowStockProducts > 0 || outOfStockProducts > 0) {
+            alertsDiv.style.display = 'block';
+            document.getElementById('alerts-text').textContent = 
+                `${lowStockProducts} produits en stock faible, ${outOfStockProducts} en rupture`;
+        } else {
+            alertsDiv.style.display = 'none';
+        }
+    }
+
+    updateTaxData() {
+        const paidInvoices = this.data.invoices.filter(inv => inv.status === 'paid');
+        const totalRevenue = paidInvoices.reduce((sum, inv) => sum + inv.subtotal, 0);
+        const totalTax = paidInvoices.reduce((sum, inv) => sum + inv.tax, 0);
+        const pendingInvoices = this.data.invoices.filter(inv => inv.status !== 'paid').length;
+
+        // Update tax elements
+        const elements = {
+            'vat-collected': this.formatCurrency(totalTax),
+            'monthly-revenue-ht': this.formatCurrency(totalRevenue),
+            'paid-invoices-tax': paidInvoices.length,
+            'pending-invoices-tax': pendingInvoices
+        };
+
+        Object.entries(elements).forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value;
+            }
+        });
+
+        // Update tax period
+        const taxPeriodElement = document.getElementById('tax-period');
+        if (taxPeriodElement) {
+            const currentMonth = new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+            taxPeriodElement.textContent = currentMonth;
+        }
+
+        // Update current tax report
+        this.updateCurrentTaxReport();
+    }
+
+    updateCurrentTaxReport() {
+        const container = document.getElementById('current-tax-report');
+        if (!container) return;
+
+        const paidInvoices = this.data.invoices.filter(inv => inv.status === 'paid');
+        const totalRevenue = paidInvoices.reduce((sum, inv) => sum + inv.subtotal, 0);
+        const totalTax = paidInvoices.reduce((sum, inv) => sum + inv.tax, 0);
+
+        container.innerHTML = `
+            <div class="flex justify-between">
+                <span>CA HT du mois:</span>
+                <span class="font-bold">${this.formatCurrency(totalRevenue)}</span>
+            </div>
+            <div class="flex justify-between">
+                <span>TVA collectée:</span>
+                <span class="font-bold">${this.formatCurrency(totalTax)}</span>
+            </div>
+            <div class="flex justify-between">
+                <span>Factures payées:</span>
+                <span class="font-bold">${paidInvoices.length}</span>
+            </div>
+            <div class="flex justify-between border-t pt-2">
+                <span>TVA à déclarer:</span>
+                <span class="font-bold text-blue-600">${this.formatCurrency(totalTax)}</span>
+            </div>
+        `;
+    }
+
+    updateMigrationStats() {
+        const elements = {
+            'migration-clients-count': this.data.clients.length,
+            'migration-products-count': this.data.products.length,
+            'migration-invoices-count': this.data.invoices.length,
+            'migration-payments-count': this.data.payments.length
+        };
+
+        Object.entries(elements).forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value;
+            }
+        });
+    }
+
+    // Stock adjustment functions
+    addStockAdjustment(adjustmentData) {
+        const adjustment = {
+            id: Date.now(),
+            ...adjustmentData,
+            productId: parseInt(adjustmentData.productId),
+            quantity: parseInt(adjustmentData.quantity),
+            date: new Date().toISOString(),
+            createdAt: new Date().toISOString()
+        };
+
+        // Update product stock
+        const product = this.data.products.find(p => p.id == adjustment.productId);
+        if (product && product.stock !== null) {
+            switch (adjustment.adjustmentType) {
+                case 'add':
+                    product.stock += adjustment.quantity;
+                    break;
+                case 'remove':
+                    product.stock = Math.max(0, product.stock - adjustment.quantity);
+                    break;
+                case 'set':
+                    product.stock = adjustment.quantity;
+                    break;
+            }
+        }
+
+        this.data.stockAdjustments.push(adjustment);
+        this.saveData();
+        this.updateUI();
+        return adjustment;
+    }
+
+    updateReports() {
+        this.generateMonthlyReport();
+        this.generateTaxReport();
+    }
+
+    // Utility functions
+    formatCurrency(amount) {
+        return new Intl.NumberFormat('fr-FR', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+        }).format(amount) + ' FCFA';
+    }
+
+    formatDate(dateString) {
+        return new Date(dateString).toLocaleDateString('fr-FR');
+    }
+
+    getStatusText(status) {
+        const statusTexts = {
+            'pending': 'En attente',
+            'paid': 'Payée',
+            'partial': 'Partiel',
+            'overdue': 'En retard'
+        };
+        return statusTexts[status] || status;
+    }
+
+    showNotification(message, type = 'info') {
+        const container = document.getElementById('notifications');
+        const colors = {
+            'success': 'bg-green-100 border-green-400 text-green-700',
+            'error': 'bg-red-100 border-red-400 text-red-700',
+            'warning': 'bg-yellow-100 border-yellow-400 text-yellow-700',
+            'info': 'bg-blue-100 border-blue-400 text-blue-700'
+        };
+
+        const notification = document.createElement('div');
+        notification.className = `border-l-4 p-4 rounded shadow-lg ${colors[type]}`;
+        notification.innerHTML = `
+            <div class="flex justify-between items-center">
+                <span>${message}</span>
+                <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-current opacity-50 hover:opacity-100">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+        `;
+
+        container.appendChild(notification);
+        lucide.createIcons();
+
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.remove();
+            }
+        }, 5000);
+    }
+
+    // Reports
+    generateMonthlyReport() {
+        const container = document.getElementById('monthly-report');
+        if (!container) return;
+
+        const thisMonth = new Date().getMonth();
+        const thisYear = new Date().getFullYear();
+        
+        const monthlyInvoices = this.data.invoices.filter(inv => {
+            const invDate = new Date(inv.createdAt);
+            return invDate.getMonth() === thisMonth && invDate.getFullYear() === thisYear;
+        });
+
+        const monthlyPayments = this.data.payments.filter(payment => {
+            const payDate = new Date(payment.createdAt);
+            return payDate.getMonth() === thisMonth && payDate.getFullYear() === thisYear;
+        });
+
+        const totalInvoiced = monthlyInvoices.reduce((sum, inv) => sum + inv.total, 0);
+        const totalReceived = monthlyPayments.reduce((sum, payment) => sum + payment.amount, 0);
+
+        container.innerHTML = `
+            <div class="space-y-2">
+                <div class="flex justify-between">
+                    <span>Factures émises:</span>
+                    <span class="font-bold">${monthlyInvoices.length}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Montant facturé:</span>
+                    <span class="font-bold">${this.formatCurrency(totalInvoiced)}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Paiements reçus:</span>
+                    <span class="font-bold">${monthlyPayments.length}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Montant encaissé:</span>
+                    <span class="font-bold text-green-600">${this.formatCurrency(totalReceived)}</span>
+                </div>
+                <div class="flex justify-between border-t pt-2">
+                    <span>Taux de recouvrement:</span>
+                    <span class="font-bold">${totalInvoiced > 0 ? Math.round((totalReceived / totalInvoiced) * 100) : 0}%</span>
+                </div>
+            </div>
+        `;
+    }
+
+    generateTaxReport() {
+        const container = document.getElementById('tax-report');
+        if (!container) return;
+
+        const paidInvoices = this.data.invoices.filter(inv => inv.status === 'paid');
+        const totalRevenue = paidInvoices.reduce((sum, inv) => sum + inv.subtotal, 0);
+        const totalTax = paidInvoices.reduce((sum, inv) => sum + inv.tax, 0);
+
+        container.innerHTML = `
+            <div class="space-y-2">
+                <div class="flex justify-between">
+                    <span>CA HT:</span>
+                    <span class="font-bold">${this.formatCurrency(totalRevenue)}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>TVA collectée (${this.data.settings.taxRate}%):</span>
+                    <span class="font-bold">${this.formatCurrency(totalTax)}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>CA TTC:</span>
+                    <span class="font-bold">${this.formatCurrency(totalRevenue + totalTax)}</span>
+                </div>
+                <div class="flex justify-between border-t pt-2">
+                    <span>Factures payées:</span>
+                    <span class="font-bold">${paidInvoices.length}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    // Data Import/Export
+    exportData() {
+        const dataToExport = {
+            ...this.data,
+            exportDate: new Date().toISOString(),
+            version: '1.0'
+        };
+
+        const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `payloop_export_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        this.showNotification('Données exportées avec succès!', 'success');
+    }
+
+    importData() {
+        document.getElementById('import-file').click();
+    }
+
+    handleImport(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                
+                // Validate data structure
+                if (importedData.clients && importedData.products && importedData.invoices && importedData.payments) {
+                    if (confirm('Voulez-vous remplacer toutes les données actuelles par les données importées?')) {
+                        this.data = { ...this.data, ...importedData };
+                        this.saveData();
+                        this.updateUI();
+                        this.showNotification('Données importées avec succès!', 'success');
+                    }
+                } else {
+                    this.showNotification('Fichier d\'import invalide', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur import:', error);
+                this.showNotification('Erreur lors de l\'import du fichier', 'error');
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = ''; // Reset file input
+    }
+
+    // Invoice actions
+    viewInvoice(invoiceId) {
+        const invoice = this.data.invoices.find(inv => inv.id == invoiceId);
+        if (!invoice) return;
+
+        const client = this.data.clients.find(c => c.id == invoice.clientId);
+        
+        let invoiceHtml = `
+            <h2 class="text-xl font-bold mb-4">Facture ${invoice.number}</h2>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <h3 class="font-semibold">Client:</h3>
+                    <p>${client?.name || 'Client inconnu'}</p>
+                    <p>${client?.email || ''}</p>
+                    <p>${client?.phone || ''}</p>
+                </div>
+                <div class="text-right">
+                    <p><strong>Date:</strong> ${this.formatDate(invoice.createdAt)}</p>
+                    <p><strong>Échéance:</strong> ${invoice.dueDate ? this.formatDate(invoice.dueDate) : 'Non définie'}</p>
+                    <p><strong>Statut:</strong> <span class="font-bold">${this.getStatusText(invoice.status)}</span></p>
+                </div>
+            </div>
+            
+            <table class="w-full border border-gray-300 mb-4">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="border border-gray-300 px-4 py-2 text-left">Article</th>
+                        <th class="border border-gray-300 px-4 py-2 text-right">Qté</th>
+                        <th class="border border-gray-300 px-4 py-2 text-right">Prix unit.</th>
+                        <th class="border border-gray-300 px-4 py-2 text-right">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        invoice.items.forEach(item => {
+            const product = this.data.products.find(p => p.id == item.productId);
+            invoiceHtml += `
+                <tr>
+                    <td class="border border-gray-300 px-4 py-2">${product?.name || 'Produit supprimé'}</td>
+                    <td class="border border-gray-300 px-4 py-2 text-right">${item.quantity}</td>
+                    <td class="border border-gray-300 px-4 py-2 text-right">${this.formatCurrency(item.price)}</td>
+                    <td class="border border-gray-300 px-4 py-2 text-right">${this.formatCurrency(item.quantity * item.price)}</td>
+                </tr>
+            `;
+        });
+
+        invoiceHtml += `
+                </tbody>
+            </table>
+            
+            <div class="text-right space-y-1">
+                <p><strong>Sous-total HT:</strong> ${this.formatCurrency(invoice.subtotal)}</p>
+                <p><strong>TVA (${this.data.settings.taxRate}%):</strong> ${this.formatCurrency(invoice.tax)}</p>
+                <p class="text-xl"><strong>Total TTC:</strong> ${this.formatCurrency(invoice.total)}</p>
+            </div>
+        `;
+
+        // Show in a modal or new window
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Payloop — Démo DOHONE</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        table { border-collapse: collapse; }
+                        .text-right { text-align: right; }
+                        .font-bold { font-weight: bold; }
+                        .text-xl { font-size: 1.25rem; }
+                        @media print { button { display: none; } }
+                    </style>
+                </head>
+                <body>
+                    ${invoiceHtml}
+                    <div class="mt-6">
+                        <button onclick="window.print()" class="bg-blue-600 text-white px-4 py-2 rounded mr-2">Imprimer</button>
+                        <button onclick="window.close()" class="bg-gray-600 text-white px-4 py-2 rounded">Fermer</button>
+                    </div>
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+    }
+}
+
+// Global functions for modals and forms
+function openClientModal() {
+    document.getElementById('client-modal').classList.add('active');
+    document.getElementById('client-form').reset();
+}
+
+function closeClientModal() {
+    document.getElementById('client-modal').classList.remove('active');
+}
+
+function saveClient(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const clientData = Object.fromEntries(formData.entries());
+    
+    app.addClient(clientData);
+    closeClientModal();
+    app.showNotification('Client ajouté avec succès!', 'success');
+}
+
+function openProductModal() {
+    document.getElementById('product-modal').classList.add('active');
+    document.getElementById('product-form').reset();
+}
+
+function closeProductModal() {
+    document.getElementById('product-modal').classList.remove('active');
+}
+
+function saveProduct(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const productData = Object.fromEntries(formData.entries());
+    
+    app.addProduct(productData);
+    closeProductModal();
+    app.showNotification('Produit ajouté avec succès!', 'success');
+}
+
+function openInvoiceModal() {
+    if (app.data.clients.length === 0) {
+        app.showNotification('Veuillez d\'abord créer au moins un client', 'warning');
+        return;
+    }
+    if (app.data.products.length === 0) {
+        app.showNotification('Veuillez d\'abord créer au moins un produit', 'warning');
+        return;
+    }
+    
+    document.getElementById('invoice-modal').classList.add('active');
+    document.getElementById('invoice-form').reset();
+    app.updateFormSelects();
+    
+    // Set default due date (30 days from now)
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 30);
+    document.querySelector('#invoice-form input[name="dueDate"]').value = dueDate.toISOString().split('T')[0];
+}
+
+function closeInvoiceModal() {
+    document.getElementById('invoice-modal').classList.remove('active');
+}
+
+function addInvoiceItem() {
+    const container = document.getElementById('invoice-items');
+    const newItem = document.createElement('div');
+    newItem.className = 'invoice-item grid grid-cols-4 gap-2';
+    newItem.innerHTML = `
+        <select name="productId" class="border border-gray-300 rounded px-2 py-1" onchange="updateItemPrice(this)">
+            <option value="">Sélectionner produit</option>
+            ${app.data.products.map(product => 
+                `<option value="${product.id}" data-price="${product.price}">${product.name}</option>`
+            ).join('')}
+        </select>
+        <input type="number" name="quantity" placeholder="Qté" min="1" value="1" class="border border-gray-300 rounded px-2 py-1" onchange="calculateItemTotal(this)">
+        <input type="number" name="price" placeholder="Prix" min="0" class="border border-gray-300 rounded px-2 py-1" onchange="calculateItemTotal(this)">
+        <input type="number" name="total" placeholder="Total" readonly class="border border-gray-300 rounded px-2 py-1 bg-gray-100">
+    `;
+    container.appendChild(newItem);
+}
+
+function updateItemPrice(select) {
+    const option = select.selectedOptions[0];
+    const price = option.dataset.price || 0;
+    const priceInput = select.parentElement.querySelector('input[name="price"]');
+    priceInput.value = price;
+    calculateItemTotal(priceInput);
+}
+
+function calculateItemTotal(input) {
+    const item = input.parentElement;
+    const quantity = parseFloat(item.querySelector('input[name="quantity"]').value) || 0;
+    const price = parseFloat(item.querySelector('input[name="price"]').value) || 0;
+    const total = quantity * price;
+    
+    item.querySelector('input[name="total"]').value = total;
+    calculateInvoiceTotal();
+}
+
+function calculateInvoiceTotal() {
+    const items = document.querySelectorAll('.invoice-item');
+    let subtotal = 0;
+    
+    items.forEach(item => {
+        const total = parseFloat(item.querySelector('input[name="total"]').value) || 0;
+        subtotal += total;
+    });
+    
+    const tax = subtotal * (app.data.settings.taxRate / 100);
+    const total = subtotal + tax;
+    
+    document.getElementById('invoice-subtotal').value = subtotal;
+    document.getElementById('invoice-tax').value = tax;
+    document.getElementById('invoice-total').value = total;
+}
+
+function saveInvoice(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    
+    // Collect invoice items
+    const items = [];
+    const itemElements = document.querySelectorAll('.invoice-item');
+    
+    itemElements.forEach(item => {
+        const productId = item.querySelector('select[name="productId"]').value;
+        const quantity = parseInt(item.querySelector('input[name="quantity"]').value);
+        const price = parseFloat(item.querySelector('input[name="price"]').value);
+        
+        if (productId && quantity && price) {
+            items.push({ productId, quantity, price });
+        }
+    });
+    
+    if (items.length === 0) {
+        app.showNotification('Veuillez ajouter au moins un article', 'warning');
+        return;
+    }
+    
+    const invoiceData = {
+        clientId: parseInt(formData.get('clientId')),
+        dueDate: formData.get('dueDate'),
+        items: items
+    };
+    
+    app.addInvoice(invoiceData);
+    closeInvoiceModal();
+    app.showNotification('Facture créée avec succès!', 'success');
+}
+
+function openPaymentModal() {
+    if (app.data.invoices.filter(inv => inv.status !== 'paid').length === 0) {
+        app.showNotification('Aucune facture impayée trouvée', 'warning');
+        return;
+    }
+    
+    document.getElementById('payment-modal').classList.add('active');
+    document.getElementById('payment-form').reset();
+    app.updateFormSelects();
+    
+    // Set today's date
+    document.querySelector('#payment-form input[name="date"]').value = new Date().toISOString().split('T')[0];
+}
+
+function closePaymentModal() {
+    document.getElementById('payment-modal').classList.remove('active');
+}
+
+function savePayment(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const paymentData = Object.fromEntries(formData.entries());
+    paymentData.invoiceId = parseInt(paymentData.invoiceId);
+    
+    app.addPayment(paymentData);
+    closePaymentModal();
+    app.showNotification('Paiement enregistré avec succès!', 'success');
+}
+
+function searchClients() {
+    const searchTerm = document.getElementById('client-search').value.toLowerCase();
+    const rows = document.querySelectorAll('#clients-table tr');
+    
+    rows.forEach(row => {
+        const name = row.querySelector('td')?.textContent.toLowerCase() || '';
+        row.style.display = name.includes(searchTerm) ? '' : 'none';
+    });
+}
+
+function exportData() {
+    app.exportData();
+}
+
+function importData() {
+    app.importData();
+}
+
+function handleImport(event) {
+    app.handleImport(event);
+}
+
+function generateMonthlyReport() {
+    app.generateMonthlyReport();
+    app.showNotification('Rapport mensuel généré', 'success');
+}
+
+function generateTaxReport() {
+    app.generateTaxReport();
+    app.showNotification('Rapport fiscal calculé', 'success');
+}
+
+// Stock management functions
+function openStockAdjustmentModal() {
+    if (app.data.products.length === 0) {
+        app.showNotification('Veuillez d\'abord créer au moins un produit', 'warning');
+        return;
+    }
+    
+    document.getElementById('stock-modal').classList.add('active');
+    document.getElementById('stock-form').reset();
+    app.updateFormSelects();
+}
+
+function closeStockModal() {
+    document.getElementById('stock-modal').classList.remove('active');
+}
+
+function saveStockAdjustment(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const adjustmentData = Object.fromEntries(formData.entries());
+    
+    app.addStockAdjustment(adjustmentData);
+    closeStockModal();
+    app.showNotification('Stock ajusté avec succès!', 'success');
+}
+
+function searchProducts() {
+    const searchTerm = document.getElementById('product-search').value.toLowerCase();
+    filterProducts();
+}
+
+function filterProducts() {
+    const searchTerm = document.getElementById('product-search').value.toLowerCase();
+    const categoryFilter = document.getElementById('category-filter').value;
+    const stockFilter = document.getElementById('stock-filter').value;
+    const rows = document.querySelectorAll('#products-table tr');
+    
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length === 0) return; // Skip header row
+        
+        const name = cells[0].textContent.toLowerCase();
+        const category = cells[1].textContent;
+        const stockCell = cells[3].textContent;
+        
+        // Search filter
+        const matchesSearch = name.includes(searchTerm);
+        
+        // Category filter
+        const matchesCategory = !categoryFilter || category === categoryFilter;
+        
+        // Stock filter
+        let matchesStock = true;
+        if (stockFilter === 'in-stock') {
+            matchesStock = stockCell !== 'N/A' && parseInt(stockCell) > 5;
+        } else if (stockFilter === 'low-stock') {
+            matchesStock = stockCell !== 'N/A' && parseInt(stockCell) <= 5 && parseInt(stockCell) > 0;
+        } else if (stockFilter === 'out-of-stock') {
+            matchesStock = stockCell !== 'N/A' && parseInt(stockCell) === 0;
+        }
+        
+        row.style.display = (matchesSearch && matchesCategory && matchesStock) ? '' : 'none';
+    });
+}
+
+function generateInventoryReport() {
+    const totalProducts = app.data.products.length;
+    const stockValue = app.data.products.reduce((sum, product) => {
+        return sum + (product.price * (product.stock || 0));
+    }, 0);
+    const lowStock = app.data.products.filter(p => p.stock !== null && p.stock <= 5).length;
+    
+    app.showNotification(`Rapport généré: ${totalProducts} produits, valeur ${app.formatCurrency(stockValue)}`, 'success');
+}
+
+function viewStockAlerts() {
+    const lowStockProducts = app.data.products.filter(p => 
+        p.stock !== null && p.stock <= app.data.settings.lowStockThreshold
+    );
+    const outOfStockProducts = app.data.products.filter(p => 
+        p.stock !== null && p.stock === 0
+    );
+    
+    let alertMessage = 'Alertes de stock:\n\n';
+    
+    if (lowStockProducts.length > 0) {
+        alertMessage += 'Stock faible:\n';
+        lowStockProducts.forEach(product => {
+            alertMessage += `• ${product.name}: ${product.stock} restant(s)\n`;
+        });
+        alertMessage += '\n';
+    }
+    
+    if (outOfStockProducts.length > 0) {
+        alertMessage += 'Rupture de stock:\n';
+        outOfStockProducts.forEach(product => {
+            alertMessage += `• ${product.name}: Stock épuisé\n`;
+        });
+    }
+    
+    alert(alertMessage);
+}
+
+// Migration functions
+function openMigrationModal() {
+    document.getElementById('migration-modal').classList.add('active');
+    updateImportFormatInfo();
+}
+
+function closeMigrationModal() {
+    document.getElementById('migration-modal').classList.remove('active');
+}
+
+function updateImportFormatInfo() {
+    const importType = document.getElementById('import-type').value;
+    const formatInfo = document.getElementById('format-info');
+    
+    const formats = {
+        'clients': 'Pour les clients: Nom, Email, Téléphone, Adresse',
+        'products': 'Pour les produits: Nom, Prix, Stock, Catégorie, Description',
+        'invoices': 'Pour les factures: Client, Articles, Montants, Dates'
+    };
+    
+    formatInfo.textContent = formats[importType] || '';
+}
+
+function processImport() {
+    const importType = document.getElementById('import-type').value;
+    const file = document.getElementById('import-data-file').files[0];
+    
+    if (!file) {
+        app.showNotification('Veuillez sélectionner un fichier', 'warning');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            let data;
+            if (file.name.endsWith('.json')) {
+                data = JSON.parse(e.target.result);
+            } else {
+                // For CSV/Excel files, we'll simulate parsing
+                app.showNotification('Import CSV/Excel simulé - Fonctionnalité en développement', 'info');
+                closeMigrationModal();
+                return;
+            }
+            
+            // Process the import based on type
+            let importedCount = 0;
+            if (importType === 'clients' && Array.isArray(data)) {
+                data.forEach(item => {
+                    if (item.name) {
+                        app.addClient(item);
+                        importedCount++;
+                    }
+                });
+            } else if (importType === 'products' && Array.isArray(data)) {
+                data.forEach(item => {
+                    if (item.name && item.price) {
+                        app.addProduct(item);
+                        importedCount++;
+                    }
+                });
+            }
+            
+            // Add to migration history
+            app.data.migrationHistory.push({
+                id: Date.now(),
+                type: importType,
+                fileName: file.name,
+                itemsImported: importedCount,
+                date: new Date().toISOString()
+            });
+            
+            app.saveData();
+            app.updateUI();
+            closeMigrationModal();
+            app.showNotification(`${importedCount} ${importType} importé(s) avec succès!`, 'success');
+            
+        } catch (error) {
+            app.showNotification('Erreur lors de l\'import: ' + error.message, 'error');
+        }
+    };
+    
+    reader.readAsText(file);
+}
+
+function downloadTemplate() {
+    const templates = {
+        clients: [
+            { name: 'Exemple Client 1', email: 'client1@example.com', phone: '+237 600 000 001', address: 'Douala, Cameroun' },
+            { name: 'Exemple Client 2', email: 'client2@example.com', phone: '+237 600 000 002', address: 'Yaoundé, Cameroun' }
+        ],
+        products: [
+            { name: 'Produit Exemple 1', price: 10000, stock: 50, category: 'Produits', description: 'Description du produit' },
+            { name: 'Service Exemple 1', price: 25000, stock: null, category: 'Services', description: 'Description du service' }
+        ]
+    };
+    
+    const blob = new Blob([JSON.stringify(templates, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'payloop_templates.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    app.showNotification('Templates téléchargés!', 'success');
+}
+
+function validateImportData() {
+    const totalItems = app.data.clients.length + app.data.products.length + app.data.invoices.length;
+    app.showNotification(`Validation: ${totalItems} éléments au total, données cohérentes`, 'success');
+}
+
+function cleanupData() {
+    // Remove duplicates (simplified)
+    const originalLength = app.data.clients.length;
+    app.data.clients = app.data.clients.filter((client, index, self) => 
+        index === self.findIndex(c => c.name === client.name && c.email === client.email)
+    );
+    const duplicatesRemoved = originalLength - app.data.clients.length;
+    
+    app.saveData();
+    app.updateUI();
+    app.showNotification(`${duplicatesRemoved} doublons supprimés`, 'success');
+}
+
+function backupData() {
+    app.exportData();
+}
+
+function resetAllData() {
+    if (confirm('Êtes-vous sûr de vouloir supprimer TOUTES les données? Cette action est irréversible!')) {
+        app.data = {
+            clients: [],
+            products: [],
+            invoices: [],
+            payments: [],
+            stockAdjustments: [],
+            migrationHistory: [],
+            settings: app.data.settings
+        };
+        app.saveData();
+        app.updateUI();
+        app.showNotification('Toutes les données ont été supprimées', 'success');
+    }
+}
+
+// Tax calculation functions
+function calculateTaxEstimate() {
+    const revenue = parseFloat(document.getElementById('tax-calc-revenue').value) || 0;
+    const period = document.getElementById('tax-calc-period').value;
+    
+    if (revenue <= 0) {
+        ['calc-vat', 'calc-ttc', 'calc-irpp'].forEach(id => {
+            document.getElementById(id).textContent = '0 FCFA';
+        });
+        return;
+    }
+    
+    const vatRate = app.data.settings.taxRate / 100;
+    const vat = revenue * vatRate;
+    const ttc = revenue + vat;
+    const irpp = revenue * 0.20; // Estimation IRPP 20%
+    
+    document.getElementById('calc-vat').textContent = app.formatCurrency(vat);
+    document.getElementById('calc-ttc').textContent = app.formatCurrency(ttc);
+    document.getElementById('calc-irpp').textContent = app.formatCurrency(irpp);
+}
+
+function generateTaxDeclaration() {
+    const paidInvoices = app.data.invoices.filter(inv => inv.status === 'paid');
+    const totalTax = paidInvoices.reduce((sum, inv) => sum + inv.tax, 0);
+    
+    app.showNotification(`Déclaration TVA générée: ${app.formatCurrency(totalTax)} à déclarer`, 'success');
+}
+
+function calculateTaxes() {
+    const paidInvoices = app.data.invoices.filter(inv => inv.status === 'paid');
+    const totalRevenue = paidInvoices.reduce((sum, inv) => sum + inv.subtotal, 0);
+    const totalTax = paidInvoices.reduce((sum, inv) => sum + inv.tax, 0);
+    
+    app.showNotification(`Calcul fiscal: CA HT ${app.formatCurrency(totalRevenue)}, TVA ${app.formatCurrency(totalTax)}`, 'success');
+}
+
+// Update existing functions to handle new views
+document.addEventListener('change', function(e) {
+    if (e.target.id === 'import-type') {
+        updateImportFormatInfo();
+    }
+    if (e.target.id === 'tax-calc-revenue' || e.target.id === 'tax-calc-period') {
+        calculateTaxEstimate();
+    }
+    if (e.target.name === 'productId' && e.target.closest('#stock-form')) {
+        const product = app.data.products.find(p => p.id == e.target.value);
+        const currentStockInput = document.getElementById('current-stock');
+        if (product && currentStockInput) {
+            currentStockInput.value = product.stock !== null ? product.stock : 'N/A';
+        }
+    }
+});
+
+// Initialize the application
+let app;
+document.addEventListener('DOMContentLoaded', function() {
+    app = new PayloopApp();
+    lucide.createIcons();
+});
+</script>
+
+</body>
+</html>
