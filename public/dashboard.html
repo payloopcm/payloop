@@ -81,10 +81,12 @@
 <body class="bg-gray-100 font-sans">
 
 <!-- Sidebar -->
-<div id="sidebar" class="w-64 bg-gray-900 text-white h-screen fixed left-0 top-0 z-10">
-        <div class="p-6">
-            <img src="images/logo-payloop-sidebar-white.svg" alt="PayLoop" class="w-full" style="max-width: 180px; height: auto;">
-        </div>
+<<div id="sidebar" class="w-64 bg-gray-900 text-white h-screen fixed left-0 top-0 z-10">
+    <div class="p-6">
+        <img src="images/logo-payloop-sidebar-white.svg" alt="PayLoop" style="height: 40px;">
+    </div>
+    
+    <nav class="mt-8">
         <div data-view="dashboard" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800">
             <i data-lucide="bar-chart" class="mr-3"></i>
             <span>Dashboard</span>
@@ -158,21 +160,26 @@
 <!-- Main Content -->
 <main id="main-content" class="ml-64 p-6 pt-2">
     <!-- App Banner -->
-<!-- Main Content -->
-<main id="main-content" class="ml-64 p-6 pt-2">
-    
-    <!-- Éléments cachés pour le JavaScript -->
-    <div id="data-status" style="display: none;"></div>
-    
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <div class="brand-gradient text-white p-4 rounded-lg mb-6 animate-slide-in">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="font-bold text-lg">Payloop — Démo DOHONE</h2>
+                <p class="text-orange-100">Gestion commerciale complète avec données persistantes — Mode démo DOHONE</p>
+            </div>
+            <div class="text-right">
+                <div class="text-sm opacity-90">Version test</div>
+                <div class="text-xs opacity-75" id="data-status">Données chargées</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Views Container -->
     <div id="view-container">
         <!-- Dashboard View -->
         <div id="dashboard-view" class="view active">
             <div class="space-y-6">
                 <!-- Stats Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
                     <div class="stat-card bg-white rounded-lg p-6 shadow-sm border">
                         <div class="flex items-center justify-between">
                             <div>
