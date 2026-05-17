@@ -2178,30 +2178,7 @@ this.saveData();
                     </style>
                 </head>
                 <body>
-                   <script>
-    // Protection et chargement utilisateur
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-
-    if (!token) {
-        window.location.href = '/login.html';
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        let userName = 'Utilisateur';
-        
-        if (user.first_name) {
-            userName = user.first_name;
-        } else if (user.email) {
-            userName = user.email.split('@')[0];
-        }
-        
-        const userNameSpans = document.querySelectorAll('.user-display-name');
-        userNameSpans.forEach(function(span) {
-            span.textContent = userName;
-        });
-    });
-</script>
+                   
                     ${invoiceHtml}
                     <div class="mt-6">
                         <button onclick="window.print()" class="bg-blue-600 text-white px-4 py-2 rounded mr-2">Imprimer</button>
