@@ -286,10 +286,6 @@
                         <i data-lucide="plus" class="mr-2"></i>
                         Nouveau client
                     </button>
-                    <button onclick="openDohoneDemo()" class="ml-3 bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
-        <i data-lucide="credit-card" class="mr-2"></i>
-        Encaisser via DOHONE
-    </button>
 </div>
 
                 <div class="bg-white rounded-lg shadow-sm border">
@@ -689,10 +685,6 @@
                         <i data-lucide="plus" class="mr-2"></i>
                         Nouvelle facture
                     </button>
-                    <button onclick="openDohoneDemo()" class="ml-3 bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
-        <i data-lucide="credit-card" class="mr-2"></i>
-        Encaisser via DOHONE
-    </button>
 </div>
 
                 <div class="bg-white rounded-lg shadow-sm border">
@@ -727,10 +719,6 @@
                         <i data-lucide="plus" class="mr-2"></i>
                         Enregistrer paiement
                     </button>
-                    <button onclick="openDohoneDemo()" class="ml-3 bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
-        <i data-lucide="credit-card" class="mr-2"></i>
-        Encaisser via DOHONE
-    </button>
 </div>
 
                 <div class="bg-white rounded-lg shadow-sm border">
@@ -969,7 +957,6 @@
                     <select name="method" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                         <option value="MTN Mobile Money">MTN Mobile Money</option>
                         <option value="Orange Money">Orange Money</option>
-                        <option value="Dohone">Dohone (démo)</option>
                         <option value="Espèces">Espèces</option>
                         <option value="Virement">Virement bancaire</option>
                         <option value="Chèque">Chèque</option>
@@ -1254,30 +1241,7 @@ class PayloopApp {
             }
         ];
 
-        
-        // ---- Démo DOHONE: facture + paiement auto ----
-        try {
-            const demoClientId = this.data.clients[0]?.id;
-            const demoProduct = this.data.products[0];
-            if (demoClientId && demoProduct) {
-                const demoInvoice = this.addInvoice({
-                    clientId: demoClientId,
-                    items: [{
-                        productId: demoProduct.id,
-                        quantity: 1,
-                        price: parseFloat(demoProduct.price)
-                    }]
-                });
-                this.addPayment({
-                    invoiceId: demoInvoice.id,
-                    amount: demoInvoice.total,
-                    method: 'Dohone',
-                    reference: 'DOH-DEMO-' + String(Date.now()).slice(-6),
-                    date: new Date().toISOString().split('T')[0]
-                });
-            }
-        } catch (e) { console.warn('Seed DOHONE demo failed:', e); }
-this.saveData();
+        this.saveData();
     }
 
     // CRUD Operations
@@ -2167,7 +2131,7 @@ this.saveData();
         printWindow.document.write(`
             <html>
                 <head>
-                    <title>Payloop — Démo DOHONE</title>
+                    <title>Payloop — Facture</title>
                     <style>
                         body { font-family: Arial, sans-serif; margin: 20px; }
                         table { border-collapse: collapse; }
