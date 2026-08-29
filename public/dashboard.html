@@ -2562,14 +2562,14 @@ function updateImportFormatInfo() {
 function processImport() {
     const importType = document.getElementById('import-type').value;
     const file = document.getElementById('import-data-file').files[0];
-    
+
     if (!file) {
         app.showNotification('Veuillez sélectionner un fichier', 'warning');
         return;
     }
-    
+
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = async function(e) {
         try {
             let data;
             if (file.name.endsWith('.json')) {
@@ -2580,25 +2580,33 @@ function processImport() {
                 closeMigrationModal();
                 return;
             }
-            
-            // Process the import based on type
+
+            // Process the import based on type (un par un, pour bien attendre chaque enregistrement en base)
             let importedCount = 0;
             if (importType === 'clients' && Array.isArray(data)) {
-                data.forEach(item => {
+                for (const item of data) {
                     if (item.name) {
-                        app.addClient(item);
-                        importedCount++;
+                        try {
+                            await app.addClient(item);
+                            importedCount++;
+                        } catch (err) {
+                            console.error('Import client échoué:', item, err);
+                        }
                     }
-                });
+                }
             } else if (importType === 'products' && Array.isArray(data)) {
-                data.forEach(item => {
+                for (const item of data) {
                     if (item.name && item.price) {
-                        app.addProduct(item);
-                        importedCount++;
+                        try {
+                            await app.addProduct(item);
+                            importedCount++;
+                        } catch (err) {
+                            console.error('Import produit échoué:', item, err);
+                        }
                     }
-                });
+                }
             }
-            
+
             // Add to migration history
             app.data.migrationHistory.push({
                 id: Date.now(),
@@ -2607,17 +2615,16 @@ function processImport() {
                 itemsImported: importedCount,
                 date: new Date().toISOString()
             });
-            
-            app.saveData();
+
             app.updateUI();
             closeMigrationModal();
             app.showNotification(`${importedCount} ${importType} importé(s) avec succès!`, 'success');
-            
+
         } catch (error) {
             app.showNotification('Erreur lors de l\'import: ' + error.message, 'error');
         }
     };
-    
+
     reader.readAsText(file);
 }
 
@@ -2651,37 +2658,69 @@ function validateImportData() {
     app.showNotification(`Validation: ${totalItems} éléments au total, données cohérentes`, 'success');
 }
 
-function cleanupData() {
-    // Remove duplicates (simplified)
-    const originalLength = app.data.clients.length;
-    app.data.clients = app.data.clients.filter((client, index, self) => 
-        index === self.findIndex(c => c.name === client.name && c.email === client.email)
-    );
-    const duplicatesRemoved = originalLength - app.data.clients.length;
-    
-    app.saveData();
-    app.updateUI();
-    app.showNotification(`${duplicatesRemoved} doublons supprimés`, 'success');
+async function cleanupData() {
+    // Repérer les doublons (même nom + même email) parmi les clients
+    const seen = new Set();
+    const duplicates = [];
+    app.data.clients.forEach(client => {
+        const key = `${client.name}|${client.email || ''}`;
+        if (seen.has(key)) {
+            duplicates.push(client);
+        } else {
+            seen.add(key);
+        }
+    });
+
+    if (duplicates.length === 0) {
+        app.showNotification('Aucun doublon trouvé', 'info');
+        return;
+    }
+
+    if (!confirm(`${duplicates.length} doublon(s) trouvé(s). Les supprimer supprimera aussi définitivement leurs factures et paiements associés. Continuer ?`)) {
+        return;
+    }
+
+    for (const client of duplicates) {
+        await app.deleteItem('clients', client.id);
+    }
+
+    app.showNotification(`${duplicates.length} doublon(s) supprimé(s)`, 'success');
 }
 
 function backupData() {
     app.exportData();
 }
 
-function resetAllData() {
-    if (confirm('Êtes-vous sûr de vouloir supprimer TOUTES les données? Cette action est irréversible!')) {
-        app.data = {
-            clients: [],
-            products: [],
-            invoices: [],
-            payments: [],
-            stockAdjustments: [],
-            migrationHistory: [],
-            settings: app.data.settings
-        };
-        app.saveData();
+async function resetAllData() {
+    const premiereConfirmation = confirm(
+        'Cette action va supprimer DÉFINITIVEMENT tous vos clients, produits, factures et paiements ' +
+        'dans la base de données PayLoop. Ce n\'est pas juste un rafraîchissement de l\'affichage : ' +
+        'c\'est une vraie suppression, sans retour en arrière possible.\n\nContinuer ?'
+    );
+    if (!premiereConfirmation) return;
+
+    const secondeConfirmation = confirm('Dernière confirmation : voulez-vous vraiment TOUT supprimer ?');
+    if (!secondeConfirmation) return;
+
+    app.showNotification('Suppression en cours...', 'info');
+
+    try {
+        // Supprimer tous les clients supprime aussi en cascade leurs factures, lignes de facture et paiements
+        for (const clientItem of [...app.data.clients]) {
+            await apiRequest(`/clients/${clientItem.id}`, { method: 'DELETE' });
+        }
+        // Supprimer tous les produits
+        for (const product of [...app.data.products]) {
+            await apiRequest(`/products/${product.id}`, { method: 'DELETE' });
+        }
+
+        await app.loadData();
         app.updateUI();
         app.showNotification('Toutes les données ont été supprimées', 'success');
+    } catch (error) {
+        app.showNotification(error.message || 'Erreur lors de la suppression', 'error');
+        await app.loadData();
+        app.updateUI();
     }
 }
 
