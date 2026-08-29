@@ -485,20 +485,20 @@
                     <div class="bg-white rounded-lg shadow-sm border p-6">
                         <h3 class="text-lg font-semibold mb-4">Import depuis Excel/CSV</h3>
                         <div class="space-y-4">
-                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                            <div id="migration-dropzone" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                                 <div class="mx-auto w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                                     <i data-lucide="upload-cloud" class="text-blue-600 w-6 h-6"></i>
                                 </div>
                                 <h4 class="font-medium mb-2">Glissez vos fichiers ici</h4>
                                 <p class="text-sm text-gray-600 mb-4">Ou cliquez pour sélectionner</p>
-                                <input type="file" id="migration-file" accept=".xlsx,.xls,.csv" multiple class="hidden">
+                                <input type="file" id="migration-file" accept=".xlsx,.xls,.csv,.json" multiple class="hidden">
                                 <button onclick="document.getElementById('migration-file').click()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                                     Sélectionner fichiers
                                 </button>
                             </div>
                             <div class="text-sm text-gray-600">
-                                <p><strong>Formats supportés:</strong> Excel (.xlsx, .xls), CSV</p>
-                                <p><strong>Types de données:</strong> Clients, Produits, Factures</p>
+                                <p><strong>Formats supportés:</strong> Excel (.xlsx, .xls), CSV, JSON</p>
+                                <p><strong>Types de données:</strong> Clients, Produits (le type de chaque feuille/fichier est détecté automatiquement)</p>
                             </div>
                         </div>
                     </div>
@@ -1453,6 +1453,114 @@ class PayloopApp {
             const dateInput = document.querySelector('#payment-form input[name="date"]');
             if (dateInput) dateInput.value = today;
         });
+
+        // Zone de dépôt de fichiers (vue Migration) : sélection via le bouton, ou glisser-déposer
+        const migrationFileInput = document.getElementById('migration-file');
+        const migrationDropzone = document.getElementById('migration-dropzone');
+        if (migrationFileInput) {
+            migrationFileInput.addEventListener('change', (event) => {
+                this.handleMigrationFiles(event.target.files);
+                event.target.value = '';
+            });
+        }
+        if (migrationDropzone) {
+            ['dragover', 'dragenter'].forEach(eventName => {
+                migrationDropzone.addEventListener(eventName, (event) => {
+                    event.preventDefault();
+                    migrationDropzone.classList.add('border-blue-500', 'bg-blue-50');
+                });
+            });
+            ['dragleave', 'drop'].forEach(eventName => {
+                migrationDropzone.addEventListener(eventName, (event) => {
+                    event.preventDefault();
+                    migrationDropzone.classList.remove('border-blue-500', 'bg-blue-50');
+                });
+            });
+            migrationDropzone.addEventListener('drop', (event) => {
+                this.handleMigrationFiles(event.dataTransfer.files);
+            });
+        }
+    }
+
+    // Import direct depuis la zone de dépôt de la vue Migration : le type (clients/produits)
+    // de chaque feuille ou fichier est détecté automatiquement (voir detectImportKind)
+    async handleMigrationFiles(fileList) {
+        const files = Array.from(fileList || []);
+        if (files.length === 0) return;
+
+        let totalClients = 0;
+        let totalProducts = 0;
+        let totalFailed = 0;
+        let anyRecognized = false;
+
+        for (const file of files) {
+            try {
+                const isJson = /\.json$/i.test(file.name);
+                const sheetsToProcess = [];
+
+                if (isJson) {
+                    const text = await file.text();
+                    const data = JSON.parse(text);
+                    if (Array.isArray(data.clients)) sheetsToProcess.push({ kind: 'clients', rows: data.clients });
+                    if (Array.isArray(data.products)) sheetsToProcess.push({ kind: 'products', rows: data.products });
+                    if (!data.clients && !data.products && Array.isArray(data)) {
+                        const kind = detectImportKind(data, '');
+                        if (kind) sheetsToProcess.push({ kind, rows: data });
+                    }
+                } else {
+                    const buffer = await file.arrayBuffer();
+                    const workbook = XLSX.read(buffer, { type: 'array' });
+                    workbook.SheetNames.forEach(sheetName => {
+                        const rawRows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: '', raw: false });
+                        const kind = detectImportKind(rawRows, normalizeHeader(sheetName));
+                        if (kind) {
+                            const aliases = kind === 'clients' ? CLIENT_COLUMN_ALIASES : PRODUCT_COLUMN_ALIASES;
+                            sheetsToProcess.push({ kind, rows: rawRows.map(row => mapSpreadsheetRow(row, aliases)) });
+                        }
+                    });
+                }
+
+                for (const { kind, rows } of sheetsToProcess) {
+                    anyRecognized = true;
+                    for (const item of rows) {
+                        try {
+                            if (kind === 'clients' && item.name) {
+                                await this.addClient(item);
+                                totalClients++;
+                            } else if (kind === 'products' && item.name && item.price) {
+                                await this.addProduct(item);
+                                totalProducts++;
+                            }
+                        } catch (err) {
+                            totalFailed++;
+                            console.error('Import échoué:', item, err);
+                        }
+                    }
+                }
+            } catch (error) {
+                totalFailed++;
+                console.error('Fichier illisible:', file.name, error);
+            }
+        }
+
+        this.data.migrationHistory.push({
+            id: Date.now(),
+            type: 'clients+products',
+            fileName: files.map(f => f.name).join(', '),
+            itemsImported: totalClients + totalProducts,
+            date: new Date().toISOString()
+        });
+        this.updateUI();
+
+        if (!anyRecognized) {
+            this.showNotification('Type de données non reconnu (renommez la feuille "Clients" ou "Produits", ou vérifiez les colonnes)', 'warning');
+        } else if (totalClients + totalProducts === 0) {
+            this.showNotification('Aucune ligne valide trouvée dans le(s) fichier(s)', 'warning');
+        } else {
+            let msg = `${totalClients} client(s), ${totalProducts} produit(s) importé(s)`;
+            if (totalFailed > 0) msg += `, ${totalFailed} échec(s) — voir la console`;
+            this.showNotification(msg, totalFailed > 0 ? 'warning' : 'success');
+        }
     }
 
     showView(viewName) {
@@ -2600,6 +2708,20 @@ const PRODUCT_COLUMN_ALIASES = {
     category: ['categorie', 'category'],
     description: ['description']
 };
+
+// Devine si une feuille/liste contient des clients ou des produits : d'abord par le nom
+// de la feuille (ex: "Clients"), sinon par les colonnes présentes. Renvoie null si ambigu.
+function detectImportKind(rows, sheetNameNormalized) {
+    if (sheetNameNormalized.includes('client')) return 'clients';
+    if (sheetNameNormalized.includes('produit') || sheetNameNormalized.includes('product')) return 'products';
+    if (!rows || rows.length === 0) return null;
+    const headers = Object.keys(rows[0]).map(normalizeHeader);
+    const hasProductHint = headers.some(h => ['prix', 'price', 'stock', 'categorie', 'category'].includes(h));
+    const hasClientHint = headers.some(h => ['telephone', 'tel', 'adresse', 'address'].includes(h));
+    if (hasProductHint && !hasClientHint) return 'products';
+    if (hasClientHint && !hasProductHint) return 'clients';
+    return null;
+}
 
 function processImport() {
     const importType = document.getElementById('import-type').value;
