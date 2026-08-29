@@ -1159,10 +1159,11 @@ class PayloopApp {
     // Data Management — charge les vraies données depuis payloop-api (plus de localStorage)
     async loadData() {
         try {
-            const [clientsRes, productsRes, invoicesRes] = await Promise.all([
+            const [clientsRes, productsRes, invoicesRes, paymentsRes] = await Promise.all([
                 apiRequest('/clients'),
                 apiRequest('/products'),
-                apiRequest('/invoices')
+                apiRequest('/invoices'),
+                apiRequest('/payments')
             ]);
 
             this.data.clients = (clientsRes?.clients || []).map(c => ({
@@ -1199,6 +1200,26 @@ class PayloopApp {
                     dueDate: inv.date_echeance,
                     createdAt: inv.created_at
                 };
+            });
+
+            this.data.payments = (paymentsRes?.payments || []).map(pa => ({
+                id: pa.id,
+                invoiceId: pa.invoice_id,
+                amount: parseFloat(pa.amount),
+                method: pa.provider,
+                reference: pa.provider_reference,
+                date: pa.created_at,
+                createdAt: pa.created_at
+            }));
+
+            // Le revenu total par client n'est pas stocké en base : on le recalcule
+            // à partir des paiements chargés (uniquement pour l'affichage du dashboard)
+            this.data.payments.forEach(payment => {
+                const invoice = this.data.invoices.find(inv => inv.id == payment.invoiceId);
+                const client = invoice && this.data.clients.find(c => c.id == invoice.clientId);
+                if (client) {
+                    client.totalRevenue += payment.amount;
+                }
             });
 
             document.getElementById('data-status').textContent = `${this.data.clients.length} clients, ${this.data.invoices.length} factures`;
@@ -1363,29 +1384,33 @@ class PayloopApp {
         return invoice;
     }
 
-    addPayment(paymentData) {
+    async addPayment(paymentData) {
+        const result = await apiRequest('/payments', {
+            method: 'POST',
+            body: JSON.stringify({
+                invoice_id: parseInt(paymentData.invoiceId),
+                amount: parseFloat(paymentData.amount),
+                provider: paymentData.method || null,
+                provider_reference: paymentData.reference || null
+            })
+        });
+
+        const pa = result.payment;
         const payment = {
-            id: Date.now(),
-            ...paymentData,
-            amount: parseFloat(paymentData.amount),
-            date: paymentData.date || new Date().toISOString().split('T')[0],
-            createdAt: new Date().toISOString()
+            id: pa.id,
+            invoiceId: pa.invoice_id,
+            amount: parseFloat(pa.amount),
+            method: pa.provider,
+            reference: pa.provider_reference,
+            date: pa.created_at,
+            createdAt: pa.created_at
         };
 
-        // Update invoice status
-        const invoice = this.data.invoices.find(inv => inv.id == paymentData.invoiceId);
+        // Le serveur nous dit si la facture est maintenant intégralement payée
+        const invoice = this.data.invoices.find(inv => inv.id == payment.invoiceId);
         if (invoice) {
-            const totalPaid = this.data.payments
-                .filter(p => p.invoiceId == invoice.id)
-                .reduce((sum, p) => sum + p.amount, 0) + payment.amount;
-            
-            if (totalPaid >= invoice.total) {
-                invoice.status = 'payee';
-            } else {
-                invoice.status = 'partial';
-            }
+            invoice.status = result.invoice.statut === 'payee' ? 'payee' : 'partial';
 
-            // Update client revenue
             const client = this.data.clients.find(c => c.id == invoice.clientId);
             if (client) {
                 client.totalRevenue += payment.amount;
@@ -1393,14 +1418,12 @@ class PayloopApp {
         }
 
         this.data.payments.push(payment);
-        this.saveData();
         this.updateUI();
         return payment;
     }
 
     async deleteItem(type, id) {
-        // payments n'a pas encore de route API dédiée : suppression locale uniquement pour l'instant
-        const endpoints = { clients: '/clients', products: '/products', invoices: '/invoices' };
+        const endpoints = { clients: '/clients', products: '/products', invoices: '/invoices', payments: '/payments' };
         if (endpoints[type]) {
             try {
                 await apiRequest(`${endpoints[type]}/${id}`, { method: 'DELETE' });
@@ -2363,15 +2386,19 @@ function closePaymentModal() {
     document.getElementById('payment-modal').classList.remove('active');
 }
 
-function savePayment(event) {
+async function savePayment(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
     const paymentData = Object.fromEntries(formData.entries());
     paymentData.invoiceId = parseInt(paymentData.invoiceId);
-    
-    app.addPayment(paymentData);
-    closePaymentModal();
-    app.showNotification('Paiement enregistré avec succès!', 'success');
+
+    try {
+        await app.addPayment(paymentData);
+        closePaymentModal();
+        app.showNotification('Paiement enregistré avec succès!', 'success');
+    } catch (error) {
+        app.showNotification(error.message || 'Erreur lors de l\'enregistrement du paiement', 'error');
+    }
 }
 
 function searchClients() {
