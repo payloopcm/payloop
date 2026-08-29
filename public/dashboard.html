@@ -1090,60 +1090,43 @@
 // ============================================
 // CONFIGURATION API PAYLOOP
 // ============================================
-const API = window.location.origin;
-const MERCHANT_ID = localStorage.getItem('merchantId');
+const API_URL = 'https://payloop-api-production.up.railway.app/api';
+
+function getToken() {
+    return localStorage.getItem('token');
+}
 
 // Redirection si pas connecté
-if (!MERCHANT_ID && !window.location.pathname.includes('login')) {
-    // On laisse la démo fonctionner sans connexion pour l'instant
+if (!getToken() && !window.location.pathname.includes('login')) {
+    window.location.href = '/login.html';
 }
 
-// Fonctions API
-async function apiGetDashboard() {
-    try {
-        const res = await fetch(`${API_URL}/dashboard/${MERCHANT_ID}`);
-        return await res.json();
-    } catch (e) { console.error('API Error:', e); return null; }
-}
+// Fonction générique pour appeler l'API payloop-api (avec le token de connexion)
+async function apiRequest(path, options = {}) {
+    const token = getToken();
+    const res = await fetch(`${API_URL}${path}`, {
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+            ...(options.headers || {})
+        }
+    });
 
-async function apiGetInvoices() {
-    try {
-        const res = await fetch(`${API_URL}/invoices/${MERCHANT_ID}`);
-        return await res.json();
-    } catch (e) { console.error('API Error:', e); return null; }
-}
+    if (res.status === 401 || res.status === 403) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login.html';
+        return null;
+    }
 
-async function apiGetProducts() {
-    try {
-        const res = await fetch(`${API_URL}/products/${MERCHANT_ID}`);
-        return await res.json();
-    } catch (e) { console.error('API Error:', e); return null; }
-}
+    const data = await res.json().catch(() => ({}));
 
-async function apiGetAccounting() {
-    try {
-        const res = await fetch(`${API_URL}/accounting/${MERCHANT_ID}`);
-        return await res.json();
-    } catch (e) { console.error('API Error:', e); return null; }
-}
+    if (!res.ok) {
+        throw new Error(data.error || 'Erreur de communication avec le serveur');
+    }
 
-async function apiGetMerchant() {
-    try {
-        const res = await fetch(`${API_URL}/merchants`);
-        const merchants = await res.json();
-        return merchants.find(m => m.id === MERCHANT_ID);
-    } catch (e) { console.error('API Error:', e); return null; }
-}
-
-async function apiAddProduct(product) {
-    try {
-        const res = await fetch(`${API_URL}/products`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...product, merchantId: MERCHANT_ID })
-        });
-        return await res.json();
-    } catch (e) { console.error('API Error:', e); return null; }
+    return data;
 }
 // Application State Management
 class PayloopApp {
@@ -1166,27 +1149,62 @@ class PayloopApp {
         this.init();
     }
 
-    init() {
-    this.loadData();
+    async init() {
+    await this.loadData();
     this.initEventListeners();
     this.updateUI();
-    this.loadFromAPI(); // <-- Nouvelle ligne
     this.showNotification('Application Payloop chargée avec succès!', 'success');
 }
 
-    // Data Management
-    loadData() {
+    // Data Management — charge les vraies données depuis payloop-api (plus de localStorage)
+    async loadData() {
         try {
-            const savedData = localStorage.getItem('payloop_data');
-            if (savedData) {
-                this.data = { ...this.data, ...JSON.parse(savedData) };
-                document.getElementById('data-status').textContent = `${this.data.clients.length} clients, ${this.data.invoices.length} factures`;
-            } else {
-                this.loadSampleData();
-            }
+            const [clientsRes, productsRes, invoicesRes] = await Promise.all([
+                apiRequest('/clients'),
+                apiRequest('/products'),
+                apiRequest('/invoices')
+            ]);
+
+            this.data.clients = (clientsRes?.clients || []).map(c => ({
+                id: c.id,
+                name: c.nom,
+                email: c.email,
+                phone: c.telephone,
+                address: c.adresse,
+                totalRevenue: 0,
+                createdAt: c.created_at
+            }));
+
+            this.data.products = (productsRes?.products || []).map(p => ({
+                id: p.id,
+                name: p.nom,
+                description: p.description,
+                price: parseFloat(p.prix),
+                stock: p.stock,
+                category: 'Produits',
+                createdAt: p.created_at
+            }));
+
+            this.data.invoices = (invoicesRes?.invoices || []).map(inv => {
+                const subtotal = parseFloat(inv.total);
+                const tax = subtotal * (this.data.settings.taxRate / 100);
+                return {
+                    id: inv.id,
+                    number: inv.numero_facture,
+                    clientId: inv.client_id,
+                    subtotal,
+                    tax,
+                    total: subtotal + tax,
+                    status: inv.statut,
+                    dueDate: inv.date_echeance,
+                    createdAt: inv.created_at
+                };
+            });
+
+            document.getElementById('data-status').textContent = `${this.data.clients.length} clients, ${this.data.invoices.length} factures`;
         } catch (error) {
             console.error('Erreur chargement données:', error);
-            this.loadSampleData();
+            this.showNotification('Impossible de charger les données depuis le serveur', 'error');
         }
     }
 
@@ -1245,54 +1263,102 @@ class PayloopApp {
     }
 
     // CRUD Operations
-    addClient(clientData) {
+    async addClient(clientData) {
+        const result = await apiRequest('/clients', {
+            method: 'POST',
+            body: JSON.stringify({
+                nom: clientData.name,
+                email: clientData.email || null,
+                telephone: clientData.phone || null,
+                adresse: clientData.address || null
+            })
+        });
+        const c = result.client;
         const client = {
-            id: Date.now(),
-            ...clientData,
+            id: c.id,
+            name: c.nom,
+            email: c.email,
+            phone: c.telephone,
+            address: c.adresse,
             totalRevenue: 0,
-            createdAt: new Date().toISOString()
+            createdAt: c.created_at
         };
         this.data.clients.push(client);
-        this.saveData();
         this.updateUI();
         return client;
     }
 
-    addProduct(productData) {
+    async addProduct(productData) {
+        const result = await apiRequest('/products', {
+            method: 'POST',
+            body: JSON.stringify({
+                nom: productData.name,
+                description: productData.description || null,
+                prix: parseFloat(productData.price),
+                stock: productData.stock ? parseInt(productData.stock) : 0
+            })
+        });
+        const p = result.product;
         const product = {
-            id: Date.now(),
-            ...productData,
-            price: parseFloat(productData.price),
-            stock: productData.stock ? parseInt(productData.stock) : null,
-            createdAt: new Date().toISOString()
+            id: p.id,
+            name: p.nom,
+            description: p.description,
+            price: parseFloat(p.prix),
+            stock: p.stock,
+            // La catégorie n'existe pas dans la base : gardée seulement le temps de la session,
+            // elle repassera à "Produits" au prochain chargement.
+            category: productData.category || 'Produits',
+            createdAt: p.created_at
         };
         this.data.products.push(product);
-        this.saveData();
         this.updateUI();
         return product;
     }
 
-    addInvoice(invoiceData) {
-        const invoice = {
-            id: Date.now(),
-            number: `INV-${new Date().getFullYear()}-${String(this.data.invoices.length + 1).padStart(3, '0')}`,
-            ...invoiceData,
-            status: 'pending',
-            createdAt: new Date().toISOString()
-        };
-        
-        // Calculate totals
-        let subtotal = 0;
-        invoice.items.forEach(item => {
-            subtotal += item.quantity * item.price;
+    async addInvoice(invoiceData) {
+        const items = invoiceData.items.map(item => {
+            const product = this.data.products.find(p => p.id == item.productId);
+            return {
+                product_id: item.productId ? parseInt(item.productId) : null,
+                description: product ? product.name : 'Article',
+                quantite: item.quantity,
+                prix_unitaire: item.price
+            };
         });
-        
-        invoice.subtotal = subtotal;
-        invoice.tax = subtotal * (this.data.settings.taxRate / 100);
-        invoice.total = subtotal + invoice.tax;
-        
+
+        const result = await apiRequest('/invoices', {
+            method: 'POST',
+            body: JSON.stringify({
+                client_id: parseInt(invoiceData.clientId),
+                items,
+                date_echeance: invoiceData.dueDate || null
+            })
+        });
+
+        const apiInvoice = result.invoice;
+        const subtotal = parseFloat(apiInvoice.total);
+        const tax = subtotal * (this.data.settings.taxRate / 100);
+
+        const invoice = {
+            id: apiInvoice.id,
+            number: apiInvoice.numero_facture,
+            clientId: apiInvoice.client_id,
+            items: (apiInvoice.items || []).map(it => ({
+                productId: it.product_id,
+                description: it.description,
+                quantity: it.quantite,
+                price: parseFloat(it.prix_unitaire),
+                total: parseFloat(it.total)
+            })),
+            subtotal,
+            tax,
+            total: subtotal + tax,
+            status: apiInvoice.statut,
+            dueDate: apiInvoice.date_echeance,
+            createdAt: apiInvoice.created_at
+        };
+
         this.data.invoices.push(invoice);
-        this.saveData();
         this.updateUI();
         return invoice;
     }
@@ -1314,7 +1380,7 @@ class PayloopApp {
                 .reduce((sum, p) => sum + p.amount, 0) + payment.amount;
             
             if (totalPaid >= invoice.total) {
-                invoice.status = 'paid';
+                invoice.status = 'payee';
             } else {
                 invoice.status = 'partial';
             }
@@ -1332,9 +1398,18 @@ class PayloopApp {
         return payment;
     }
 
-    deleteItem(type, id) {
+    async deleteItem(type, id) {
+        // payments n'a pas encore de route API dédiée : suppression locale uniquement pour l'instant
+        const endpoints = { clients: '/clients', products: '/products', invoices: '/invoices' };
+        if (endpoints[type]) {
+            try {
+                await apiRequest(`${endpoints[type]}/${id}`, { method: 'DELETE' });
+            } catch (error) {
+                this.showNotification(error.message || 'Erreur lors de la suppression', 'error');
+                return;
+            }
+        }
         this.data[type] = this.data[type].filter(item => item.id != id);
-        this.saveData();
         this.updateUI();
     }
 
@@ -1408,10 +1483,10 @@ class PayloopApp {
     updateDashboard() {
         // Calculate stats
         const totalRevenue = this.data.invoices
-            .filter(inv => inv.status === 'paid')
+            .filter(inv => inv.status === 'payee')
             .reduce((sum, inv) => sum + inv.total, 0);
         
-        const paidInvoicesCount = this.data.invoices.filter(inv => inv.status === 'paid').length;
+        const paidInvoicesCount = this.data.invoices.filter(inv => inv.status === 'payee').length;
         const activeClientsCount = this.data.clients.length;
         const productsCount = this.data.products.length;
 
@@ -1423,80 +1498,6 @@ class PayloopApp {
 
         // Update recent activity
         this.updateRecentActivity();
-    }
-// Charger les données depuis l'API PayLoop
-    async loadFromAPI() {
-        if (!MERCHANT_ID) {
-            console.log('Mode démo - pas de connexion API');
-            return;
-        }
-
-        try {
-            // Charger les données du marchand
-            const merchant = await apiGetMerchant();
-            if (merchant) {
-                document.getElementById('page-title').textContent = 'Dashboard - ' + merchant.name;
-            }
-
-            // Charger les stats du dashboard
-            const dashboard = await apiGetDashboard();
-            if (dashboard) {
-                document.getElementById('total-revenue').textContent = this.formatCurrency(dashboard.total.revenue);
-                document.getElementById('paid-invoices-count').textContent = dashboard.total.invoices;
-            }
-
-            // Charger les factures depuis l'API
-            const apiInvoices = await apiGetInvoices();
-            if (apiInvoices && apiInvoices.length > 0) {
-                // Convertir au format de la démo
-                const convertedInvoices = apiInvoices.map(inv => ({
-                    id: inv.id,
-                    number: inv.invoiceNumber,
-                    clientId: inv.customerId,
-                    clientName: 'Client API',
-                    items: inv.items || [],
-                    subtotal: inv.amount,
-                    tax: inv.tva,
-                    total: inv.totalAmount,
-                    status: inv.status || 'paid',
-                    date: inv.createdAt,
-                    paymentMethod: 'mobile_money'
-                }));
-                
-                // Fusionner avec les données existantes (éviter les doublons)
-                convertedInvoices.forEach(apiInv => {
-                    if (!this.data.invoices.find(i => i.number === apiInv.number)) {
-                        this.data.invoices.push(apiInv);
-                    }
-                });
-            }
-
-            // Charger les produits depuis l'API
-            const apiProducts = await apiGetProducts();
-            if (apiProducts && apiProducts.length > 0) {
-                const convertedProducts = apiProducts.map(p => ({
-                    id: p.id,
-                    name: p.name,
-                    price: p.price,
-                    stock: p.stock,
-                    minStock: p.minStock,
-                    category: 'Produits'
-                }));
-                
-                convertedProducts.forEach(apiProd => {
-                    if (!this.data.products.find(p => p.name === apiProd.name)) {
-                        this.data.products.push(apiProd);
-                    }
-                });
-            }
-
-            // Mettre à jour l'interface
-            this.updateUI();
-            this.showNotification('Données synchronisées avec le serveur', 'success');
-
-        } catch (error) {
-            console.error('Erreur chargement API:', error);
-        }
     }
     updateRecentActivity() {
         const container = document.getElementById('recent-activity');
@@ -1622,12 +1623,17 @@ class PayloopApp {
         tbody.innerHTML = this.data.invoices.map(invoice => {
             const client = this.data.clients.find(c => c.id == invoice.clientId);
             const statusColors = {
+                'brouillon': 'bg-gray-100 text-gray-800',
+                'envoyee': 'bg-yellow-100 text-yellow-800',
+                'en_attente_paiement': 'bg-blue-100 text-blue-800',
+                'payee': 'bg-green-100 text-green-800',
+                'annulee': 'bg-red-100 text-red-800',
+                // Anciens statuts locaux utilisés par l'enregistrement de paiement (vue Paiements, pas encore reliée à l'API)
                 'pending': 'bg-yellow-100 text-yellow-800',
-                'paid': 'bg-green-100 text-green-800',
                 'partial': 'bg-blue-100 text-blue-800',
                 'overdue': 'bg-red-100 text-red-800'
             };
-            
+
             return `
                 <tr>
                     <td class="px-6 py-4 font-mono text-sm">${invoice.number}</td>
@@ -1636,7 +1642,7 @@ class PayloopApp {
                     <td class="px-6 py-4">${this.formatCurrency(invoice.tax)}</td>
                     <td class="px-6 py-4 font-bold">${this.formatCurrency(invoice.total)}</td>
                     <td class="px-6 py-4">
-                        <span class="px-2 py-1 rounded-full text-xs ${statusColors[invoice.status] || statusColors.pending}">
+                        <span class="px-2 py-1 rounded-full text-xs ${statusColors[invoice.status] || statusColors.brouillon}">
                             ${this.getStatusText(invoice.status)}
                         </span>
                     </td>
@@ -1710,7 +1716,7 @@ class PayloopApp {
 
         // Update invoice selects (unpaid invoices only)
         const invoiceSelects = document.querySelectorAll('#payment-form select[name="invoiceId"]');
-        const unpaidInvoices = this.data.invoices.filter(inv => inv.status !== 'paid');
+        const unpaidInvoices = this.data.invoices.filter(inv => inv.status !== 'payee');
         invoiceSelects.forEach(select => {
             select.innerHTML = '<option value="">Sélectionner une facture</option>' + 
                 unpaidInvoices.map(invoice => {
@@ -1772,10 +1778,10 @@ class PayloopApp {
     }
 
     updateTaxData() {
-        const paidInvoices = this.data.invoices.filter(inv => inv.status === 'paid');
+        const paidInvoices = this.data.invoices.filter(inv => inv.status === 'payee');
         const totalRevenue = paidInvoices.reduce((sum, inv) => sum + inv.subtotal, 0);
         const totalTax = paidInvoices.reduce((sum, inv) => sum + inv.tax, 0);
-        const pendingInvoices = this.data.invoices.filter(inv => inv.status !== 'paid').length;
+        const pendingInvoices = this.data.invoices.filter(inv => inv.status !== 'payee').length;
 
         // Update tax elements
         const elements = {
@@ -1807,7 +1813,7 @@ class PayloopApp {
         const container = document.getElementById('current-tax-report');
         if (!container) return;
 
-        const paidInvoices = this.data.invoices.filter(inv => inv.status === 'paid');
+        const paidInvoices = this.data.invoices.filter(inv => inv.status === 'payee');
         const totalRevenue = paidInvoices.reduce((sum, inv) => sum + inv.subtotal, 0);
         const totalTax = paidInvoices.reduce((sum, inv) => sum + inv.tax, 0);
 
@@ -1899,8 +1905,13 @@ class PayloopApp {
 
     getStatusText(status) {
         const statusTexts = {
+            'brouillon': 'Brouillon',
+            'envoyee': 'Envoyée',
+            'en_attente_paiement': 'En attente de paiement',
+            'payee': 'Payée',
+            'annulee': 'Annulée',
+            // Anciens statuts locaux (vue Paiements, pas encore reliée à l'API)
             'pending': 'En attente',
-            'paid': 'Payée',
             'partial': 'Partiel',
             'overdue': 'En retard'
         };
@@ -1988,7 +1999,7 @@ class PayloopApp {
         const container = document.getElementById('tax-report');
         if (!container) return;
 
-        const paidInvoices = this.data.invoices.filter(inv => inv.status === 'paid');
+        const paidInvoices = this.data.invoices.filter(inv => inv.status === 'payee');
         const totalRevenue = paidInvoices.reduce((sum, inv) => sum + inv.subtotal, 0);
         const totalTax = paidInvoices.reduce((sum, inv) => sum + inv.tax, 0);
 
@@ -2069,12 +2080,29 @@ class PayloopApp {
     }
 
     // Invoice actions
-    viewInvoice(invoiceId) {
+    async viewInvoice(invoiceId) {
         const invoice = this.data.invoices.find(inv => inv.id == invoiceId);
         if (!invoice) return;
 
+        // La liste des factures ne contient pas les lignes : on les charge à la demande
+        if (!invoice.items) {
+            try {
+                const result = await apiRequest(`/invoices/${invoiceId}`);
+                invoice.items = (result.invoice.items || []).map(it => ({
+                    productId: it.product_id,
+                    description: it.description,
+                    quantity: it.quantite,
+                    price: parseFloat(it.prix_unitaire),
+                    total: parseFloat(it.total)
+                }));
+            } catch (error) {
+                this.showNotification('Impossible de charger les lignes de la facture', 'error');
+                return;
+            }
+        }
+
         const client = this.data.clients.find(c => c.id == invoice.clientId);
-        
+
         let invoiceHtml = `
             <h2 class="text-xl font-bold mb-4">Facture ${invoice.number}</h2>
             <div class="grid grid-cols-2 gap-4 mb-6">
@@ -2165,14 +2193,18 @@ function closeClientModal() {
     document.getElementById('client-modal').classList.remove('active');
 }
 
-function saveClient(event) {
+async function saveClient(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
     const clientData = Object.fromEntries(formData.entries());
-    
-    app.addClient(clientData);
-    closeClientModal();
-    app.showNotification('Client ajouté avec succès!', 'success');
+
+    try {
+        await app.addClient(clientData);
+        closeClientModal();
+        app.showNotification('Client ajouté avec succès!', 'success');
+    } catch (error) {
+        app.showNotification(error.message || 'Erreur lors de la création du client', 'error');
+    }
 }
 
 function openProductModal() {
@@ -2184,14 +2216,18 @@ function closeProductModal() {
     document.getElementById('product-modal').classList.remove('active');
 }
 
-function saveProduct(event) {
+async function saveProduct(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
     const productData = Object.fromEntries(formData.entries());
-    
-    app.addProduct(productData);
-    closeProductModal();
-    app.showNotification('Produit ajouté avec succès!', 'success');
+
+    try {
+        await app.addProduct(productData);
+        closeProductModal();
+        app.showNotification('Produit ajouté avec succès!', 'success');
+    } catch (error) {
+        app.showNotification(error.message || 'Erreur lors de la création du produit', 'error');
+    }
 }
 
 function openInvoiceModal() {
@@ -2271,7 +2307,7 @@ function calculateInvoiceTotal() {
     document.getElementById('invoice-total').value = total;
 }
 
-function saveInvoice(event) {
+async function saveInvoice(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
     
@@ -2299,14 +2335,18 @@ function saveInvoice(event) {
         dueDate: formData.get('dueDate'),
         items: items
     };
-    
-    app.addInvoice(invoiceData);
-    closeInvoiceModal();
-    app.showNotification('Facture créée avec succès!', 'success');
+
+    try {
+        await app.addInvoice(invoiceData);
+        closeInvoiceModal();
+        app.showNotification('Facture créée avec succès!', 'success');
+    } catch (error) {
+        app.showNotification(error.message || 'Erreur lors de la création de la facture', 'error');
+    }
 }
 
 function openPaymentModal() {
-    if (app.data.invoices.filter(inv => inv.status !== 'paid').length === 0) {
+    if (app.data.invoices.filter(inv => inv.status !== 'payee').length === 0) {
         app.showNotification('Aucune facture impayée trouvée', 'warning');
         return;
     }
@@ -2641,14 +2681,14 @@ function calculateTaxEstimate() {
 }
 
 function generateTaxDeclaration() {
-    const paidInvoices = app.data.invoices.filter(inv => inv.status === 'paid');
+    const paidInvoices = app.data.invoices.filter(inv => inv.status === 'payee');
     const totalTax = paidInvoices.reduce((sum, inv) => sum + inv.tax, 0);
     
     app.showNotification(`Déclaration TVA générée: ${app.formatCurrency(totalTax)} à déclarer`, 'success');
 }
 
 function calculateTaxes() {
-    const paidInvoices = app.data.invoices.filter(inv => inv.status === 'paid');
+    const paidInvoices = app.data.invoices.filter(inv => inv.status === 'payee');
     const totalRevenue = paidInvoices.reduce((sum, inv) => sum + inv.subtotal, 0);
     const totalTax = paidInvoices.reduce((sum, inv) => sum + inv.tax, 0);
     
@@ -2723,9 +2763,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function logout() {
             if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
-                alert('Déconnexion en cours...\n\n(L\'authentification sera implémentée prochainement)');
-                // TODO: Implémenter la vraie déconnexion
-                // window.location.href = '/login.html';
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login.html';
             }
         }
     </script>
