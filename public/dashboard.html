@@ -7,6 +7,7 @@
     <script type="text/javascript" src="https://me.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=1150Im9RAKwJBSQDeF5Va18GGPhbzt3BAf1xxMJjsK4_714hUiMr_Udi9dTmI7BcOFQ-AEd2wdxehyNPJJ19W0mUVIXScb4rznDsthQzm1IYdZeg8S3ANU7ix_dPOhOWPjOzUzHOTQw9p8yTbqzW9dSb1zjTH5h29oR0xvaUP6y5LySoQl6CoU1yZNLrfrMPxX82dmfikPuqyRcEL2De6VyWzS5fr3uQYB__1y6y7HOrqTy5PjnNpglC8kOTwjk077UetbBEY-1XRE2mASu-JCrqav1RWVLpb5C1ZEdrEOJgKaraF6tXLbAJk0HoVRhA0RZdlux9VStDsQvOkpLSaCtVfXgdi6gw3ZF7jpHBVr0al_nDpWBx4jj6wz1QiPdlnWxov68ceDy_X0yWirYz6Fo-dm32dHOwNK3Tzp2Th6KN067u9-7aRwR-S7kZ3oYLQZWNigMrFbFQscB2yq9NA1lGnTYWFnP7F1quFDe_vxo2rS1uCAO67bPaMOJ9bpDZPcVPKGbeafcXioMoEHxAiIKOVH9NFwxPFIK6dF6QtgMr1eD-PLG2Fg2MUBpCqBrIC5pu6RVlBCnFR0-U-wc6GoG6HH1NuJmSXTDIsWvme_XFOTJWZ0XazUkDYD87TQtQROA-8n3STMHUEELnvkMVxLzXuIYeZ44Iiu4gvTtyBjLBteRF8yFKgz0skQywyKmfXJCuLKi9B5VzFC7S8CyCDXW0Va0a0x-39kNfrJtCljiqWwbHh6STGHtmwvRMfZIVzc_DJ-OoiSXeDTY4KG8kBZuii-NbIj00JAp30_34n5f-lhdMtgYQ79on_IOFWqYyCLAbjXxxMacyPTC-zCuLTHDPqwub9hvzluefHiovoWUWKu6612b0-GrplBLwhEJkE_ovBvhB9XRhnYImcb0_M6nx08AvrfNyLwRLKYEl4S7q0aYUmsBMU6CGZx5q5Th80nfyvDPL8pqfbCCPPBnKVy2DyVqbTDIbdjPjFRj1hiFpg9V95ehfsZAe31bHkqIf6Xz-6gBhceaXf4VTU0j6xu4-YoBL2DBTGH4aR96K-bAkECsz1eUMa2UNCycoZR7rOmsRxDwviJ8Q-oEIVmASWP_WfIEbxN2iwKE8g0wzDGeyG1ssLg6WEbB74THHvcFIKsj5NblEhDudguknpTSKG6xt0XsmgbnOYA1accF-8zd0GXGlkZtbiINPaXLlXQLtphOw4dFnRJRPYYNIhaO1ZqzsR3RpvR5529OxBkD8Mu9G1OvGRUlPNflPizBHt9KNXQfmkkiY5Zcu9ttnQdZ7sZO4QcBgOMxxRCtuOyK7xjkHXm1BUOTN3Jq8YuwyHpWNec4qpb5qJfAPJG0_sRczAhO_bAtqhUJtAcbdQxroS1pXUTnb7eytKDqmuEn1WiLj7qeL-pXhqJjGuj62uVKV2hjtUTxAx9ijzwSGeT2XaHTf2lTL8_wPK4oXqVM1N0k0NDB1ojV1FZ7z6WjY6jDjfLbBgvn_HZ3WrHu-e-JzrOo7bdq5yzWVkC9e_T0PS2dOuj04qlBhyKWUbJ0QrIC7ofA2dbgw2KTuzKbpL5IdlAGYUDyYgUIpIx8mdKZ8m5WMWeWH-Dfyxd7EpbJottFGZ1pVb-4flXwDFhNdxPlLtdbHNzJlxbbMtAjNFZ13sPOqg09kMKKMIX9ckfH-PUq7Ug" nonce="8f0de803c3f951d597646373ef4a51d3" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         .lucide { width: 20px; height: 20px; }
         .chart-container { position: relative; height: 250px; }
@@ -2559,6 +2560,47 @@ function updateImportFormatInfo() {
     formatInfo.textContent = formats[importType] || '';
 }
 
+// Retire les accents et met en minuscule, pour reconnaître un en-tête de colonne
+// quelle que soit sa casse ou ses accents (ex: "Téléphone", "telephone", "TELEPHONE")
+function normalizeHeader(h) {
+    return h.toString().trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
+
+// Fait correspondre les colonnes d'une ligne de tableur à nos champs internes,
+// en acceptant plusieurs libellés possibles par champ (français ou anglais)
+function mapSpreadsheetRow(row, fieldAliases) {
+    const normalizedRow = {};
+    Object.keys(row).forEach(key => {
+        normalizedRow[normalizeHeader(key)] = row[key];
+    });
+
+    const mapped = {};
+    Object.entries(fieldAliases).forEach(([targetField, aliases]) => {
+        for (const alias of aliases) {
+            if (normalizedRow[alias] !== undefined && normalizedRow[alias] !== '') {
+                mapped[targetField] = normalizedRow[alias];
+                break;
+            }
+        }
+    });
+    return mapped;
+}
+
+const CLIENT_COLUMN_ALIASES = {
+    name: ['nom', 'name'],
+    email: ['email', 'e-mail', 'courriel'],
+    phone: ['telephone', 'tel', 'phone'],
+    address: ['adresse', 'address']
+};
+
+const PRODUCT_COLUMN_ALIASES = {
+    name: ['nom', 'name'],
+    price: ['prix', 'price'],
+    stock: ['stock'],
+    category: ['categorie', 'category'],
+    description: ['description']
+};
+
 function processImport() {
     const importType = document.getElementById('import-type').value;
     const file = document.getElementById('import-data-file').files[0];
@@ -2568,39 +2610,68 @@ function processImport() {
         return;
     }
 
+    if (importType === 'invoices') {
+        app.showNotification('L\'import de factures n\'est pas encore disponible, seuls Clients et Produits le sont', 'warning');
+        return;
+    }
+
+    const isJson = /\.json$/i.test(file.name);
+    const isSpreadsheet = /\.(xlsx|xls|csv)$/i.test(file.name);
+
+    if (!isJson && !isSpreadsheet) {
+        app.showNotification('Format non supporté : utilisez un fichier .xlsx, .xls, .csv ou .json', 'error');
+        return;
+    }
+
     const reader = new FileReader();
     reader.onload = async function(e) {
         try {
-            let data;
-            if (file.name.endsWith('.json')) {
-                data = JSON.parse(e.target.result);
+            let rows;
+
+            if (isJson) {
+                rows = JSON.parse(e.target.result);
+                if (!Array.isArray(rows)) {
+                    throw new Error('Le fichier JSON doit contenir une liste d\'éléments');
+                }
             } else {
-                // For CSV/Excel files, we'll simulate parsing
-                app.showNotification('Import CSV/Excel simulé - Fonctionnalité en développement', 'info');
-                closeMigrationModal();
-                return;
+                // Fichier Excel/CSV : on lit la feuille qui correspond au type importé
+                // (ou la première feuille si le fichier n'a pas ce nom précis)
+                const workbook = XLSX.read(e.target.result, { type: 'array' });
+                const preferredSheetName = importType === 'clients' ? 'Clients' : 'Produits';
+                const sheetName = workbook.SheetNames.includes(preferredSheetName)
+                    ? preferredSheetName
+                    : workbook.SheetNames[0];
+                // raw: false garde les valeurs telles qu'affichées (texte), pour ne pas perdre
+                // le "+" ou un zéro initial d'un numéro de téléphone saisi sans guillemets
+                const rawRows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: '', raw: false });
+                const aliases = importType === 'clients' ? CLIENT_COLUMN_ALIASES : PRODUCT_COLUMN_ALIASES;
+                rows = rawRows.map(row => mapSpreadsheetRow(row, aliases));
             }
 
             // Process the import based on type (un par un, pour bien attendre chaque enregistrement en base)
             let importedCount = 0;
-            if (importType === 'clients' && Array.isArray(data)) {
-                for (const item of data) {
+            let failedCount = 0;
+
+            if (importType === 'clients') {
+                for (const item of rows) {
                     if (item.name) {
                         try {
                             await app.addClient(item);
                             importedCount++;
                         } catch (err) {
+                            failedCount++;
                             console.error('Import client échoué:', item, err);
                         }
                     }
                 }
-            } else if (importType === 'products' && Array.isArray(data)) {
-                for (const item of data) {
+            } else if (importType === 'products') {
+                for (const item of rows) {
                     if (item.name && item.price) {
                         try {
                             await app.addProduct(item);
                             importedCount++;
                         } catch (err) {
+                            failedCount++;
                             console.error('Import produit échoué:', item, err);
                         }
                     }
@@ -2618,39 +2689,45 @@ function processImport() {
 
             app.updateUI();
             closeMigrationModal();
-            app.showNotification(`${importedCount} ${importType} importé(s) avec succès!`, 'success');
+
+            if (failedCount > 0) {
+                app.showNotification(`${importedCount} importé(s), ${failedCount} échec(s) — voir la console du navigateur`, 'warning');
+            } else if (importedCount === 0) {
+                app.showNotification('Aucune ligne valide trouvée dans le fichier (vérifiez les en-têtes de colonnes)', 'warning');
+            } else {
+                app.showNotification(`${importedCount} ${importType === 'clients' ? 'client(s)' : 'produit(s)'} importé(s) avec succès!`, 'success');
+            }
 
         } catch (error) {
             app.showNotification('Erreur lors de l\'import: ' + error.message, 'error');
         }
     };
 
-    reader.readAsText(file);
+    if (isJson) {
+        reader.readAsText(file);
+    } else {
+        reader.readAsArrayBuffer(file);
+    }
 }
 
 function downloadTemplate() {
-    const templates = {
-        clients: [
-            { name: 'Exemple Client 1', email: 'client1@example.com', phone: '+237 600 000 001', address: 'Douala, Cameroun' },
-            { name: 'Exemple Client 2', email: 'client2@example.com', phone: '+237 600 000 002', address: 'Yaoundé, Cameroun' }
-        ],
-        products: [
-            { name: 'Produit Exemple 1', price: 10000, stock: 50, category: 'Produits', description: 'Description du produit' },
-            { name: 'Service Exemple 1', price: 25000, stock: null, category: 'Services', description: 'Description du service' }
-        ]
-    };
-    
-    const blob = new Blob([JSON.stringify(templates, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'payloop_templates.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    app.showNotification('Templates téléchargés!', 'success');
+    // Vrai fichier Excel (.xlsx), avec une feuille par type de données —
+    // à remplir puis à réimporter tel quel via "Importer données"
+    const clientsSheet = XLSX.utils.json_to_sheet([
+        { Nom: 'Exemple Client 1', Email: 'client1@example.com', Telephone: '+237 600 000 001', Adresse: 'Douala, Cameroun' },
+        { Nom: 'Exemple Client 2', Email: 'client2@example.com', Telephone: '+237 600 000 002', Adresse: 'Yaoundé, Cameroun' }
+    ]);
+    const produitsSheet = XLSX.utils.json_to_sheet([
+        { Nom: 'Produit Exemple 1', Prix: 10000, Stock: 50, Categorie: 'Produits', Description: 'Description du produit' },
+        { Nom: 'Service Exemple 1', Prix: 25000, Stock: '', Categorie: 'Services', Description: 'Description du service' }
+    ]);
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, clientsSheet, 'Clients');
+    XLSX.utils.book_append_sheet(workbook, produitsSheet, 'Produits');
+    XLSX.writeFile(workbook, 'payloop_template.xlsx');
+
+    app.showNotification('Template Excel téléchargé!', 'success');
 }
 
 function validateImportData() {
