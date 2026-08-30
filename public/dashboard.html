@@ -1201,6 +1201,7 @@ class PayloopApp {
                     total: subtotal + tax,
                     status: inv.statut,
                     dueDate: inv.date_echeance,
+                    dateEmission: inv.date_emission,
                     createdAt: inv.created_at
                 };
             });
@@ -1387,6 +1388,7 @@ class PayloopApp {
             total: subtotal + tax,
             status: apiInvoice.statut,
             dueDate: apiInvoice.date_echeance,
+            dateEmission: apiInvoice.date_emission,
             createdAt: apiInvoice.created_at
         };
 
@@ -1925,11 +1927,13 @@ class PayloopApp {
         }
     }
 
-    // Renvoie les factures dont la date de création tombe dans le mois/année donnés.
-    // Utilisé pour que "TVA collectée" etc. reflètent la période sélectionnée, pas le cumul total.
+    // Renvoie les factures dont la date de facturation (date_emission) tombe dans le mois/année
+    // donnés. Utilisé pour que "TVA collectée" etc. reflètent la période sélectionnée, pas le
+    // cumul total. On se base sur date_emission (la date réelle de la facture) plutôt que sur
+    // createdAt (l'horodatage technique de création en base), qui peut différer.
     getInvoicesForTaxPeriod(year, month) {
         return this.data.invoices.filter(inv => {
-            const d = new Date(inv.createdAt);
+            const d = new Date(inv.dateEmission || inv.createdAt);
             return d.getFullYear() === year && d.getMonth() === month;
         });
     }
@@ -2077,34 +2081,50 @@ class PayloopApp {
     }
 
     // Stock adjustment functions
-    addStockAdjustment(adjustmentData) {
+    // Ajuste réellement le stock d'un produit via l'API (PATCH /products/:id/stock, qui applique
+    // une quantité relative : positive pour ajouter, négative pour retirer). Pour "Définir stock",
+    // on calcule la différence avec le stock actuel pour obtenir la même quantité relative.
+    async addStockAdjustment(adjustmentData) {
+        const productId = parseInt(adjustmentData.productId);
+        const quantity = parseInt(adjustmentData.quantity);
+        const product = this.data.products.find(p => p.id == productId);
+        if (!product) {
+            throw new Error('Produit introuvable');
+        }
+
+        let quantite;
+        switch (adjustmentData.adjustmentType) {
+            case 'add':
+                quantite = quantity;
+                break;
+            case 'remove':
+                quantite = -quantity;
+                break;
+            case 'set':
+                quantite = quantity - (product.stock || 0);
+                break;
+            default:
+                quantite = 0;
+        }
+
         const adjustment = {
             id: Date.now(),
             ...adjustmentData,
-            productId: parseInt(adjustmentData.productId),
-            quantity: parseInt(adjustmentData.quantity),
+            productId,
+            quantity,
             date: new Date().toISOString(),
             createdAt: new Date().toISOString()
         };
 
-        // Update product stock
-        const product = this.data.products.find(p => p.id == adjustment.productId);
-        if (product && product.stock !== null) {
-            switch (adjustment.adjustmentType) {
-                case 'add':
-                    product.stock += adjustment.quantity;
-                    break;
-                case 'remove':
-                    product.stock = Math.max(0, product.stock - adjustment.quantity);
-                    break;
-                case 'set':
-                    product.stock = adjustment.quantity;
-                    break;
-            }
+        if (quantite !== 0) {
+            const result = await apiRequest(`/products/${productId}/stock`, {
+                method: 'PATCH',
+                body: JSON.stringify({ quantite })
+            });
+            product.stock = result.product.stock;
         }
 
         this.data.stockAdjustments.push(adjustment);
-        this.saveData();
         this.updateUI();
         return adjustment;
     }
@@ -2649,14 +2669,18 @@ function closeStockModal() {
     document.getElementById('stock-modal').classList.remove('active');
 }
 
-function saveStockAdjustment(event) {
+async function saveStockAdjustment(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
     const adjustmentData = Object.fromEntries(formData.entries());
-    
-    app.addStockAdjustment(adjustmentData);
-    closeStockModal();
-    app.showNotification('Stock ajusté avec succès!', 'success');
+
+    try {
+        await app.addStockAdjustment(adjustmentData);
+        closeStockModal();
+        app.showNotification('Stock ajusté avec succès!', 'success');
+    } catch (error) {
+        app.showNotification('Erreur lors de l\'ajustement du stock: ' + error.message, 'error');
+    }
 }
 
 function searchProducts() {
@@ -3103,7 +3127,7 @@ function generateTaxDeclaration() {
         return {
             'N° Facture': inv.number,
             'Client': client ? client.name : '-',
-            'Date': app.formatDate(inv.createdAt),
+            'Date': app.formatDate(inv.dateEmission || inv.createdAt),
             'CA HT': inv.subtotal,
             'TVA': inv.tax,
             'TTC': inv.total
