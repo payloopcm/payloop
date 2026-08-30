@@ -68,6 +68,16 @@
     applyTranslations(lang);
   };
 
+  // Pour les textes que le code JS de la page doit écrire lui-même à un moment donné (ex : un
+  // bouton qui affiche "Connexion..." pendant le chargement) : renvoie le texte dans la langue
+  // actuellement choisie par le visiteur.
+  window.payloopT = function (key) {
+    var lang = getStoredLang();
+    var dict = (window.PAYLOOP_I18N && window.PAYLOOP_I18N[lang]) || {};
+    return dict[key] !== undefined ? dict[key] : key;
+  };
+  window.getPayloopLang = getStoredLang;
+
   document.addEventListener('DOMContentLoaded', function () {
     applyTranslations(getStoredLang());
   });
