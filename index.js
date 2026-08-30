@@ -15,16 +15,7 @@ const TVA_RATE = 0.1925; // 19.25% TVA Cameroun
 // PAGE D'ACCUEIL
 // ============================================
 app.get('/', (req, res) => {
-  res.json({ 
-    message: '🚀 PayLoop API is running!',
-    version: '1.0.0',
-    endpoints: {
-      webhook: 'POST /webhook/dohone',
-      merchants: 'GET /merchants',
-      invoices: 'GET /invoices/:merchantId',
-      products: 'GET /products/:merchantId'
-    }
-  });
+  res.redirect('/dashboard.html');
 });
 
 // ============================================
