@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayLoop — Gestion automatisée pour PME africaines</title>
+    <meta name="description" content="PayLoop simplifie la facturation, le suivi des paiements, le stock et la fiscalité des PME camerounaises. Créez une facture conforme en quelques clics.">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#111827">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .lucide { width: 20px; height: 20px; }
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+
+    <!-- ============================================ -->
+    <!-- NAVIGATION -->
+    <!-- ============================================ -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-gray-200">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="/" class="flex items-center">
+                <img src="/images/logo-ht.png" alt="PayLoop" class="h-11 w-auto">
+            </a>
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-600">
+                <a href="#solution" class="hover:text-gray-900">La solution</a>
+                <a href="#fonctionnalites" class="hover:text-gray-900">Fonctionnalités</a>
+                <a href="#comment-ca-marche" class="hover:text-gray-900">Comment ça marche</a>
+                <a href="#tarifs" class="hover:text-gray-900">Tarifs</a>
+            </nav>
+            <div class="flex items-center space-x-3">
+                <a href="/login.html" class="hidden sm:inline-block text-sm font-medium text-gray-700 hover:text-gray-900 px-3 py-2">
+                    Se connecter
+                </a>
+                <a href="/login.html" class="inline-block text-sm font-medium text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md">
+                    Essayer gratuitement
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================ -->
+    <!-- HERO -->
+    <!-- ============================================ -->
+    <section class="bg-gray-900 text-white">
+        <div class="max-w-6xl mx-auto px-6 py-20 md:py-28 text-center">
+            <div class="inline-flex items-center space-x-2 bg-white/10 rounded-full px-4 py-1.5 text-sm text-gray-200 mb-6">
+                <i data-lucide="globe" class="w-4 h-4"></i>
+                <span>Accessible depuis un simple navigateur — ordinateur ou téléphone</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold leading-tight max-w-3xl mx-auto">
+                La gestion simplifiée pour les PME camerounaises
+            </h1>
+            <p class="mt-6 text-lg text-gray-300 max-w-2xl mx-auto">
+                Facturation · Suivi des paiements · Stock · Fiscalité — tout au même endroit, pensé pour les réalités du terrain.
+            </p>
+            <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="/login.html" class="w-full sm:w-auto text-center bg-green-600 hover:bg-green-700 text-white font-medium px-8 py-3 rounded-md">
+                    Essayer gratuitement
+                </a>
+                <a href="#fonctionnalites" class="w-full sm:w-auto text-center bg-white/10 hover:bg-white/20 text-white font-medium px-8 py-3 rounded-md">
+                    Découvrir PayLoop
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- LE CONSTAT -->
+    <!-- ============================================ -->
+    <section class="py-20 bg-white">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <span class="text-sm font-semibold text-green-700 tracking-wide uppercase">Le constat</span>
+                <h2 class="mt-2 text-3xl font-bold text-gray-900">Gérer une PME au Cameroun, aujourd'hui</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-16">
+                <div>
+                    <div class="w-11 h-11 rounded-full bg-blue-50 flex items-center justify-center mb-4">
+                        <i data-lucide="clock" class="w-5 h-5 text-blue-700"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">Des heures perdues</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">Factures et suivis remplis à la main, un par un, chaque jour.</p>
+                </div>
+                <div>
+                    <div class="w-11 h-11 rounded-full bg-amber-50 flex items-center justify-center mb-4">
+                        <i data-lucide="triangle-alert" class="w-5 h-5 text-amber-700"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">Des erreurs fréquentes</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">Calculs de TVA manuels, montants illisibles, factures égarées.</p>
+                </div>
+                <div>
+                    <div class="w-11 h-11 rounded-full bg-green-50 flex items-center justify-center mb-4">
+                        <i data-lucide="circle-check" class="w-5 h-5 text-green-700"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">Aucune vue d'ensemble</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">Impossible de savoir en un instant qui a payé, qui doit encore payer.</p>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 rounded-2xl p-8 md:p-10 grid md:grid-cols-3 gap-8 items-center">
+                <div class="md:col-span-2">
+                    <span class="text-xs font-semibold text-gray-500 tracking-wide uppercase">Exemple vécu</span>
+                    <h3 class="text-xl font-bold mt-1 mb-2">Société de prestation de service</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Paiement encaissé par TPE, facture papier rédigée à la main, ticket de caisse agrafé.
+                        Avec PayLoop, la même facture se crée en quelques clics — TVA calculée automatiquement,
+                        statut de paiement suivi en temps réel.
+                    </p>
+                </div>
+                <div class="bg-white rounded-xl p-6 text-center border border-gray-200">
+                    <div class="text-3xl font-bold text-gray-900">10 à 20 min</div>
+                    <div class="text-xs text-gray-500 mt-1 mb-3">pour une seule facture, à la main</div>
+                    <div class="text-3xl font-bold text-green-600">&lt; 30 sec</div>
+                    <div class="text-xs text-gray-500 mt-1">avec PayLoop</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- LA SOLUTION (overview) -->
+    <!-- ============================================ -->
+    <section id="solution" class="py-20 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <span class="text-sm font-semibold text-green-700 tracking-wide uppercase">La solution</span>
+                <h2 class="mt-2 text-3xl font-bold text-gray-900">PayLoop, tout-en-un pour votre gestion</h2>
+                <p class="mt-4 text-gray-600">
+                    Une plateforme unique, accessible depuis un simple navigateur, pensée pour les réalités des PME camerounaises.
+                </p>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-xl p-6 border border-gray-200">
+                    <div class="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center mb-4">
+                        <i data-lucide="file-text" class="w-5 h-5 text-teal-700"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">Facturation instantanée</h3>
+                    <p class="text-gray-600 text-sm">Créez une facture conforme en quelques clics, TVA calculée automatiquement.</p>
+                </div>
+                <div class="bg-white rounded-xl p-6 border border-gray-200">
+                    <div class="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center mb-4">
+                        <i data-lucide="banknote" class="w-5 h-5 text-teal-700"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">Suivi des paiements</h3>
+                    <p class="text-gray-600 text-sm">Changez le statut d'une facture en un clic : envoyée, en attente, payée.</p>
+                </div>
+                <div class="bg-white rounded-xl p-6 border border-gray-200">
+                    <div class="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center mb-4">
+                        <i data-lucide="package" class="w-5 h-5 text-teal-700"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">Stock en temps réel</h3>
+                    <p class="text-gray-600 text-sm">Alertes automatiques dès qu'un article se fait rare ou manque.</p>
+                </div>
+                <div class="bg-white rounded-xl p-6 border border-gray-200">
+                    <div class="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center mb-4">
+                        <i data-lucide="calculator" class="w-5 h-5 text-teal-700"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">Fiscalité simplifiée</h3>
+                    <p class="text-gray-600 text-sm">TVA et impôts calculés pour vous, rapports prêts à déclarer.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- FONCTIONNALITÉS DÉTAILLÉES -->
+    <!-- ============================================ -->
+    <section id="fonctionnalites" class="py-20 bg-white">
+        <div class="max-w-6xl mx-auto px-6 space-y-20">
+
+            <!-- Facturation -->
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="w-11 h-11 rounded-lg bg-teal-50 flex items-center justify-center mb-4">
+                        <i data-lucide="file-text" class="w-5 h-5 text-teal-700"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Facturation & TVA automatique</h3>
+                    <ul class="space-y-3 text-gray-600 text-sm">
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Numérotation automatique de chaque facture (client, date, montant HT/TTC)</li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>TVA camerounaise (19,25 %) calculée automatiquement — zéro erreur de calcul</li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Cinq statuts de suivi : brouillon, envoyée, en attente de paiement, payée, annulée</li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Export PDF professionnel, prêt à envoyer ou imprimer</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                    <div class="bg-white rounded-lg p-5 border border-gray-200 shadow-sm">
+                        <div class="text-xs text-gray-400 font-mono mb-3">FACTURE N° INV-2026-0142</div>
+                        <div class="flex justify-between text-sm py-2 border-b border-gray-100">
+                            <span class="text-gray-500">Client</span><span class="font-medium">Boutique Ndoumbe</span>
+                        </div>
+                        <div class="flex justify-between text-sm py-2 border-b border-gray-100">
+                            <span class="text-gray-500">Montant HT</span><span class="font-medium">25 000 FCFA</span>
+                        </div>
+                        <div class="flex justify-between text-sm py-2 border-b border-gray-100">
+                            <span class="text-gray-500">TVA (19,25 %)</span><span class="font-medium">4 813 FCFA</span>
+                        </div>
+                        <div class="flex justify-between text-sm py-3">
+                            <span class="text-gray-700 font-semibold">Total TTC</span><span class="font-bold text-lg">29 813 FCFA</span>
+                        </div>
+                        <span class="inline-block bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full">Payée</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paiements -->
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="order-2 md:order-1 bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                    <div class="bg-white rounded-lg p-6 border border-gray-200 shadow-sm text-center">
+                        <div class="text-4xl font-bold text-gray-900">65%</div>
+                        <div class="text-xs text-gray-500 mt-1 mb-4">taux de recouvrement</div>
+                        <div class="w-full h-3 rounded-full bg-gray-100 overflow-hidden">
+                            <div class="h-full bg-green-600" style="width:65%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500 mt-2">
+                            <span>Encaissé</span><span>En attente</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-1 md:order-2">
+                    <div class="w-11 h-11 rounded-lg bg-teal-50 flex items-center justify-center mb-4">
+                        <i data-lucide="banknote" class="w-5 h-5 text-teal-700"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Paiements & taux de recouvrement</h3>
+                    <ul class="space-y-3 text-gray-600 text-sm">
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Chaque paiement enregistré (espèces, virement, mobile money) et rattaché à sa facture</li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Historique complet et consultable à tout moment</li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Une seule vue pour savoir qui a payé — et qui doit encore payer</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Stock -->
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="w-11 h-11 rounded-lg bg-teal-50 flex items-center justify-center mb-4">
+                        <i data-lucide="package" class="w-5 h-5 text-teal-700"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Stock & produits sous contrôle</h3>
+                    <ul class="space-y-3 text-gray-600 text-sm">
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Catalogue de produits et services avec prix fixes — fini la ressaisie à chaque vente</li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Alerte automatique dès qu'un article passe sous son seuil de réapprovisionnement</li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Valeur totale du stock visible en temps réel</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                    <div class="bg-white rounded-lg p-5 border border-gray-200 shadow-sm">
+                        <div class="flex items-center text-amber-800 bg-amber-50 rounded-lg p-3 text-sm">
+                            <i data-lucide="triangle-alert" class="w-4 h-4 mr-2 flex-shrink-0"></i>
+                            Chargeur solaire USB — stock à 0. Il est temps de réapprovisionner.
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 mt-4 text-center text-xs">
+                            <div class="bg-green-50 text-green-800 rounded-md py-2 font-medium">En stock</div>
+                            <div class="bg-amber-50 text-amber-800 rounded-md py-2 font-medium">Stock faible</div>
+                            <div class="bg-red-50 text-red-800 rounded-md py-2 font-medium">Rupture</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fiscalité -->
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="order-2 md:order-1 bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                    <div class="bg-white rounded-lg p-5 border border-gray-200 shadow-sm">
+                        <div class="text-xs text-gray-400 font-mono mb-3">DÉCLARATION TVA — JUILLET</div>
+                        <div class="flex justify-between text-sm py-2 border-b border-gray-100">
+                            <span class="text-gray-500">CA HT de la période</span><span class="font-medium">351 000 FCFA</span>
+                        </div>
+                        <div class="flex justify-between text-sm py-2 border-b border-gray-100">
+                            <span class="text-gray-500">TVA collectée (19,25 %)</span><span class="font-medium">67 568 FCFA</span>
+                        </div>
+                        <div class="flex justify-between text-sm py-2">
+                            <span class="text-gray-500">Factures payées</span><span class="font-medium">5</span>
+                        </div>
+                        <div class="mt-3 text-xs text-amber-700 bg-amber-50 rounded-md px-3 py-2">TVA à déclarer avant le 15</div>
+                    </div>
+                </div>
+                <div class="order-1 md:order-2">
+                    <div class="w-11 h-11 rounded-lg bg-teal-50 flex items-center justify-center mb-4">
+                        <i data-lucide="calculator" class="w-5 h-5 text-teal-700"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Fiscalité, sans le casse-tête</h3>
+                    <ul class="space-y-3 text-gray-600 text-sm">
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>TVA collectée calculée automatiquement, mois par mois</li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Estimation de l'IRPP à partir du chiffre d'affaires réel</li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Rappel des échéances : TVA mensuelle, déclaration annuelle</li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Rapport de déclaration TVA exportable en un clic (Excel)</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- VUE D'ENSEMBLE / DASHBOARD -->
+    <!-- ============================================ -->
+    <section class="py-20 bg-gray-900 text-white">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <span class="text-sm font-semibold text-teal-400 tracking-wide uppercase">Vue d'ensemble</span>
+            <h2 class="mt-2 text-3xl font-bold">Tout votre commerce, en un coup d'œil</h2>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12 text-left">
+                <div class="bg-white/5 rounded-xl p-6">
+                    <i data-lucide="banknote" class="w-5 h-5 text-teal-400 mb-3"></i>
+                    <div class="font-semibold mb-1">Chiffre d'affaires</div>
+                    <div class="text-sm text-gray-400">du mois, mis à jour en direct</div>
+                </div>
+                <div class="bg-white/5 rounded-xl p-6">
+                    <i data-lucide="file-text" class="w-5 h-5 text-teal-400 mb-3"></i>
+                    <div class="font-semibold mb-1">Factures</div>
+                    <div class="text-sm text-gray-400">émises, en attente, payées</div>
+                </div>
+                <div class="bg-white/5 rounded-xl p-6">
+                    <i data-lucide="users" class="w-5 h-5 text-teal-400 mb-3"></i>
+                    <div class="font-semibold mb-1">Clients actifs</div>
+                    <div class="text-sm text-gray-400">et leur historique complet</div>
+                </div>
+                <div class="bg-white/5 rounded-xl p-6">
+                    <i data-lucide="package" class="w-5 h-5 text-teal-400 mb-3"></i>
+                    <div class="font-semibold mb-1">Produits en stock</div>
+                    <div class="text-sm text-gray-400">avec alertes automatiques</div>
+                </div>
+            </div>
+            <p class="mt-10 text-gray-400 text-sm">Accessible depuis n'importe quel navigateur, ordinateur ou téléphone — sur payloop.cm</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- POUR QUI ? -->
+    <!-- ============================================ -->
+    <section class="py-20 bg-white">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <span class="text-sm font-semibold text-green-700 tracking-wide uppercase">Pour qui ?</span>
+                <h2 class="mt-2 text-3xl font-bold text-gray-900">Un outil pensé pour tous les commerces</h2>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-6">
+                <div class="border border-gray-200 rounded-xl p-6">
+                    <div class="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center mb-4">
+                        <i data-lucide="store" class="w-5 h-5 text-teal-700"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">Commerce & boutiques</h3>
+                    <p class="text-gray-600 text-sm">Quincailleries, pharmacies, boutiques — factures et stock au même endroit.</p>
+                </div>
+                <div class="border border-gray-200 rounded-xl p-6">
+                    <div class="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center mb-4">
+                        <i data-lucide="utensils" class="w-5 h-5 text-teal-700"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">Restauration & loisirs</h3>
+                    <p class="text-gray-600 text-sm">Restaurants, bars, boîtes de nuit — encaissements rapides, catalogue de prix fixes.</p>
+                </div>
+                <div class="border border-gray-200 rounded-xl p-6">
+                    <div class="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center mb-4">
+                        <i data-lucide="scissors" class="w-5 h-5 text-teal-700"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">Services</h3>
+                    <p class="text-gray-600 text-sm">Pressings, salons, garages — suivi client et statut de chaque prestation.</p>
+                </div>
+                <div class="border border-gray-200 rounded-xl p-6">
+                    <div class="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center mb-4">
+                        <i data-lucide="briefcase" class="w-5 h-5 text-teal-700"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">Artisanat & professions libérales</h3>
+                    <p class="text-gray-600 text-sm">Facturation professionnelle et fiscalité maîtrisée, sans comptable à temps plein.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- COMMENT ÇA MARCHE -->
+    <!-- ============================================ -->
+    <section id="comment-ca-marche" class="py-20 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <span class="text-sm font-semibold text-green-700 tracking-wide uppercase">Comment ça marche</span>
+                <h2 class="mt-2 text-3xl font-bold text-gray-900">Démarrez en quelques minutes</h2>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="relative">
+                    <div class="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center font-bold mb-4">1</div>
+                    <h3 class="font-semibold mb-1">Créez votre compte</h3>
+                    <p class="text-gray-600 text-sm">Inscription gratuite en moins d'une minute, aucune carte bancaire requise.</p>
+                </div>
+                <div class="relative">
+                    <div class="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center font-bold mb-4">2</div>
+                    <h3 class="font-semibold mb-1">Ajoutez clients & produits</h3>
+                    <p class="text-gray-600 text-sm">Renseignez votre catalogue et vos clients une seule fois.</p>
+                </div>
+                <div class="relative">
+                    <div class="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center font-bold mb-4">3</div>
+                    <h3 class="font-semibold mb-1">Créez votre première facture</h3>
+                    <p class="text-gray-600 text-sm">TVA calculée automatiquement, export PDF en un clic.</p>
+                </div>
+                <div class="relative">
+                    <div class="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center font-bold mb-4">4</div>
+                    <h3 class="font-semibold mb-1">Suivez tout en direct</h3>
+                    <p class="text-gray-600 text-sm">Paiements, stock et fiscalité, à jour en permanence sur votre tableau de bord.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- TARIFS -->
+    <!-- ============================================ -->
+    <section id="tarifs" class="py-20 bg-white">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-4">
+                <span class="text-sm font-semibold text-green-700 tracking-wide uppercase">Tarification</span>
+                <h2 class="mt-2 text-3xl font-bold text-gray-900">Un abonnement simple, sans surprise</h2>
+            </div>
+            <p class="text-center text-xs text-gray-400 mb-14">Tarifs indicatifs — à confirmer</p>
+
+            <div class="grid sm:grid-cols-2 gap-8 max-w-3xl mx-auto">
+                <div class="border border-gray-200 rounded-2xl p-8">
+                    <h3 class="font-semibold text-lg mb-1">Essentiel</h3>
+                    <div class="text-3xl font-bold mb-6">7 000 <span class="text-base font-medium text-gray-500">FCFA/mois</span></div>
+                    <ul class="space-y-3 text-sm text-gray-600 mb-8">
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Factures illimitées</li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>TVA calculée automatiquement</li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Gestion de stock</li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Tableau de bord</li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>1 utilisateur</li>
+                    </ul>
+                    <a href="/login.html" class="block text-center border border-gray-300 hover:border-gray-400 text-gray-800 font-medium px-6 py-2.5 rounded-md">Commencer</a>
+                </div>
+                <div class="border-2 border-green-600 rounded-2xl p-8 relative">
+                    <span class="absolute -top-3 left-8 bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full">Recommandé</span>
+                    <h3 class="font-semibold text-lg mb-1">Pro</h3>
+                    <div class="text-3xl font-bold mb-6">15 000 <span class="text-base font-medium text-gray-500">FCFA/mois</span></div>
+                    <ul class="space-y-3 text-sm text-gray-600 mb-8">
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Tout Essentiel, plus :</li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Rapports fiscaux avancés</li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Plusieurs utilisateurs</li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>Support prioritaire</li>
+                    </ul>
+                    <a href="/login.html" class="block text-center bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2.5 rounded-md">Commencer</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- CTA FINAL -->
+    <!-- ============================================ -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-2xl mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Essayez PayLoop dès aujourd'hui</h2>
+            <p class="text-gray-600 mb-8">Rejoignez les premiers commerçants à simplifier leur facturation avec PayLoop.</p>
+            <a href="/login.html" class="inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-8 py-3 rounded-md">
+                Essayer gratuitement
+            </a>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- FOOTER -->
+    <!-- ============================================ -->
+    <footer class="bg-white text-gray-500 py-14 border-t border-gray-200">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="flex items-center">
+                <img src="/images/logo-ht.png" alt="PayLoop" class="h-11 w-auto">
+            </div>
+            <div class="text-sm text-center sm:text-right">
+                <div>payloop.cm</div>
+                <div>Contact : contact@payloop.cm</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // Enregistre le Service Worker pour que cette page fonctionne aussi hors-ligne.
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js').catch((err) => {
+                    console.error('Échec de l\'enregistrement du Service Worker :', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

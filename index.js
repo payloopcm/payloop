@@ -11,9 +11,9 @@ app.use(express.static('public'));
 // ============================================
 // PAGE D'ACCUEIL
 // ============================================
-app.get('/', (req, res) => {
-  res.redirect('/dashboard.html');
-});
+// La page publique (public/index.html) est servie automatiquement sur "/"
+// par express.static ci-dessus. Le tableau de bord reste accessible sur
+// /dashboard.html (lien "Se connecter" / "Essayer gratuitement" de la page d'accueil).
 
 // ============================================
 // DÉMARRAGE DU SERVEUR
