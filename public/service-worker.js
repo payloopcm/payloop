@@ -5,8 +5,10 @@
 // le numéro de cache pour forcer tous les navigateurs à récupérer la nouvelle version plutôt
 // que de garder l'ancienne indéfiniment. À refaire à chaque fois qu'un des fichiers listés
 // ci-dessous (autre que dashboard.html/login.html, toujours récupérés en priorité sur le réseau) change.
+// Étape 4 : ajout de la police IBM Plex Sans (hébergée sur le site plutôt que via Google Fonts,
+// pour qu'elle continue de s'afficher correctement même hors-ligne) — cache encore augmenté.
 
-const CACHE_NAME = 'payloop-shell-v3';
+const CACHE_NAME = 'payloop-shell-v4';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [
@@ -20,6 +22,15 @@ const PRECACHE_URLS = [
   '/images/logo-payloop-sidebar-white%20(1).svg',
   '/images/icon-192.png',
   '/images/icon-512.png',
+  '/fonts/ibm-plex-sans/ibm-plex-sans.css',
+  '/fonts/ibm-plex-sans/ibm-plex-sans-latin-400-normal.woff2',
+  '/fonts/ibm-plex-sans/ibm-plex-sans-latin-500-normal.woff2',
+  '/fonts/ibm-plex-sans/ibm-plex-sans-latin-600-normal.woff2',
+  '/fonts/ibm-plex-sans/ibm-plex-sans-latin-700-normal.woff2',
+  '/fonts/ibm-plex-sans/ibm-plex-sans-latin-ext-400-normal.woff2',
+  '/fonts/ibm-plex-sans/ibm-plex-sans-latin-ext-500-normal.woff2',
+  '/fonts/ibm-plex-sans/ibm-plex-sans-latin-ext-600-normal.woff2',
+  '/fonts/ibm-plex-sans/ibm-plex-sans-latin-ext-700-normal.woff2',
 ];
 
 self.addEventListener('install', (event) => {
