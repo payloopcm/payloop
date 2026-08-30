@@ -53,8 +53,23 @@
                 <a href="/login.html" class="inline-block text-sm font-medium text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md">
                     Essayer gratuitement
                 </a>
+                <button id="mobile-menu-button" onclick="toggleMobileMenu()" class="md:hidden text-gray-700 p-2 -mr-2" aria-label="Ouvrir le menu">
+                    <i data-lucide="menu" id="mobile-menu-icon-open" class="w-6 h-6"></i>
+                    <i data-lucide="x" id="mobile-menu-icon-close" class="w-6 h-6 hidden"></i>
+                </button>
             </div>
         </div>
+
+        <!-- Menu mobile : les liens de navigation, invisibles sur petit écran dans la barre du
+             haut (voir <nav> ci-dessus qui est "hidden md:flex"), réapparaissent ici une fois
+             le bouton ☰ ouvert. -->
+        <nav id="mobile-menu" class="hidden md:hidden border-t border-gray-200 bg-white px-6 py-4 space-y-1 text-sm font-medium text-gray-700">
+            <a href="#solution" onclick="closeMobileMenu()" class="block py-2">La solution</a>
+            <a href="#fonctionnalites" onclick="closeMobileMenu()" class="block py-2">Fonctionnalités</a>
+            <a href="#comment-ca-marche" onclick="closeMobileMenu()" class="block py-2">Comment ça marche</a>
+            <a href="#tarifs" onclick="closeMobileMenu()" class="block py-2">Tarifs</a>
+            <a href="/login.html" class="block py-2 border-t border-gray-100 mt-2 pt-3">Se connecter</a>
+        </nav>
     </header>
 
     <!-- ============================================ -->
@@ -491,6 +506,20 @@
 
     <script>
         lucide.createIcons();
+
+        // Menu mobile (bouton ☰ dans la barre du haut, visible seulement sur petit écran)
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const isOpen = !menu.classList.contains('hidden');
+            menu.classList.toggle('hidden');
+            document.getElementById('mobile-menu-icon-open').classList.toggle('hidden', !isOpen);
+            document.getElementById('mobile-menu-icon-close').classList.toggle('hidden', isOpen);
+        }
+        function closeMobileMenu() {
+            document.getElementById('mobile-menu').classList.add('hidden');
+            document.getElementById('mobile-menu-icon-open').classList.remove('hidden');
+            document.getElementById('mobile-menu-icon-close').classList.add('hidden');
+        }
 
         // Enregistre le Service Worker pour que cette page fonctionne aussi hors-ligne.
         if ('serviceWorker' in navigator) {
