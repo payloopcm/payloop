@@ -162,7 +162,7 @@
                                 <span class="text-gray-700">Mon profil</span>
                             </a>
                             
-                            <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition" onclick="showSettings(); return false;">
+                            <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition" onclick="openSettingsModal(); return false;">
                                 <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -880,6 +880,70 @@
     </div>
 </div>
 
+<!-- Settings Modal ("Mes paramètres") -->
+<div id="settings-modal" class="modal">
+    <div class="modal-content w-full max-w-md">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Mes paramètres</h3>
+            <button onclick="closeSettingsModal()" class="text-gray-500 hover:text-gray-700">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <form id="settings-form" onsubmit="saveSettings(event)">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Nom de l'entreprise</label>
+                    <input type="text" name="company_name" id="settings-company-name" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                    <p class="text-xs text-gray-500 mt-1">Affiché sur vos factures et rapports.</p>
+                </div>
+
+                <div class="border-t border-gray-200 pt-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">TVA</label>
+                            <p class="text-xs text-gray-500 mt-1">Désactivez si vous êtes soumis à l'Impôt libératoire (exonéré de TVA).</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-4">
+                            <input type="checkbox" name="tax_enabled" id="settings-tax-enabled" class="sr-only peer" onchange="toggleTaxRateField()">
+                            <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-green-600 transition-colors"></div>
+                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+                        </label>
+                    </div>
+                    <div id="settings-tax-rate-wrapper" class="mt-3">
+                        <label class="block text-sm font-medium text-gray-700">Taux de TVA (%)</label>
+                        <input type="number" name="tax_rate" id="settings-tax-rate" step="0.01" min="0" max="100" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 pt-4">
+                    <label class="block text-sm font-medium text-gray-700">Seuil d'alerte de stock faible</label>
+                    <input type="number" name="low_stock_threshold" id="settings-low-stock-threshold" min="0" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                    <p class="text-xs text-gray-500 mt-1">Un produit est signalé « stock faible » en dessous de cette quantité.</p>
+                </div>
+
+                <div class="border-t border-gray-200 pt-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Notifications</label>
+                            <p class="text-xs text-gray-500 mt-1">Affiche des rappels (factures en retard, stock faible) à l'ouverture de l'application.</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-4">
+                            <input type="checkbox" name="notifications_enabled" id="settings-notifications-enabled" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-green-600 transition-colors"></div>
+                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6">
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                    Enregistrer les paramètres
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Product Modal -->
 <div id="product-modal" class="modal">
     <div class="modal-content w-full max-w-md">
@@ -1216,10 +1280,16 @@ class PayloopApp {
     }
 
     async init() {
+    // "Mes paramètres" : on charge la TVA, le nom d'entreprise et le seuil de stock
+    // AVANT les données, car le calcul de la TVA sur les factures en dépend.
+    await this.loadSettings();
     await this.loadData();
     this.initEventListeners();
     this.updateUI();
     this.showNotification('Application Payloop chargée avec succès!', 'success');
+
+    // Notifications : rappels de factures en retard / stock faible, si activés
+    this.checkReminders();
 
     // "Mon profil" : on charge le nom et la photo de l'utilisateur pour les afficher
     // dans la barre du haut. Non bloquant : si ça échoue, le nom générique reste affiché.
@@ -1235,6 +1305,65 @@ class PayloopApp {
 }
 
     // "Mon profil" : récupère le profil (nom, photo) et met à jour la barre du haut
+    // "Mes paramètres" : récupère les réglages (TVA, nom d'entreprise, seuil de stock)
+    async loadSettings() {
+        try {
+            const res = await apiRequest('/settings');
+            if (res && res.settings) {
+                this.applySettings(res.settings);
+            }
+        } catch (error) {
+            // Non bloquant : si ça échoue, les valeurs par défaut codées en dur restent utilisées
+            console.error('Erreur chargement paramètres:', error);
+        }
+    }
+
+    // Applique les réglages reçus du serveur. Quand la TVA est désactivée, on force le
+    // taux utilisé partout (facturation, TVA collectée, PDF...) à 0, plutôt que de modifier
+    // chaque endroit qui calcule la TVA séparément — on garde le taux configuré de côté
+    // (taxRateConfigured) pour le réafficher si l'utilisateur réactive la TVA plus tard.
+    applySettings(settings) {
+        this.data.settings.companyName = settings.company_name || this.data.settings.companyName;
+        this.data.settings.lowStockThreshold = settings.low_stock_threshold ?? this.data.settings.lowStockThreshold;
+        this.data.settings.taxEnabled = settings.tax_enabled !== false;
+        this.data.settings.taxRateConfigured = parseFloat(settings.tax_rate ?? this.data.settings.taxRate);
+        this.data.settings.taxRate = this.data.settings.taxEnabled ? this.data.settings.taxRateConfigured : 0;
+        this.data.settings.notificationsEnabled = settings.notifications_enabled !== false;
+    }
+
+    // Notifications : affiche des rappels (factures en retard, stock faible) à l'ouverture
+    // de l'application, si l'utilisateur ne les a pas désactivés dans "Mes paramètres".
+    checkReminders() {
+        if (this.data.settings.notificationsEnabled === false) return;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const overdueCount = this.data.invoices.filter(inv => {
+            if (['payee', 'annulee'].includes(inv.status)) return false;
+            if (!inv.dueDate) return false;
+            return new Date(inv.dueDate) < today;
+        }).length;
+
+        const lowStockCount = this.data.products.filter(p =>
+            p.stock !== null && p.stock <= this.data.settings.lowStockThreshold
+        ).length;
+
+        if (overdueCount > 0) {
+            this.showNotification(
+                overdueCount === 1 ? '1 facture est en retard de paiement' : `${overdueCount} factures sont en retard de paiement`,
+                'warning'
+            );
+        }
+
+        if (lowStockCount > 0) {
+            this.showNotification(
+                lowStockCount === 1 ? '1 produit a un stock faible' : `${lowStockCount} produits ont un stock faible`,
+                'warning'
+            );
+        }
+    }
+
     async loadUserProfile() {
         try {
             const res = await apiRequest('/users/me');
@@ -3730,8 +3859,55 @@ document.addEventListener('DOMContentLoaded', function() {
             setAvatarDisplay('topbar-avatar', 'topbar-avatar-letter', user);
         }
 
-        function showSettings() {
-            alert('Fonctionnalité "Mes paramètres" - À venir !\n\nNous implémenterons :\n- Langue\n- Notifications\n- Sécurité\n- Préférences');
+        // "Mes paramètres" — ouvre la fenêtre avec les valeurs actuellement chargées
+        function openSettingsModal() {
+            document.getElementById('userDropdown').classList.add('hidden');
+            const s = app.data.settings;
+            document.getElementById('settings-company-name').value = s.companyName || '';
+            document.getElementById('settings-tax-enabled').checked = s.taxEnabled !== false;
+            document.getElementById('settings-tax-rate').value = s.taxRateConfigured ?? s.taxRate ?? 19.25;
+            document.getElementById('settings-low-stock-threshold').value = s.lowStockThreshold ?? 5;
+            document.getElementById('settings-notifications-enabled').checked = s.notificationsEnabled !== false;
+            toggleTaxRateField();
+            document.getElementById('settings-modal').classList.add('active');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settings-modal').classList.remove('active');
+        }
+
+        // Affiche/masque le champ "Taux de TVA" selon que la TVA est activée ou non
+        function toggleTaxRateField() {
+            const enabled = document.getElementById('settings-tax-enabled').checked;
+            document.getElementById('settings-tax-rate-wrapper').style.display = enabled ? 'block' : 'none';
+        }
+
+        async function saveSettings(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const taxEnabled = document.getElementById('settings-tax-enabled').checked;
+            const notificationsEnabled = document.getElementById('settings-notifications-enabled').checked;
+
+            const payload = {
+                company_name: formData.get('company_name'),
+                tax_enabled: taxEnabled,
+                tax_rate: parseFloat(formData.get('tax_rate')) || 0,
+                low_stock_threshold: parseInt(formData.get('low_stock_threshold'), 10) || 0,
+                notifications_enabled: notificationsEnabled
+            };
+
+            try {
+                const res = await apiRequest('/settings', {
+                    method: 'PUT',
+                    body: JSON.stringify(payload)
+                });
+                app.applySettings(res.settings);
+                app.updateUI();
+                closeSettingsModal();
+                app.showNotification('Paramètres mis à jour avec succès !', 'success');
+            } catch (error) {
+                app.showNotification(error.message || 'Erreur lors de la mise à jour des paramètres', 'error');
+            }
         }
 
         function logout() {
