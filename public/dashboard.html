@@ -1436,6 +1436,26 @@ class PayloopApp {
         this.updateUI();
     }
 
+    // Changer manuellement le statut d'une facture (liste déroulante dans le tableau des factures)
+    async changeInvoiceStatus(invoiceId, newStatus) {
+        const invoice = this.data.invoices.find(inv => inv.id == invoiceId);
+        if (!invoice || invoice.status === newStatus) return;
+
+        try {
+            await apiRequest(`/invoices/${invoiceId}/statut`, {
+                method: 'PATCH',
+                body: JSON.stringify({ statut: newStatus })
+            });
+            invoice.status = newStatus;
+            this.updateUI();
+            this.showNotification('Statut de la facture mis à jour', 'success');
+        } catch (error) {
+            console.error('Erreur changement statut facture:', error);
+            this.showNotification(error.message || 'Erreur lors du changement de statut', 'error');
+            this.updateInvoicesTable(); // remet la liste déroulante sur l'ancien statut
+        }
+    }
+
     // UI Management
     initEventListeners() {
         // Navigation
@@ -1779,9 +1799,11 @@ class PayloopApp {
                     <td class="px-6 py-4">${this.formatCurrency(invoice.tax)}</td>
                     <td class="px-6 py-4 font-bold">${this.formatCurrency(invoice.total)}</td>
                     <td class="px-6 py-4">
-                        <span class="px-2 py-1 rounded-full text-xs ${statusColors[invoice.status] || statusColors.brouillon}">
-                            ${this.getStatusText(invoice.status)}
-                        </span>
+                        <select onchange="app.changeInvoiceStatus(${invoice.id}, this.value)" class="px-2 py-1 rounded-full text-xs border-0 cursor-pointer ${statusColors[invoice.status] || statusColors.brouillon}">
+                            ${['brouillon', 'envoyee', 'en_attente_paiement', 'payee', 'annulee'].map(s =>
+                                `<option value="${s}" ${invoice.status === s ? 'selected' : ''}>${this.getStatusText(s)}</option>`
+                            ).join('')}
+                        </select>
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex space-x-2">
