@@ -8,6 +8,7 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         .lucide { width: 20px; height: 20px; }
         .chart-container { position: relative; height: 250px; }
@@ -2192,13 +2193,13 @@ class PayloopApp {
     }
 
     // Reports
-    generateMonthlyReport() {
-        const container = document.getElementById('monthly-report');
-        if (!container) return;
+    // Calcule les chiffres du rapport mensuel (mois en cours). Centralisé ici pour que l'aperçu
+    // à l'écran et le PDF téléchargé affichent toujours exactement les mêmes chiffres.
+    getMonthlyReportData() {
+        const now = new Date();
+        const thisMonth = now.getMonth();
+        const thisYear = now.getFullYear();
 
-        const thisMonth = new Date().getMonth();
-        const thisYear = new Date().getFullYear();
-        
         const monthlyInvoices = this.data.invoices.filter(inv => {
             const invDate = new Date(inv.dateEmission || inv.createdAt);
             return invDate.getMonth() === thisMonth && invDate.getFullYear() === thisYear;
@@ -2211,28 +2212,46 @@ class PayloopApp {
 
         const totalInvoiced = monthlyInvoices.reduce((sum, inv) => sum + inv.total, 0);
         const totalReceived = monthlyPayments.reduce((sum, payment) => sum + payment.amount, 0);
+        let label = now.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+        label = label.charAt(0).toUpperCase() + label.slice(1);
+
+        return {
+            label,
+            invoiceCount: monthlyInvoices.length,
+            totalInvoiced,
+            paymentCount: monthlyPayments.length,
+            totalReceived,
+            recoveryRate: totalInvoiced > 0 ? Math.round((totalReceived / totalInvoiced) * 100) : 0
+        };
+    }
+
+    generateMonthlyReport() {
+        const container = document.getElementById('monthly-report');
+        if (!container) return;
+
+        const data = this.getMonthlyReportData();
 
         container.innerHTML = `
             <div class="space-y-2">
                 <div class="flex justify-between">
                     <span>Factures émises:</span>
-                    <span class="font-bold">${monthlyInvoices.length}</span>
+                    <span class="font-bold">${data.invoiceCount}</span>
                 </div>
                 <div class="flex justify-between">
                     <span>Montant facturé:</span>
-                    <span class="font-bold">${this.formatCurrency(totalInvoiced)}</span>
+                    <span class="font-bold">${this.formatCurrency(data.totalInvoiced)}</span>
                 </div>
                 <div class="flex justify-between">
                     <span>Paiements reçus:</span>
-                    <span class="font-bold">${monthlyPayments.length}</span>
+                    <span class="font-bold">${data.paymentCount}</span>
                 </div>
                 <div class="flex justify-between">
                     <span>Montant encaissé:</span>
-                    <span class="font-bold text-green-600">${this.formatCurrency(totalReceived)}</span>
+                    <span class="font-bold text-green-600">${this.formatCurrency(data.totalReceived)}</span>
                 </div>
                 <div class="flex justify-between border-t pt-2">
                     <span>Taux de recouvrement:</span>
-                    <span class="font-bold">${totalInvoiced > 0 ? Math.round((totalReceived / totalInvoiced) * 100) : 0}%</span>
+                    <span class="font-bold">${data.recoveryRate}%</span>
                 </div>
             </div>
         `;
@@ -2645,7 +2664,43 @@ function handleImport(event) {
 
 function generateMonthlyReport() {
     app.generateMonthlyReport();
-    app.showNotification('Rapport mensuel généré', 'success');
+    downloadMonthlyReportPDF();
+}
+
+// Construit et télécharge automatiquement le rapport mensuel en PDF, avec les mêmes chiffres
+// que l'aperçu affiché à l'écran.
+function downloadMonthlyReportPDF() {
+    const data = app.getMonthlyReportData();
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text('Rapport mensuel', 14, 20);
+    doc.setFontSize(11);
+    doc.text(`Entreprise : ${app.data.settings.companyName}`, 14, 30);
+    doc.text(`Période : ${data.label}`, 14, 37);
+    doc.text(`Généré le : ${new Date().toLocaleDateString('fr-FR')}`, 14, 44);
+
+    const rows = [
+        ['Factures émises', String(data.invoiceCount)],
+        ['Montant facturé', app.formatCurrency(data.totalInvoiced)],
+        ['Paiements reçus', String(data.paymentCount)],
+        ['Montant encaissé', app.formatCurrency(data.totalReceived)],
+        ['Taux de recouvrement', data.recoveryRate + '%']
+    ];
+
+    let y = 58;
+    doc.setFontSize(12);
+    rows.forEach(([label, value]) => {
+        doc.text(label, 14, y);
+        doc.text(value, 120, y);
+        y += 10;
+    });
+
+    const fileSuffix = data.label.toLowerCase().replace(/\s+/g, '-');
+    doc.save(`rapport-mensuel-${fileSuffix}.pdf`);
+
+    app.showNotification(`Rapport mensuel téléchargé (${data.label})`, 'success');
 }
 
 function generateTaxReport() {
