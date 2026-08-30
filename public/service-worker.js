@@ -7,8 +7,10 @@
 // ci-dessous (autre que dashboard.html/login.html, toujours récupérés en priorité sur le réseau) change.
 // Étape 4 : ajout de la police Plus Jakarta Sans (hébergée sur le site plutôt que via Google Fonts,
 // pour qu'elle continue de s'afficher correctement même hors-ligne) — cache encore augmenté.
+// Étape 5 : nouvelle icône d'onglet (sans carré blanc) et système de traduction FR/EN de la page
+// d'accueil — cache encore augmenté.
 
-const CACHE_NAME = 'payloop-shell-v4';
+const CACHE_NAME = 'payloop-shell-v5';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [
@@ -22,6 +24,9 @@ const PRECACHE_URLS = [
   '/images/logo-payloop-sidebar-white%20(1).svg',
   '/images/icon-192.png',
   '/images/icon-512.png',
+  '/images/icon-favicon-192.png',
+  '/i18n.js',
+  '/i18n-home.js',
   '/fonts/plus-jakarta-sans/plus-jakarta-sans.css',
   '/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-400-normal.woff2',
   '/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-500-normal.woff2',
