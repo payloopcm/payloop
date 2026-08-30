@@ -7,15 +7,13 @@
     "start": "node index.js",
     "dev": "node index.js"
   },
-  "keywords": ["fintech", "cameroon", "mobile-money", "dohone"],
+  "keywords": ["fintech", "cameroon", "mobile-money"],
   "author": "Ibrahim LAMARO",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "5.22.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
-    "pdfkit": "^0.15.0",
-    "prisma": "5.22.0"
+    "pdfkit": "^0.15.0"
   }
 }
