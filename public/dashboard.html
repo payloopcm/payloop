@@ -6,6 +6,7 @@
     <title>Payloop — Gestion automatisée pour PME </title>
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#111827">
+    <script src="/offline-store.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1224,9 +1225,28 @@ class PayloopApp {
             });
 
             document.getElementById('data-status').textContent = `${this.data.clients.length} clients, ${this.data.invoices.length} factures`;
+
+            // Étape 2 du mode hors-ligne : on garde une copie locale des données
+            // fraîchement chargées, pour pouvoir les consulter sans connexion la prochaine fois.
+            await saveOfflineSnapshot(this.data);
         } catch (error) {
             console.error('Erreur chargement données:', error);
-            this.showNotification('Impossible de charger les données depuis le serveur', 'error');
+
+            // Étape 2 du mode hors-ligne : si le serveur est injoignable, on affiche
+            // la dernière copie locale enregistrée plutôt que de laisser l'écran vide.
+            const snapshot = await loadOfflineSnapshot();
+            if (snapshot) {
+                this.data.clients = snapshot.clients || [];
+                this.data.products = snapshot.products || [];
+                this.data.invoices = snapshot.invoices || [];
+                this.data.payments = snapshot.payments || [];
+                this.data.migrationHistory = snapshot.migrationHistory || [];
+                const savedDate = new Date(snapshot.savedAt).toLocaleString('fr-FR');
+                document.getElementById('data-status').textContent = `Mode hors-ligne — dernières données du ${savedDate}`;
+                this.showNotification('Pas de connexion : affichage des dernières données enregistrées', 'error');
+            } else {
+                this.showNotification('Impossible de charger les données depuis le serveur', 'error');
+            }
         }
     }
 

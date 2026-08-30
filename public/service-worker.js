@@ -1,13 +1,15 @@
 // Service Worker PayLoop — Étape 1 : mise en cache de l'appli pour un chargement hors-ligne.
-// Ne gère pas encore les données (factures, clients...) hors-ligne : ça viendra dans une étape suivante.
+// Étape 2 : les données (factures, clients...) sont maintenant aussi gardées en copie locale,
+// via offline-store.js — ce fichier doit donc lui aussi être mis en cache.
 
-const CACHE_NAME = 'payloop-shell-v1';
+const CACHE_NAME = 'payloop-shell-v2';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [
   '/dashboard.html',
   '/login.html',
   '/manifest.json',
+  '/offline-store.js',
   '/images/logo.png',
   '/images/logo-ht.png',
   '/images/logo st.png',
