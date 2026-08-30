@@ -2667,6 +2667,14 @@ function generateMonthlyReport() {
     downloadMonthlyReportPDF();
 }
 
+// Le séparateur de milliers de formatCurrency() est une espace insécable fine (U+202F), un
+// caractère absent de la police standard utilisée par jsPDF : sans conversion, il fait planter
+// l'affichage du texte qui la suit dans le PDF (d'où les "&" observés à la place des montants).
+// On la remplace par une espace normale, uniquement pour le rendu PDF.
+function formatCurrencyForPDF(amount) {
+    return app.formatCurrency(amount).replace(/[  ]/g, ' ');
+}
+
 // Construit et télécharge automatiquement le rapport mensuel en PDF, avec les mêmes chiffres
 // que l'aperçu affiché à l'écran.
 function downloadMonthlyReportPDF() {
@@ -2683,9 +2691,9 @@ function downloadMonthlyReportPDF() {
 
     const rows = [
         ['Factures émises', String(data.invoiceCount)],
-        ['Montant facturé', app.formatCurrency(data.totalInvoiced)],
+        ['Montant facturé', formatCurrencyForPDF(data.totalInvoiced)],
         ['Paiements reçus', String(data.paymentCount)],
-        ['Montant encaissé', app.formatCurrency(data.totalReceived)],
+        ['Montant encaissé', formatCurrencyForPDF(data.totalReceived)],
         ['Taux de recouvrement', data.recoveryRate + '%']
     ];
 
