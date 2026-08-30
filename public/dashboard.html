@@ -541,9 +541,10 @@
         <!-- Taxes View -->
         <div id="taxes-view" class="view">
             <div class="space-y-6">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center flex-wrap gap-3">
                     <h2 class="text-2xl font-bold">Gestion Fiscale</h2>
-                    <div class="flex space-x-3">
+                    <div class="flex items-center space-x-3">
+                        <select id="tax-period-select" class="border border-gray-300 rounded-lg px-3 py-2 text-sm"></select>
                         <button onclick="generateTaxDeclaration()" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
                             <i data-lucide="file-text" class="mr-2"></i>
                             Déclaration TVA
@@ -558,11 +559,11 @@
                 <!-- Tax Overview -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-white p-6 rounded-lg shadow-sm border">
-                        <h3 class="font-semibold text-gray-700 mb-4">TVA collectée (19.25%)</h3>
+                        <h3 class="font-semibold text-gray-700 mb-4" id="vat-collected-title">TVA collectée</h3>
                         <div class="text-2xl font-bold text-blue-600" id="vat-collected">0 FCFA</div>
-                        <div class="text-sm text-gray-600 mt-1">Sur CA facturé</div>
+                        <div class="text-sm text-gray-600 mt-1">Sur CA facturé de la période sélectionnée</div>
                         <div class="mt-4">
-                            <div class="text-xs text-gray-500 mb-1">Période actuelle</div>
+                            <div class="text-xs text-gray-500 mb-1">Période sélectionnée</div>
                             <div class="w-full bg-gray-200 rounded-full h-2">
                                 <div class="bg-blue-600 h-2 rounded-full" style="width: 75%"></div>
                             </div>
@@ -571,7 +572,7 @@
                     </div>
 
                     <div class="bg-white p-6 rounded-lg shadow-sm border">
-                        <h3 class="font-semibold text-gray-700 mb-4">CA mensuel HT</h3>
+                        <h3 class="font-semibold text-gray-700 mb-4">CA HT de la période</h3>
                         <div class="text-2xl font-bold text-green-600" id="monthly-revenue-ht">0 FCFA</div>
                         <div class="text-sm text-gray-600 mt-1">Chiffre d'affaires HT</div>
                         <div class="mt-4 space-y-2">
@@ -654,8 +655,8 @@
                                 <div id="current-tax-report" class="space-y-2 text-sm">
                                     <!-- Populated by JavaScript -->
                                 </div>
-                                <button onclick="generateTaxReport()" class="mt-4 w-full py-2 bg-blue-600 text-white rounded">
-                                    Générer rapport TVA
+                                <button onclick="generateTaxDeclaration()" class="mt-4 w-full py-2 bg-blue-600 text-white rounded">
+                                    Télécharger rapport TVA (Excel)
                                 </button>
                             </div>
                             <div>
@@ -1456,6 +1457,13 @@ class PayloopApp {
             });
         });
 
+        // Sélecteur de période (vue Fiscalité) : rafraîchit les chiffres quand on change de mois
+        populateTaxPeriodSelect();
+        const taxPeriodSelect = document.getElementById('tax-period-select');
+        if (taxPeriodSelect) {
+            taxPeriodSelect.addEventListener('change', () => this.updateTaxData());
+        }
+
         // Set default date for payment form
         const today = new Date().toISOString().split('T')[0];
         document.addEventListener('DOMContentLoaded', () => {
@@ -1917,18 +1925,29 @@ class PayloopApp {
         }
     }
 
+    // Renvoie les factures dont la date de création tombe dans le mois/année donnés.
+    // Utilisé pour que "TVA collectée" etc. reflètent la période sélectionnée, pas le cumul total.
+    getInvoicesForTaxPeriod(year, month) {
+        return this.data.invoices.filter(inv => {
+            const d = new Date(inv.createdAt);
+            return d.getFullYear() === year && d.getMonth() === month;
+        });
+    }
+
     updateTaxData() {
-        const paidInvoices = this.data.invoices.filter(inv => inv.status === 'payee');
+        const period = getSelectedTaxPeriod();
+        const invoicesInPeriod = this.getInvoicesForTaxPeriod(period.year, period.month);
+        const paidInvoices = invoicesInPeriod.filter(inv => inv.status === 'payee');
+        const pendingInvoices = invoicesInPeriod.filter(inv => inv.status !== 'payee');
         const totalRevenue = paidInvoices.reduce((sum, inv) => sum + inv.subtotal, 0);
         const totalTax = paidInvoices.reduce((sum, inv) => sum + inv.tax, 0);
-        const pendingInvoices = this.data.invoices.filter(inv => inv.status !== 'payee').length;
 
         // Update tax elements
         const elements = {
             'vat-collected': this.formatCurrency(totalTax),
             'monthly-revenue-ht': this.formatCurrency(totalRevenue),
             'paid-invoices-tax': paidInvoices.length,
-            'pending-invoices-tax': pendingInvoices
+            'pending-invoices-tax': pendingInvoices.length
         };
 
         Object.entries(elements).forEach(([id, value]) => {
@@ -1938,11 +1957,15 @@ class PayloopApp {
             }
         });
 
+        const vatTitleElement = document.getElementById('vat-collected-title');
+        if (vatTitleElement) {
+            vatTitleElement.textContent = `TVA collectée (${this.data.settings.taxRate}%)`;
+        }
+
         // Update tax period
         const taxPeriodElement = document.getElementById('tax-period');
         if (taxPeriodElement) {
-            const currentMonth = new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
-            taxPeriodElement.textContent = currentMonth;
+            taxPeriodElement.textContent = period.label.charAt(0).toUpperCase() + period.label.slice(1);
         }
 
         // Update current tax report
@@ -1953,13 +1976,19 @@ class PayloopApp {
         const container = document.getElementById('current-tax-report');
         if (!container) return;
 
-        const paidInvoices = this.data.invoices.filter(inv => inv.status === 'payee');
+        const period = getSelectedTaxPeriod();
+        const paidInvoices = this.getInvoicesForTaxPeriod(period.year, period.month).filter(inv => inv.status === 'payee');
         const totalRevenue = paidInvoices.reduce((sum, inv) => sum + inv.subtotal, 0);
         const totalTax = paidInvoices.reduce((sum, inv) => sum + inv.tax, 0);
+        const periodLabel = period.label.charAt(0).toUpperCase() + period.label.slice(1);
 
         container.innerHTML = `
+            <div class="flex justify-between text-gray-500">
+                <span>Période:</span>
+                <span class="font-medium">${periodLabel}</span>
+            </div>
             <div class="flex justify-between">
-                <span>CA HT du mois:</span>
+                <span>CA HT:</span>
                 <span class="font-bold">${this.formatCurrency(totalRevenue)}</span>
             </div>
             <div class="flex justify-between">
@@ -3005,19 +3034,100 @@ function calculateTaxEstimate() {
     document.getElementById('calc-irpp').textContent = app.formatCurrency(irpp);
 }
 
+// Remplit le sélecteur de période de la vue Fiscalité avec les 24 derniers mois.
+// Par défaut, le mois précédent est sélectionné (celui qu'on déclare avant le 15 du mois en cours).
+function populateTaxPeriodSelect() {
+    const select = document.getElementById('tax-period-select');
+    if (!select) return;
+
+    const now = new Date();
+    const options = [];
+    for (let i = 1; i <= 24; i++) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        let label = d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+        label = label.charAt(0).toUpperCase() + label.slice(1);
+        options.push(`<option value="${value}">${label}</option>`);
+    }
+    select.innerHTML = options.join('');
+}
+
+// Lit la période choisie dans le sélecteur (année/mois). Si le sélecteur n'est pas encore
+// rempli, se replie sur le mois précédent.
+function getSelectedTaxPeriod() {
+    const select = document.getElementById('tax-period-select');
+    if (select && select.value) {
+        const [y, m] = select.value.split('-').map(Number);
+        const label = new Date(y, m - 1, 1).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+        return { year: y, month: m - 1, label };
+    }
+    const now = new Date();
+    const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    return {
+        year: prev.getFullYear(),
+        month: prev.getMonth(),
+        label: prev.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+    };
+}
+
+// Génère et télécharge la déclaration TVA de la période sélectionnée en Excel :
+// une feuille "Résumé" (totaux) et une feuille "Factures" (détail des factures payées).
 function generateTaxDeclaration() {
-    const paidInvoices = app.data.invoices.filter(inv => inv.status === 'payee');
-    const totalTax = paidInvoices.reduce((sum, inv) => sum + inv.tax, 0);
-    
-    app.showNotification(`Déclaration TVA générée: ${app.formatCurrency(totalTax)} à déclarer`, 'success');
+    const period = getSelectedTaxPeriod();
+    const periodLabel = period.label.charAt(0).toUpperCase() + period.label.slice(1);
+    const paidInvoices = app.getInvoicesForTaxPeriod(period.year, period.month).filter(inv => inv.status === 'payee');
+
+    if (paidInvoices.length === 0) {
+        app.showNotification(`Aucune facture payée pour ${period.label} : rien à déclarer`, 'warning');
+        return;
+    }
+
+    const totalHT = paidInvoices.reduce((sum, inv) => sum + inv.subtotal, 0);
+    const totalTVA = paidInvoices.reduce((sum, inv) => sum + inv.tax, 0);
+    const totalTTC = totalHT + totalTVA;
+
+    const summarySheet = XLSX.utils.aoa_to_sheet([
+        ['Déclaration TVA'],
+        ['Entreprise', app.data.settings.companyName],
+        ['Période', periodLabel],
+        ['Généré le', new Date().toLocaleDateString('fr-FR')],
+        [],
+        ['CA HT', totalHT],
+        [`TVA collectée (${app.data.settings.taxRate}%)`, totalTVA],
+        ['CA TTC', totalTTC],
+        ['Nombre de factures payées', paidInvoices.length]
+    ]);
+
+    const detailRows = paidInvoices.map(inv => {
+        const client = app.data.clients.find(c => c.id == inv.clientId);
+        return {
+            'N° Facture': inv.number,
+            'Client': client ? client.name : '-',
+            'Date': app.formatDate(inv.createdAt),
+            'CA HT': inv.subtotal,
+            'TVA': inv.tax,
+            'TTC': inv.total
+        };
+    });
+    const detailSheet = XLSX.utils.json_to_sheet(detailRows);
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, summarySheet, 'Résumé');
+    XLSX.utils.book_append_sheet(workbook, detailSheet, 'Factures');
+
+    const fileName = `declaration-tva-${period.year}-${String(period.month + 1).padStart(2, '0')}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
+
+    app.showNotification(`Déclaration TVA téléchargée (${period.label}) : ${app.formatCurrency(totalTVA)} de TVA`, 'success');
 }
 
 function calculateTaxes() {
-    const paidInvoices = app.data.invoices.filter(inv => inv.status === 'payee');
+    const period = getSelectedTaxPeriod();
+    const paidInvoices = app.getInvoicesForTaxPeriod(period.year, period.month).filter(inv => inv.status === 'payee');
     const totalRevenue = paidInvoices.reduce((sum, inv) => sum + inv.subtotal, 0);
     const totalTax = paidInvoices.reduce((sum, inv) => sum + inv.tax, 0);
-    
-    app.showNotification(`Calcul fiscal: CA HT ${app.formatCurrency(totalRevenue)}, TVA ${app.formatCurrency(totalTax)}`, 'success');
+
+    app.showNotification(`Calcul fiscal (${period.label}): CA HT ${app.formatCurrency(totalRevenue)}, TVA ${app.formatCurrency(totalTax)}`, 'success');
 }
 
 // Update existing functions to handle new views
