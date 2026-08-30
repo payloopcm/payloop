@@ -46,24 +46,26 @@
             <a href="/" class="flex items-center">
                 <img src="/images/logo-ht.png" alt="PayLoop" class="h-16 w-auto">
             </a>
-            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-600">
-                <a href="#solution" class="hover:text-gray-900" data-i18n="nav.solution">La solution</a>
-                <a href="#fonctionnalites" class="hover:text-gray-900" data-i18n="nav.features">Fonctionnalités</a>
-                <a href="#comment-ca-marche" class="hover:text-gray-900" data-i18n="nav.how">Comment ça marche</a>
-                <a href="#tarifs" class="hover:text-gray-900" data-i18n="nav.pricing">Tarifs</a>
-            </nav>
-            <div class="hidden md:inline-flex items-center bg-gray-50 border border-gray-200 rounded-full p-1 text-xs font-medium mr-2">
-                <button id="lang-btn-fr" onclick="setLang('fr')" class="lang-btn flex items-center gap-1.5 px-3 py-1.5 rounded-full">
-                    <svg width="16" height="16" viewBox="0 0 20 20" class="rounded-sm"><rect width="20" height="20" fill="#fff"/><rect width="6.67" height="20" fill="#002654"/><rect x="13.33" width="6.67" height="20" fill="#ED2939"/></svg>
-                    <span>FR</span>
-                </button>
-                <button id="lang-btn-en" onclick="setLang('en')" class="lang-btn flex items-center gap-1.5 px-3 py-1.5 rounded-full">
-                    <svg width="16" height="16" viewBox="0 0 20 20" class="rounded-sm"><rect width="20" height="20" fill="#012169"/><path d="M0,0 L20,20 M20,0 L0,20" stroke="#fff" stroke-width="4"/><path d="M0,0 L20,20 M20,0 L0,20" stroke="#C8102E" stroke-width="2"/><path d="M10,0 V20 M0,10 H20" stroke="#fff" stroke-width="6"/><path d="M10,0 V20 M0,10 H20" stroke="#C8102E" stroke-width="3.6"/></svg>
-                    <span>EN</span>
-                </button>
+            <div class="hidden md:flex items-center gap-6">
+                <nav class="flex items-center space-x-6 text-sm font-medium text-gray-600 whitespace-nowrap">
+                    <a href="#solution" class="hover:text-gray-900" data-i18n="nav.solution">La solution</a>
+                    <a href="#fonctionnalites" class="hover:text-gray-900" data-i18n="nav.features">Fonctionnalités</a>
+                    <a href="#comment-ca-marche" class="hover:text-gray-900" data-i18n="nav.how">Comment ça marche</a>
+                    <a href="#tarifs" class="hover:text-gray-900" data-i18n="nav.pricing">Tarifs</a>
+                </nav>
+                <div class="inline-flex items-center bg-gray-50 border border-gray-200 rounded-full p-1 text-xs font-medium whitespace-nowrap">
+                    <button id="lang-btn-fr" onclick="setLang('fr')" class="lang-btn flex items-center gap-1.5 px-3 py-1.5 rounded-full">
+                        <svg width="16" height="16" viewBox="0 0 20 20" class="rounded-sm"><rect width="20" height="20" fill="#fff"/><rect width="6.67" height="20" fill="#002654"/><rect x="13.33" width="6.67" height="20" fill="#ED2939"/></svg>
+                        <span>FR</span>
+                    </button>
+                    <button id="lang-btn-en" onclick="setLang('en')" class="lang-btn flex items-center gap-1.5 px-3 py-1.5 rounded-full">
+                        <svg width="16" height="16" viewBox="0 0 20 20" class="rounded-sm"><rect width="20" height="20" fill="#012169"/><path d="M0,0 L20,20 M20,0 L0,20" stroke="#fff" stroke-width="4"/><path d="M0,0 L20,20 M20,0 L0,20" stroke="#C8102E" stroke-width="2"/><path d="M10,0 V20 M0,10 H20" stroke="#fff" stroke-width="6"/><path d="M10,0 V20 M0,10 H20" stroke="#C8102E" stroke-width="3.6"/></svg>
+                        <span>EN</span>
+                    </button>
+                </div>
             </div>
             <div class="flex items-center space-x-3">
-                <a href="/login.html" class="hidden sm:inline-block text-sm font-medium text-gray-700 hover:text-gray-900 px-3 py-2" data-i18n="nav.login">
+                <a href="/login.html" class="hidden sm:inline-block text-sm font-medium text-gray-700 hover:text-gray-900 px-3 py-2 whitespace-nowrap" data-i18n="nav.login">
                     Se connecter
                 </a>
                 <a href="/login.html" class="inline-block text-sm font-medium text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md" data-i18n="nav.cta">
