@@ -137,9 +137,9 @@
                     <!-- User Menu Dropdown -->
                     <div class="relative">
                         <button id="userMenuButton" class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition">
-                            <div class="flex items-center space-x-2 bg-green-50 px-3 py-1 rounded-full">
-                                <div class="w-2 h-2 bg-green-500 rounded-full status-indicator"></div>
-                                <span class="text-green-700 text-sm font-medium">En ligne</span>
+                            <div id="connection-badge" class="flex items-center space-x-2 bg-green-50 px-3 py-1 rounded-full">
+                                <div id="connection-dot" class="w-2 h-2 bg-green-500 rounded-full status-indicator"></div>
+                                <span id="connection-text" class="text-green-700 text-sm font-medium">En ligne</span>
                             </div>
                             
                             <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
@@ -1146,6 +1146,14 @@ class PayloopApp {
     this.initEventListeners();
     this.updateUI();
     this.showNotification('Application Payloop chargée avec succès!', 'success');
+
+    // Étape 3 du mode hors-ligne : on relance l'envoi des actions restées en attente
+    // (au cas où il en resterait d'avant), et on réagit aux changements de connexion
+    // pour resynchroniser automatiquement dès que le réseau revient.
+    await this.updateConnectionBadge();
+    window.addEventListener('online', () => this.syncOfflineQueue());
+    window.addEventListener('offline', () => this.updateConnectionBadge());
+    this.syncOfflineQueue();
 }
 
     // Data Management — charge les vraies données depuis payloop-api (plus de localStorage)
@@ -1368,14 +1376,26 @@ class PayloopApp {
             };
         });
 
-        const result = await apiRequest('/invoices', {
-            method: 'POST',
-            body: JSON.stringify({
-                client_id: parseInt(invoiceData.clientId),
-                items,
-                date_echeance: invoiceData.dueDate || null
-            })
-        });
+        const payload = {
+            client_id: parseInt(invoiceData.clientId),
+            items,
+            date_echeance: invoiceData.dueDate || null
+        };
+
+        let result;
+        try {
+            result = await apiRequest('/invoices', {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+        } catch (error) {
+            // Étape 3 du mode hors-ligne : si le serveur est injoignable, on crée la
+            // facture localement en attendant de pouvoir l'envoyer.
+            if (isOfflineError(error)) {
+                return await this.addInvoiceOffline(invoiceData, items, payload);
+            }
+            throw error;
+        }
 
         const apiInvoice = result.invoice;
         const subtotal = parseFloat(apiInvoice.total);
@@ -1403,6 +1423,43 @@ class PayloopApp {
 
         this.data.invoices.push(invoice);
         this.updateUI();
+        return invoice;
+    }
+
+    // Étape 3 du mode hors-ligne : crée la facture uniquement en local, avec un identifiant
+    // temporaire, et la met en file d'attente pour l'envoyer au serveur automatiquement
+    // dès que la connexion reviendra.
+    async addInvoiceOffline(invoiceData, items, payload) {
+        const subtotal = items.reduce((sum, it) => sum + (it.quantite * it.prix_unitaire), 0);
+        const tax = subtotal * (this.data.settings.taxRate / 100);
+
+        const invoice = {
+            id: 'offline-' + Date.now(),
+            number: 'En attente de synchronisation',
+            clientId: invoiceData.clientId,
+            items: items.map(it => ({
+                productId: it.product_id,
+                description: it.description,
+                quantity: it.quantite,
+                price: it.prix_unitaire,
+                total: it.quantite * it.prix_unitaire
+            })),
+            subtotal,
+            tax,
+            total: subtotal + tax,
+            status: 'brouillon',
+            dueDate: invoiceData.dueDate || null,
+            dateEmission: new Date().toISOString(),
+            createdAt: new Date().toISOString(),
+            pendingSync: true
+        };
+
+        this.data.invoices.push(invoice);
+        await queueOfflineAction({ type: 'createInvoice', tempId: invoice.id, payload });
+        await saveOfflineSnapshot(this.data);
+        this.updateUI();
+        this.updateConnectionBadge();
+        this.showNotification('Pas de connexion : facture enregistrée, elle sera envoyée automatiquement au retour du réseau', 'error');
         return invoice;
     }
 
@@ -1446,13 +1503,19 @@ class PayloopApp {
 
     async deleteItem(type, id) {
         const endpoints = { clients: '/clients', products: '/products', invoices: '/invoices', payments: '/payments' };
-        if (endpoints[type]) {
+        // Étape 3 du mode hors-ligne : une facture pas encore synchronisée n'existe pas
+        // encore côté serveur — inutile (et impossible) d'appeler l'API pour la supprimer.
+        const isOfflineInvoice = type === 'invoices' && typeof id === 'string' && id.startsWith('offline-');
+        if (endpoints[type] && !isOfflineInvoice) {
             try {
                 await apiRequest(`${endpoints[type]}/${id}`, { method: 'DELETE' });
             } catch (error) {
                 this.showNotification(error.message || 'Erreur lors de la suppression', 'error');
                 return;
             }
+        }
+        if (isOfflineInvoice) {
+            await removeQueuedActionsForTempId(id);
         }
         this.data[type] = this.data[type].filter(item => item.id != id);
         this.updateUI();
@@ -1463,6 +1526,16 @@ class PayloopApp {
         const invoice = this.data.invoices.find(inv => inv.id == invoiceId);
         if (!invoice || invoice.status === newStatus) return;
 
+        // Étape 3 du mode hors-ligne : cette facture n'a pas encore été envoyée au serveur —
+        // on se contente de changer son statut localement, il partira avec elle à la synchronisation.
+        if (typeof invoiceId === 'string' && invoiceId.startsWith('offline-')) {
+            invoice.status = newStatus;
+            await saveOfflineSnapshot(this.data);
+            this.updateUI();
+            this.showNotification('Statut mis à jour localement (en attente de connexion)', 'success');
+            return;
+        }
+
         try {
             await apiRequest(`/invoices/${invoiceId}/statut`, {
                 method: 'PATCH',
@@ -1472,9 +1545,125 @@ class PayloopApp {
             this.updateUI();
             this.showNotification('Statut de la facture mis à jour', 'success');
         } catch (error) {
+            // Étape 3 du mode hors-ligne : le serveur est injoignable — on applique quand
+            // même le changement, et on l'enverra automatiquement au retour du réseau.
+            if (isOfflineError(error)) {
+                invoice.status = newStatus;
+                invoice.pendingSync = true;
+                await queueOfflineAction({ type: 'changeStatus', invoiceId, newStatus });
+                await saveOfflineSnapshot(this.data);
+                this.updateUI();
+                this.updateConnectionBadge();
+                this.showNotification('Pas de connexion : statut enregistré, il sera envoyé automatiquement au retour du réseau', 'error');
+                return;
+            }
             console.error('Erreur changement statut facture:', error);
             this.showNotification(error.message || 'Erreur lors du changement de statut', 'error');
             this.updateInvoicesTable(); // remet la liste déroulante sur l'ancien statut
+        }
+    }
+
+    // Étape 3 du mode hors-ligne : rejoue dans l'ordre les actions mises en attente
+    // (factures créées ou statuts changés hors connexion) dès que le serveur redevient joignable.
+    async syncOfflineQueue() {
+        if (this.isSyncingOffline) return;
+        this.isSyncingOffline = true;
+        try {
+            let queue = await getOfflineQueue();
+            while (queue.length > 0) {
+                const stillOffline = !(await this.syncOneOfflineAction(queue[0]));
+                if (stillOffline) break; // on retentera au prochain retour de connexion
+                await removeOfflineQueueItem(queue[0].queueId);
+                queue = await getOfflineQueue();
+            }
+        } finally {
+            this.isSyncingOffline = false;
+            this.updateConnectionBadge();
+        }
+    }
+
+    // Envoie une action de la file au serveur. Renvoie false si le serveur est toujours
+    // injoignable (l'action reste en file pour plus tard) ; true dans tous les autres cas,
+    // pour ne pas bloquer indéfiniment les actions suivantes sur une erreur définitive.
+    async syncOneOfflineAction(item) {
+        try {
+            if (item.action.type === 'createInvoice') {
+                const result = await apiRequest('/invoices', {
+                    method: 'POST',
+                    body: JSON.stringify(item.action.payload)
+                });
+                const apiInvoice = result.invoice;
+                const localInvoice = this.data.invoices.find(inv => inv.id === item.action.tempId);
+                if (localInvoice) {
+                    const subtotal = parseFloat(apiInvoice.total);
+                    const tax = subtotal * (this.data.settings.taxRate / 100);
+                    const desiredStatus = localInvoice.status;
+                    localInvoice.id = apiInvoice.id;
+                    localInvoice.number = apiInvoice.numero_facture;
+                    localInvoice.subtotal = subtotal;
+                    localInvoice.tax = tax;
+                    localInvoice.total = subtotal + tax;
+                    localInvoice.status = apiInvoice.statut;
+                    localInvoice.dateEmission = apiInvoice.date_emission;
+                    localInvoice.createdAt = apiInvoice.created_at;
+                    localInvoice.pendingSync = false;
+                    // Si le statut avait été changé hors-ligne (avant même l'envoi de la facture),
+                    // on le renvoie maintenant avec le véritable identifiant reçu du serveur.
+                    if (desiredStatus !== apiInvoice.statut) {
+                        await queueOfflineAction({ type: 'changeStatus', invoiceId: apiInvoice.id, newStatus: desiredStatus });
+                    }
+                }
+            } else if (item.action.type === 'changeStatus') {
+                await apiRequest(`/invoices/${item.action.invoiceId}/statut`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ statut: item.action.newStatus })
+                });
+                const localInvoice = this.data.invoices.find(inv => inv.id == item.action.invoiceId);
+                if (localInvoice) {
+                    localInvoice.status = item.action.newStatus;
+                    localInvoice.pendingSync = false;
+                }
+            }
+            await saveOfflineSnapshot(this.data);
+            this.updateUI();
+            return true;
+        } catch (error) {
+            if (isOfflineError(error)) return false;
+            console.error('Erreur de synchronisation hors-ligne:', error);
+            this.showNotification("Erreur lors de l'envoi d'une action en attente : " + (error.message || ''), 'error');
+            return true;
+        }
+    }
+
+    // Étape 3 du mode hors-ligne : reflète l'état réel de la connexion et le nombre
+    // d'actions en attente dans le badge en haut de l'écran.
+    async updateConnectionBadge() {
+        const badge = document.getElementById('connection-badge');
+        const dot = document.getElementById('connection-dot');
+        const text = document.getElementById('connection-text');
+        if (!badge || !dot || !text) return;
+
+        const pendingCount = await getOfflineQueueCount();
+
+        badge.classList.remove('bg-green-50', 'bg-red-50', 'bg-yellow-50');
+        dot.classList.remove('bg-green-500', 'bg-red-500', 'bg-yellow-500');
+        text.classList.remove('text-green-700', 'text-red-700', 'text-yellow-700');
+
+        if (!navigator.onLine) {
+            badge.classList.add('bg-red-50');
+            dot.classList.add('bg-red-500');
+            text.classList.add('text-red-700');
+            text.textContent = pendingCount > 0 ? `Hors ligne (${pendingCount} en attente)` : 'Hors ligne';
+        } else if (pendingCount > 0) {
+            badge.classList.add('bg-yellow-50');
+            dot.classList.add('bg-yellow-500');
+            text.classList.add('text-yellow-700');
+            text.textContent = `Synchronisation en cours... (${pendingCount})`;
+        } else {
+            badge.classList.add('bg-green-50');
+            dot.classList.add('bg-green-500');
+            text.classList.add('text-green-700');
+            text.textContent = 'En ligne';
         }
     }
 
@@ -1815,13 +2004,16 @@ class PayloopApp {
 
             return `
                 <tr>
-                    <td class="px-6 py-4 font-mono text-sm">${invoice.number}</td>
+                    <td class="px-6 py-4 font-mono text-sm">
+                        ${invoice.number}
+                        ${invoice.pendingSync ? '<i data-lucide="clock" class="w-3 h-3 inline-block text-yellow-600 ml-1" title="En attente de synchronisation"></i>' : ''}
+                    </td>
                     <td class="px-6 py-4">${client?.name || 'Client supprimé'}</td>
                     <td class="px-6 py-4">${this.formatCurrency(invoice.subtotal)}</td>
                     <td class="px-6 py-4">${this.formatCurrency(invoice.tax)}</td>
                     <td class="px-6 py-4 font-bold">${this.formatCurrency(invoice.total)}</td>
                     <td class="px-6 py-4">
-                        <select onchange="app.changeInvoiceStatus(${invoice.id}, this.value)" class="px-2 py-1 rounded-full text-xs border-0 cursor-pointer ${statusColors[invoice.status] || statusColors.brouillon}">
+                        <select onchange="app.changeInvoiceStatus('${invoice.id}', this.value)" class="px-2 py-1 rounded-full text-xs border-0 cursor-pointer ${statusColors[invoice.status] || statusColors.brouillon}">
                             ${['brouillon', 'envoyee', 'en_attente_paiement', 'payee', 'annulee'].map(s =>
                                 `<option value="${s}" ${invoice.status === s ? 'selected' : ''}>${this.getStatusText(s)}</option>`
                             ).join('')}
@@ -1829,10 +2021,10 @@ class PayloopApp {
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex space-x-2">
-                            <button onclick="app.viewInvoice(${invoice.id})" class="text-blue-600 hover:text-blue-800">
+                            <button onclick="app.viewInvoice('${invoice.id}')" class="text-blue-600 hover:text-blue-800">
                                 <i data-lucide="eye" class="w-4 h-4"></i>
                             </button>
-                            <button onclick="app.deleteItem('invoices', ${invoice.id})" class="text-red-600 hover:text-red-800">
+                            <button onclick="app.deleteItem('invoices', '${invoice.id}')" class="text-red-600 hover:text-red-800">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -2629,9 +2821,13 @@ async function saveInvoice(event) {
     };
 
     try {
-        await app.addInvoice(invoiceData);
+        const invoice = await app.addInvoice(invoiceData);
         closeInvoiceModal();
-        app.showNotification('Facture créée avec succès!', 'success');
+        // Si la facture a été créée hors-ligne, addInvoice a déjà affiché la notification
+        // adaptée ("en attente de connexion") — pas besoin d'en afficher une deuxième.
+        if (!invoice.pendingSync) {
+            app.showNotification('Facture créée avec succès!', 'success');
+        }
     } catch (error) {
         app.showNotification(error.message || 'Erreur lors de la création de la facture', 'error');
     }
