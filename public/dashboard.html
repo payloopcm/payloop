@@ -1160,11 +1160,12 @@ class PayloopApp {
     // Data Management — charge les vraies données depuis payloop-api (plus de localStorage)
     async loadData() {
         try {
-            const [clientsRes, productsRes, invoicesRes, paymentsRes] = await Promise.all([
+            const [clientsRes, productsRes, invoicesRes, paymentsRes, migrationHistoryRes] = await Promise.all([
                 apiRequest('/clients'),
                 apiRequest('/products'),
                 apiRequest('/invoices'),
-                apiRequest('/payments')
+                apiRequest('/payments'),
+                apiRequest('/migration-history')
             ]);
 
             this.data.clients = (clientsRes?.clients || []).map(c => ({
@@ -1211,6 +1212,14 @@ class PayloopApp {
                 reference: pa.provider_reference,
                 date: pa.created_at,
                 createdAt: pa.created_at
+            }));
+
+            this.data.migrationHistory = (migrationHistoryRes?.history || []).map(h => ({
+                id: h.id,
+                type: h.type,
+                fileName: h.file_name,
+                itemsImported: h.items_imported,
+                date: h.created_at
             }));
 
             // Le revenu total par client n'est pas stocké en base : on le recalcule
@@ -1543,12 +1552,10 @@ class PayloopApp {
             }
         }
 
-        this.data.migrationHistory.push({
-            id: Date.now(),
+        await this.logMigrationImport({
             type: 'clients+products',
             fileName: files.map(f => f.name).join(', '),
-            itemsImported: totalClients + totalProducts,
-            date: new Date().toISOString()
+            itemsImported: totalClients + totalProducts
         });
         this.updateUI();
 
@@ -1609,6 +1616,7 @@ class PayloopApp {
         this.updateInventoryStats();
         this.updateTaxData();
         this.updateMigrationStats();
+        this.renderMigrationHistory();
         this.updateFormSelects();
     }
 
@@ -1983,6 +1991,60 @@ class PayloopApp {
                 element.textContent = value;
             }
         });
+    }
+
+    // Enregistre un import (Migration) côté serveur pour qu'il reste visible après un rechargement.
+    // Si l'enregistrement serveur échoue (ex: coupure réseau), on garde quand même une trace
+    // locale pour la session en cours plutôt que de perdre l'information silencieusement.
+    async logMigrationImport(entry) {
+        try {
+            const result = await apiRequest('/migration-history', {
+                method: 'POST',
+                body: JSON.stringify({
+                    file_name: entry.fileName,
+                    type: entry.type,
+                    items_imported: entry.itemsImported
+                })
+            });
+            const h = result.entry;
+            this.data.migrationHistory.push({
+                id: h.id,
+                type: h.type,
+                fileName: h.file_name,
+                itemsImported: h.items_imported,
+                date: h.created_at
+            });
+        } catch (error) {
+            console.error('Erreur enregistrement historique import (non bloquant):', error);
+            this.data.migrationHistory.push({ id: Date.now(), ...entry, date: new Date().toISOString() });
+        }
+    }
+
+    // Affiche la liste des imports effectués (le plus récent en premier) dans la vue Migration.
+    renderMigrationHistory() {
+        const container = document.getElementById('migration-history');
+        if (!container) return;
+
+        if (!this.data.migrationHistory || this.data.migrationHistory.length === 0) {
+            container.innerHTML = '<p class="text-gray-500 text-center">Aucun import effectué</p>';
+            return;
+        }
+
+        const sortedHistory = [...this.data.migrationHistory].sort((a, b) => (new Date(b.date) - new Date(a.date)) || (b.id - a.id));
+
+        container.innerHTML = sortedHistory.map(entry => {
+            const typeLabel = entry.type === 'clients' ? 'Clients' : entry.type === 'products' ? 'Produits' : 'Clients + Produits';
+            const dateLabel = new Date(entry.date).toLocaleString('fr-FR');
+            return `
+                <div class="flex items-center justify-between py-3 border-b last:border-b-0">
+                    <div>
+                        <div class="font-medium">${entry.fileName || 'Fichier'}</div>
+                        <div class="text-sm text-gray-500">${typeLabel} · ${dateLabel}</div>
+                    </div>
+                    <div class="text-sm text-green-700 font-medium">${entry.itemsImported} importé(s)</div>
+                </div>
+            `;
+        }).join('');
     }
 
     // Stock adjustment functions
@@ -2801,12 +2863,10 @@ function processImport() {
             }
 
             // Add to migration history
-            app.data.migrationHistory.push({
-                id: Date.now(),
+            await app.logMigrationImport({
                 type: importType,
                 fileName: file.name,
-                itemsImported: importedCount,
-                date: new Date().toISOString()
+                itemsImported: importedCount
             });
 
             app.updateUI();
