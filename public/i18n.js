@@ -66,6 +66,12 @@
   window.setLang = function (lang) {
     storeLang(lang);
     applyTranslations(lang);
+    // Le tableau de bord régénère lui-même certains blocs (tableaux, activité récente...) en
+    // JavaScript ; ces blocs ne sont pas des balises data-i18n, donc on prévient le reste du
+    // code pour qu'il les redessine dans la nouvelle langue, si une fonction a été fournie.
+    if (typeof window.payloopOnLangChange === 'function') {
+      try { window.payloopOnLangChange(lang); } catch (e) { console.error(e); }
+    }
   };
 
   // Pour les textes que le code JS de la page doit écrire lui-même à un moment donné (ex : un
@@ -75,6 +81,16 @@
     var lang = getStoredLang();
     var dict = (window.PAYLOOP_I18N && window.PAYLOOP_I18N[lang]) || {};
     return dict[key] !== undefined ? dict[key] : key;
+  };
+
+  // Comme payloopT, mais remplace {0}, {1}, ... par les valeurs fournies — pour les phrases avec
+  // un nom de client, un numéro de facture, etc. au milieu du texte.
+  window.payloopTF = function (key) {
+    var s = window.payloopT(key);
+    for (var i = 1; i < arguments.length; i++) {
+      s = s.split('{' + (i - 1) + '}').join(arguments[i]);
+    }
+    return s;
   };
   window.getPayloopLang = getStoredLang;
 

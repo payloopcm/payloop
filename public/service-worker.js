@@ -10,8 +10,10 @@
 // Étape 5 : nouvelle icône d'onglet (sans carré blanc) et système de traduction FR/EN de la page
 // d'accueil — cache encore augmenté.
 // Étape 6 : traduction FR/EN de la page de connexion — cache encore augmenté.
+// Étape 7 : police Plus Jakarta Sans et traduction FR/EN du tableau de bord (menu, barre du
+// haut, page d'accueil) — cache encore augmenté.
 
-const CACHE_NAME = 'payloop-shell-v6';
+const CACHE_NAME = 'payloop-shell-v7';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [
@@ -29,6 +31,7 @@ const PRECACHE_URLS = [
   '/i18n.js',
   '/i18n-home.js',
   '/i18n-login.js',
+  '/i18n-dashboard.js',
   '/fonts/plus-jakarta-sans/plus-jakarta-sans.css',
   '/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-400-normal.woff2',
   '/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-500-normal.woff2',

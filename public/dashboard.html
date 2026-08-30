@@ -18,6 +18,10 @@
     <style>
         body, .font-sans { font-family: 'Plus Jakarta Sans', sans-serif; }
         .lucide { width: 20px; height: 20px; }
+        /* Bouton FR/EN : la langue active est en blanc avec une ombre légère, l'autre reste grisée. */
+        .lang-btn { color: #9ca3af; transition: color .15s; }
+        .lang-btn.lang-active { background: #fff; color: #111827; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+        .lang-btn:not(.lang-active):hover { color: #4b5563; }
         .chart-container { position: relative; height: 250px; }
         .pie-chart-container { position: relative; height: 300px; }
         .status-indicator { animation: pulse 2s infinite; }
@@ -98,35 +102,35 @@
     <nav class="mt-8">
         <div data-view="dashboard" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800">
             <i data-lucide="bar-chart" class="mr-3"></i>
-            <span>Dashboard</span>
+            <span data-i18n="dash.nav.dashboard">Dashboard</span>
         </div>
         <div data-view="invoices" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800">
             <i data-lucide="file-text" class="mr-3"></i>
-            <span>Factures</span>
+            <span data-i18n="dash.nav.invoices">Factures</span>
         </div>
         <div data-view="payments" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800">
             <i data-lucide="smartphone" class="mr-3"></i>
-            <span>Paiements</span>
+            <span data-i18n="dash.nav.payments">Paiements</span>
         </div>
         <div data-view="clients" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800">
             <i data-lucide="users" class="mr-3"></i>
-            <span>Clients</span>
+            <span data-i18n="dash.nav.clients">Clients</span>
         </div>
         <div data-view="inventory" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800">
             <i data-lucide="package" class="mr-3"></i>
-            <span>Stock & Produits</span>
+            <span data-i18n="dash.nav.inventory">Stock & Produits</span>
         </div>
         <div data-view="migration" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800">
             <i data-lucide="database" class="mr-3"></i>
-            <span>Migration</span>
+            <span data-i18n="dash.nav.migration">Migration</span>
         </div>
         <div data-view="taxes" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800">
             <i data-lucide="file-text" class="mr-3"></i>
-            <span>Fiscalité</span>
+            <span data-i18n="dash.nav.taxes">Fiscalité</span>
         </div>
         <div data-view="reports" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800">
             <i data-lucide="trending-up" class="mr-3"></i>
-            <span>Rapports</span>
+            <span data-i18n="dash.nav.reports">Rapports</span>
         </div>
     </nav>
 </div>
@@ -135,22 +139,33 @@
 <div id="topbar" class="bg-white border-b border-gray-200 px-6 py-4 ml-64">
     <div class="flex justify-between items-center">
         <div>
-            <h1 id="page-title" class="text-xl font-semibold text-gray-900">Dashboard</h1>
+            <h1 id="page-title" class="text-xl font-semibold text-gray-900" data-i18n="dash.title.dashboard">Dashboard</h1>
         </div>
         <div class="flex items-center space-x-4">
+                    <!-- Bouton FR/EN -->
+                    <div class="inline-flex items-center bg-gray-100 border border-gray-200 rounded-full p-1 text-xs font-medium">
+                        <button id="lang-btn-fr" onclick="setLang('fr')" class="lang-btn flex items-center gap-1.5 px-3 py-1.5 rounded-full">
+                            <svg width="16" height="16" viewBox="0 0 20 20" class="rounded-sm"><rect width="20" height="20" fill="#fff"/><rect width="6.67" height="20" fill="#002654"/><rect x="13.33" width="6.67" height="20" fill="#ED2939"/></svg>
+                            <span>FR</span>
+                        </button>
+                        <button id="lang-btn-en" onclick="setLang('en')" class="lang-btn flex items-center gap-1.5 px-3 py-1.5 rounded-full">
+                            <svg width="16" height="16" viewBox="0 0 20 20" class="rounded-sm"><rect width="20" height="20" fill="#012169"/><path d="M0,0 L20,20 M20,0 L0,20" stroke="#fff" stroke-width="4"/><path d="M0,0 L20,20 M20,0 L0,20" stroke="#C8102E" stroke-width="2"/><path d="M10,0 V20 M0,10 H20" stroke="#fff" stroke-width="6"/><path d="M10,0 V20 M0,10 H20" stroke="#C8102E" stroke-width="3.6"/></svg>
+                            <span>EN</span>
+                        </button>
+                    </div>
                     <!-- User Menu Dropdown -->
                     <div class="relative">
                         <button id="userMenuButton" class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition">
                             <div id="connection-badge" class="flex items-center space-x-2 bg-green-50 px-3 py-1 rounded-full">
                                 <div id="connection-dot" class="w-2 h-2 bg-green-500 rounded-full status-indicator"></div>
-                                <span id="connection-text" class="text-green-700 text-sm font-medium">En ligne</span>
+                                <span id="connection-text" class="text-green-700 text-sm font-medium" data-i18n="dash.online">En ligne</span>
                             </div>
                             
                             <div id="topbar-avatar" class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center overflow-hidden">
                                 <span id="topbar-avatar-letter" class="text-white text-sm font-medium">U</span>
                             </div>
 
-                            <span class="text-gray-700 font-medium user-display-name">Utilisateur</span>
+                            <span class="text-gray-700 font-medium user-display-name" data-i18n="dash.default_username">Utilisateur</span>
                             
                             <svg class="w-4 h-4 text-gray-500 transition-transform" id="userMenuArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -163,7 +178,7 @@
                                 <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                 </svg>
-                                <span class="text-gray-700">Mon profil</span>
+                                <span class="text-gray-700" data-i18n="dash.dropdown_profile">Mon profil</span>
                             </a>
                             
                             <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition" onclick="openSettingsModal(); return false;">
@@ -171,7 +186,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                 </svg>
-                                <span class="text-gray-700">Mes paramètres</span>
+                                <span class="text-gray-700" data-i18n="dash.dropdown_settings">Mes paramètres</span>
                             </a>
                             
                             <div class="border-t border-gray-200 my-2"></div>
@@ -180,7 +195,7 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                                 </svg>
-                                <span>Déconnexion</span>
+                                <span data-i18n="dash.dropdown_logout">Déconnexion</span>
                             </a>
                         </div>
                     </div>
@@ -210,9 +225,9 @@
                     <div class="stat-card bg-white rounded-lg p-6 shadow-sm border">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-gray-600 text-sm font-medium">Chiffre d'affaires</p>
+                                <p class="text-gray-600 text-sm font-medium" data-i18n="dash.stat_revenue">Chiffre d'affaires</p>
                                 <p class="text-2xl font-bold text-gray-900 mt-2" id="total-revenue">0 FCFA</p>
-                                <div class="text-sm text-gray-500">Ce mois</div>
+                                <div class="text-sm text-gray-500" data-i18n="dash.stat_revenue_sub">Ce mois</div>
                             </div>
                             <div class="p-3 rounded-full bg-blue-100">
                                 <i data-lucide="banknote" class="text-blue-600"></i>
@@ -223,9 +238,9 @@
                     <div class="stat-card bg-white rounded-lg p-6 shadow-sm border">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-gray-600 text-sm font-medium">Factures payées</p>
+                                <p class="text-gray-600 text-sm font-medium" data-i18n="dash.stat_paid_invoices">Factures payées</p>
                                 <p class="text-2xl font-bold text-gray-900 mt-2" id="paid-invoices-count">0</p>
-                                <div class="text-sm text-gray-500">Total</div>
+                                <div class="text-sm text-gray-500" data-i18n="dash.stat_total">Total</div>
                             </div>
                             <div class="p-3 rounded-full bg-green-100">
                                 <i data-lucide="check-circle" class="text-green-600"></i>
@@ -236,9 +251,9 @@
                     <div class="stat-card bg-white rounded-lg p-6 shadow-sm border">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-gray-600 text-sm font-medium">Clients actifs</p>
+                                <p class="text-gray-600 text-sm font-medium" data-i18n="dash.stat_active_clients">Clients actifs</p>
                                 <p class="text-2xl font-bold text-gray-900 mt-2" id="active-clients-count">0</p>
-                                <div class="text-sm text-gray-500">Total</div>
+                                <div class="text-sm text-gray-500" data-i18n="dash.stat_total">Total</div>
                             </div>
                             <div class="p-3 rounded-full bg-purple-100">
                                 <i data-lucide="users" class="text-purple-600"></i>
@@ -249,9 +264,9 @@
                     <div class="stat-card bg-white rounded-lg p-6 shadow-sm border">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-gray-600 text-sm font-medium">Produits en stock</p>
+                                <p class="text-gray-600 text-sm font-medium" data-i18n="dash.stat_products">Produits en stock</p>
                                 <p class="text-2xl font-bold text-gray-900 mt-2" id="products-count">0</p>
-                                <div class="text-sm text-gray-500">Articles</div>
+                                <div class="text-sm text-gray-500" data-i18n="dash.stat_products_sub">Articles</div>
                             </div>
                             <div class="p-3 rounded-full bg-yellow-100">
                                 <i data-lucide="package" class="text-yellow-600"></i>
@@ -263,10 +278,10 @@
                 <!-- Recent Activity -->
                 <div class="bg-white rounded-lg shadow-sm border">
                     <div class="p-6 border-b">
-                        <h3 class="text-lg font-semibold">Activité récente</h3>
+                        <h3 class="text-lg font-semibold" data-i18n="dash.recent_activity">Activité récente</h3>
                     </div>
                     <div id="recent-activity" class="p-6">
-                        <p class="text-gray-500 text-center">Aucune activité récente</p>
+                        <p class="text-gray-500 text-center" data-i18n="dash.no_recent_activity">Aucune activité récente</p>
                     </div>
                 </div>
             </div>
@@ -1220,6 +1235,11 @@
 <!-- Notification Container -->
 <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>
 
+<!-- Traduction FR/EN : le dictionnaire de textes (i18n-dashboard.js) doit être chargé avant le
+     moteur qui les applique (i18n.js), et avant le reste du code de la page qui utilise payloopT(). -->
+<script src="/i18n-dashboard.js"></script>
+<script src="/i18n.js"></script>
+
 <script>
 // ============================================
 // CONFIGURATION API PAYLOOP
@@ -1877,17 +1897,17 @@ class PayloopApp {
             badge.classList.add('bg-red-50');
             dot.classList.add('bg-red-500');
             text.classList.add('text-red-700');
-            text.textContent = pendingCount > 0 ? `Hors ligne (${pendingCount} en attente)` : 'Hors ligne';
+            text.textContent = pendingCount > 0 ? `${payloopT('dash.offline')} (${pendingCount} ${payloopT('dash.pending_label')})` : payloopT('dash.offline');
         } else if (pendingCount > 0) {
             badge.classList.add('bg-yellow-50');
             dot.classList.add('bg-yellow-500');
             text.classList.add('text-yellow-700');
-            text.textContent = `Synchronisation en cours... (${pendingCount})`;
+            text.textContent = `${payloopT('dash.syncing')} (${pendingCount})`;
         } else {
             badge.classList.add('bg-green-50');
             dot.classList.add('bg-green-500');
             text.classList.add('text-green-700');
-            text.textContent = 'En ligne';
+            text.textContent = payloopT('dash.online');
         }
     }
 
@@ -2044,16 +2064,16 @@ class PayloopApp {
 
         // Update page title
         const titles = {
-            'dashboard': 'Dashboard',
-            'clients': 'Gestion Clients',
-            'inventory': 'Stock & Produits',
-            'invoices': 'Gestion Factures',
-            'payments': 'Gestion Paiements',
-            'migration': 'Migration & Import',
-            'taxes': 'Gestion Fiscale',
-            'reports': 'Rapports'
+            'dashboard': payloopT('dash.title.dashboard'),
+            'clients': payloopT('dash.title.clients'),
+            'inventory': payloopT('dash.title.inventory'),
+            'invoices': payloopT('dash.title.invoices'),
+            'payments': payloopT('dash.title.payments'),
+            'migration': payloopT('dash.title.migration'),
+            'taxes': payloopT('dash.title.taxes'),
+            'reports': payloopT('dash.title.reports')
         };
-        document.getElementById('page-title').textContent = titles[viewName] || 'Dashboard';
+        document.getElementById('page-title').textContent = titles[viewName] || payloopT('dash.title.dashboard');
 
         this.currentView = viewName;
         this.updateViewContent(viewName);
@@ -2103,7 +2123,7 @@ class PayloopApp {
                 const client = this.data.clients.find(c => c.id == invoice.clientId);
                 activities.push({
                     type: 'invoice',
-                    text: `Facture ${invoice.number} créée pour ${client?.name || 'Client inconnu'}`,
+                    text: payloopTF('dash.activity_invoice_created', invoice.number, client?.name || payloopT('dash.unknown_client')),
                     date: invoice.createdAt,
                     amount: invoice.total
                 });
@@ -2118,7 +2138,7 @@ class PayloopApp {
                 const client = this.data.clients.find(c => c.id == invoice?.clientId);
                 activities.push({
                     type: 'payment',
-                    text: `Paiement reçu de ${client?.name || 'Client inconnu'}`,
+                    text: payloopTF('dash.activity_payment_received', client?.name || payloopT('dash.unknown_client')),
                     date: payment.createdAt,
                     amount: payment.amount
                 });
@@ -2128,7 +2148,7 @@ class PayloopApp {
         activities.sort((a, b) => new Date(b.date) - new Date(a.date));
 
         if (activities.length === 0) {
-            container.innerHTML = '<p class="text-gray-500 text-center">Aucune activité récente</p>';
+            container.innerHTML = `<p class="text-gray-500 text-center">${payloopT('dash.no_recent_activity')}</p>`;
         } else {
             container.innerHTML = activities.slice(0, 5).map(activity => `
                 <div class="flex items-center justify-between py-2 border-b last:border-b-0">
@@ -3690,6 +3710,38 @@ document.addEventListener('DOMContentLoaded', function() {
     app = new PayloopApp();
     lucide.createIcons();
 });
+
+// Quand le visiteur change de langue (bouton FR/EN), on redessine tout ce que l'appli avait
+// déjà généré en JavaScript (tableaux, activité récente, titre de la page...), sinon ça resterait
+// affiché dans l'ancienne langue jusqu'au prochain rafraîchissement des données.
+window.payloopOnLangChange = function (lang) {
+    if (!app) return;
+    app.updateUI();
+    app.updateConnectionBadge();
+    // Le nom affiché dans la barre du haut (ex : "Ibrahim Lamaro") n'est pas un texte traduit,
+    // donc on le redessine avec les vraies données de l'utilisateur pour ne pas le remplacer
+    // par le texte générique "Utilisateur"/"User" du dictionnaire.
+    if (typeof updateUserDisplay === 'function') {
+        try {
+            const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+            updateUserDisplay(storedUser);
+        } catch (e) {}
+    }
+    const titleEl = document.getElementById('page-title');
+    if (titleEl && app.currentView) {
+        const titles = {
+            'dashboard': payloopT('dash.title.dashboard'),
+            'clients': payloopT('dash.title.clients'),
+            'inventory': payloopT('dash.title.inventory'),
+            'invoices': payloopT('dash.title.invoices'),
+            'payments': payloopT('dash.title.payments'),
+            'migration': payloopT('dash.title.migration'),
+            'taxes': payloopT('dash.title.taxes'),
+            'reports': payloopT('dash.title.reports')
+        };
+        titleEl.textContent = titles[app.currentView] || payloopT('dash.title.dashboard');
+    }
+};
 </script>
 <!-- User Menu Dropdown Script -->
     <script>
@@ -3858,7 +3910,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const nameEl = document.querySelector('.user-display-name');
             if (nameEl) {
                 const fullName = [user.first_name, user.last_name].filter(Boolean).join(' ');
-                nameEl.textContent = fullName || user.email || 'Utilisateur';
+                nameEl.textContent = fullName || user.email || payloopT('dash.default_username');
             }
             setAvatarDisplay('topbar-avatar', 'topbar-avatar-letter', user);
         }
