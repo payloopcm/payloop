@@ -37,8 +37,11 @@
 // Étape 15 : traduction FR/EN de la section Fiscalité (calculateur, cartes, rapports), les noms
 // de mois de la liste des périodes s'affichent désormais dans la bonne langue, et le fichier de
 // déclaration TVA téléchargeable en Excel suit lui aussi la langue active — cache encore augmenté.
+// Étape 16 : traduction FR/EN de la section Rapports (rapport mensuel, statistiques fiscales), et
+// le PDF du rapport mensuel téléchargeable suit désormais lui aussi la langue active — cache
+// encore augmenté.
 
-const CACHE_NAME = 'payloop-shell-v15';
+const CACHE_NAME = 'payloop-shell-v16';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [

@@ -757,26 +757,26 @@
         <!-- Reports View -->
         <div id="reports-view" class="view">
             <div class="space-y-6">
-                <h2 class="text-2xl font-bold">Rapports</h2>
-                
+                <h2 class="text-2xl font-bold" data-i18n="dash.rep.heading">Rapports</h2>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white p-6 rounded-lg shadow-sm border">
-                        <h3 class="text-lg font-semibold mb-4">Rapport mensuel</h3>
+                        <h3 class="text-lg font-semibold mb-4" data-i18n="dash.rep.monthly_title">Rapport mensuel</h3>
                         <div id="monthly-report" class="space-y-2">
                             <!-- Populated by JavaScript -->
                         </div>
                         <button onclick="generateMonthlyReport()" class="mt-4 w-full py-2 bg-blue-600 text-white rounded">
-                            Générer rapport
+                            <span data-i18n="dash.rep.generate_button">Générer rapport</span>
                         </button>
                     </div>
-                    
+
                     <div class="bg-white p-6 rounded-lg shadow-sm border">
-                        <h3 class="text-lg font-semibold mb-4">Statistiques fiscales</h3>
+                        <h3 class="text-lg font-semibold mb-4" data-i18n="dash.rep.tax_stats_title">Statistiques fiscales</h3>
                         <div id="tax-report" class="space-y-2">
                             <!-- Populated by JavaScript -->
                         </div>
                         <button onclick="generateTaxReport()" class="mt-4 w-full py-2 bg-green-600 text-white rounded">
-                            Calculer TVA
+                            <span data-i18n="dash.rep.calculate_vat_button">Calculer TVA</span>
                         </button>
                     </div>
                 </div>
@@ -2732,7 +2732,8 @@ class PayloopApp {
 
         const totalInvoiced = monthlyInvoices.reduce((sum, inv) => sum + inv.total, 0);
         const totalReceived = monthlyPayments.reduce((sum, payment) => sum + payment.amount, 0);
-        let label = now.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+        const isEn = (typeof getPayloopLang === 'function') && getPayloopLang() === 'en';
+        let label = now.toLocaleDateString(isEn ? 'en-US' : 'fr-FR', { month: 'long', year: 'numeric' });
         label = label.charAt(0).toUpperCase() + label.slice(1);
 
         return {
@@ -2754,23 +2755,23 @@ class PayloopApp {
         container.innerHTML = `
             <div class="space-y-2">
                 <div class="flex justify-between">
-                    <span>Factures émises:</span>
+                    <span>${payloopT('dash.rep.invoices_issued_label')}</span>
                     <span class="font-bold">${data.invoiceCount}</span>
                 </div>
                 <div class="flex justify-between">
-                    <span>Montant facturé:</span>
+                    <span>${payloopT('dash.rep.amount_invoiced_label')}</span>
                     <span class="font-bold">${this.formatCurrency(data.totalInvoiced)}</span>
                 </div>
                 <div class="flex justify-between">
-                    <span>Paiements reçus:</span>
+                    <span>${payloopT('dash.rep.payments_received_label')}</span>
                     <span class="font-bold">${data.paymentCount}</span>
                 </div>
                 <div class="flex justify-between">
-                    <span>Montant encaissé:</span>
+                    <span>${payloopT('dash.rep.amount_collected_label')}</span>
                     <span class="font-bold text-green-600">${this.formatCurrency(data.totalReceived)}</span>
                 </div>
                 <div class="flex justify-between border-t pt-2">
-                    <span>Taux de recouvrement:</span>
+                    <span>${payloopT('dash.rep.recovery_rate_label')}</span>
                     <span class="font-bold">${data.recoveryRate}%</span>
                 </div>
             </div>
@@ -2788,19 +2789,19 @@ class PayloopApp {
         container.innerHTML = `
             <div class="space-y-2">
                 <div class="flex justify-between">
-                    <span>CA HT:</span>
+                    <span>${payloopT('dash.tax.report_ca_ht_label')}</span>
                     <span class="font-bold">${this.formatCurrency(totalRevenue)}</span>
                 </div>
                 <div class="flex justify-between">
-                    <span>TVA collectée (${this.data.settings.taxRate}%):</span>
+                    <span>${payloopTF('dash.rep.vat_collected_rate_label', this.data.settings.taxRate)}</span>
                     <span class="font-bold">${this.formatCurrency(totalTax)}</span>
                 </div>
                 <div class="flex justify-between">
-                    <span>CA TTC:</span>
+                    <span>${payloopT('dash.rep.ca_ttc_label')}</span>
                     <span class="font-bold">${this.formatCurrency(totalRevenue + totalTax)}</span>
                 </div>
                 <div class="flex justify-between border-t pt-2">
-                    <span>Factures payées:</span>
+                    <span>${payloopT('dash.tax.paid_invoices_label')}</span>
                     <span class="font-bold">${paidInvoices.length}</span>
                 </div>
             </div>
@@ -3206,20 +3207,21 @@ function downloadMonthlyReportPDF() {
     const data = app.getMonthlyReportData();
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
+    const isEn = (typeof getPayloopLang === 'function') && getPayloopLang() === 'en';
 
     doc.setFontSize(18);
-    doc.text('Rapport mensuel', 14, 20);
+    doc.text(payloopT('dash.rep.monthly_title'), 14, 20);
     doc.setFontSize(11);
-    doc.text(`Entreprise : ${app.data.settings.companyName}`, 14, 30);
-    doc.text(`Période : ${data.label}`, 14, 37);
-    doc.text(`Généré le : ${new Date().toLocaleDateString('fr-FR')}`, 14, 44);
+    doc.text(payloopTF('dash.rep.pdf_company', app.data.settings.companyName), 14, 30);
+    doc.text(payloopTF('dash.rep.pdf_period', data.label), 14, 37);
+    doc.text(payloopTF('dash.rep.pdf_generated_on', new Date().toLocaleDateString(isEn ? 'en-US' : 'fr-FR')), 14, 44);
 
     const rows = [
-        ['Factures émises', String(data.invoiceCount)],
-        ['Montant facturé', formatCurrencyForPDF(data.totalInvoiced)],
-        ['Paiements reçus', String(data.paymentCount)],
-        ['Montant encaissé', formatCurrencyForPDF(data.totalReceived)],
-        ['Taux de recouvrement', data.recoveryRate + '%']
+        [payloopT('dash.rep.pdf_row_invoices_issued'), String(data.invoiceCount)],
+        [payloopT('dash.rep.pdf_row_amount_invoiced'), formatCurrencyForPDF(data.totalInvoiced)],
+        [payloopT('dash.rep.pdf_row_payments_received'), String(data.paymentCount)],
+        [payloopT('dash.rep.pdf_row_amount_collected'), formatCurrencyForPDF(data.totalReceived)],
+        [payloopT('dash.rep.pdf_row_recovery_rate'), data.recoveryRate + '%']
     ];
 
     let y = 58;
@@ -3233,12 +3235,12 @@ function downloadMonthlyReportPDF() {
     const fileSuffix = data.label.toLowerCase().replace(/\s+/g, '-');
     doc.save(`rapport-mensuel-${fileSuffix}.pdf`);
 
-    app.showNotification(`Rapport mensuel téléchargé (${data.label})`, 'success');
+    app.showNotification(payloopTF('dash.rep.notif_report_downloaded', data.label), 'success');
 }
 
 function generateTaxReport() {
     app.generateTaxReport();
-    app.showNotification('Rapport fiscal calculé', 'success');
+    app.showNotification(payloopT('dash.rep.notif_tax_report_calculated'), 'success');
 }
 
 // Stock management functions
@@ -3839,6 +3841,12 @@ window.payloopOnLangChange = function (lang) {
         if (typeof app !== 'undefined' && app && typeof app.updateTaxData === 'function') {
             app.updateTaxData();
         }
+    }
+    // Les aperçus de la vue Rapports (rapport mensuel, statistiques fiscales) sont eux aussi
+    // générés en JavaScript — on les redessine pour qu'ils changent de langue sans attendre un
+    // changement de vue.
+    if (app.updateReports) {
+        app.updateReports();
     }
 };
 </script>
