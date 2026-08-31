@@ -332,19 +332,19 @@
         <div id="inventory-view" class="view">
             <div class="space-y-6">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-2xl font-bold">Stock & Produits</h2>
+                    <h2 class="text-2xl font-bold" data-i18n="dash.title.inventory">Stock & Produits</h2>
                     <div class="flex space-x-3">
                         <button onclick="openProductModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
                             <i data-lucide="plus" class="mr-2"></i>
-                            Nouveau produit
+                            <span data-i18n="dash.stk.new_button">Nouveau produit</span>
                         </button>
                         <button onclick="openStockAdjustmentModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700">
                             <i data-lucide="package" class="mr-2"></i>
-                            Ajuster stock
+                            <span data-i18n="dash.stk.adjust_button">Ajuster stock</span>
                         </button>
                         <button onclick="generateInventoryReport()" class="bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-purple-700">
                             <i data-lucide="file-text" class="mr-2"></i>
-                            Rapport stock
+                            <span data-i18n="dash.stk.report_button">Rapport stock</span>
                         </button>
                     </div>
                 </div>
@@ -353,38 +353,38 @@
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div class="bg-white p-6 rounded-lg shadow-sm border">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-gray-600">Articles en stock</span>
+                            <span class="text-gray-600" data-i18n="dash.stk.stat_total_label">Articles en stock</span>
                             <div class="w-3 h-3 bg-green-500 rounded-full"></div>
                         </div>
                         <div class="text-2xl font-bold" id="total-products-stat">0</div>
-                        <div class="text-sm text-green-600">Produits actifs</div>
+                        <div class="text-sm text-green-600" data-i18n="dash.stk.stat_total_sub">Produits actifs</div>
                     </div>
 
                     <div class="bg-white p-6 rounded-lg shadow-sm border">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-gray-600">Valeur du stock</span>
+                            <span class="text-gray-600" data-i18n="dash.stk.stat_value_label">Valeur du stock</span>
                             <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
                         </div>
                         <div class="text-2xl font-bold" id="stock-value">0 FCFA</div>
-                        <div class="text-sm text-gray-500">Valeur totale</div>
+                        <div class="text-sm text-gray-500" data-i18n="dash.stk.stat_value_sub">Valeur totale</div>
                     </div>
 
                     <div class="bg-white p-6 rounded-lg shadow-sm border">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-gray-600">Stock faible</span>
+                            <span class="text-gray-600" data-i18n="dash.stk.stat_low_label">Stock faible</span>
                             <div class="w-3 h-3 bg-yellow-500 rounded-full status-indicator"></div>
                         </div>
                         <div class="text-2xl font-bold text-yellow-600" id="low-stock-count">0</div>
-                        <div class="text-sm text-yellow-600">Alerte réappro</div>
+                        <div class="text-sm text-yellow-600" data-i18n="dash.stk.stat_low_sub">Alerte réappro</div>
                     </div>
 
                     <div class="bg-white p-6 rounded-lg shadow-sm border">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-gray-600">Ruptures</span>
+                            <span class="text-gray-600" data-i18n="dash.stk.stat_out_label">Ruptures</span>
                             <div class="w-3 h-3 bg-red-500 rounded-full"></div>
                         </div>
                         <div class="text-2xl font-bold text-red-600" id="out-of-stock-count">0</div>
-                        <div class="text-sm text-red-600">Stock épuisé</div>
+                        <div class="text-sm text-red-600" data-i18n="dash.stk.stat_out_sub">Stock épuisé</div>
                     </div>
                 </div>
 
@@ -393,10 +393,10 @@
                     <div class="flex items-center">
                         <i data-lucide="alert-triangle" class="text-yellow-600 mr-3"></i>
                         <div>
-                            <h4 class="font-semibold text-yellow-800">Alertes de stock</h4>
-                            <p class="text-yellow-700" id="alerts-text">Produits nécessitant un réapprovisionnement</p>
+                            <h4 class="font-semibold text-yellow-800" data-i18n="dash.stk.alerts_title">Alertes de stock</h4>
+                            <p class="text-yellow-700" id="alerts-text" data-i18n="dash.stk.alerts_default_text">Produits nécessitant un réapprovisionnement</p>
                         </div>
-                        <button onclick="viewStockAlerts()" class="ml-auto px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">
+                        <button onclick="viewStockAlerts()" class="ml-auto px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700" data-i18n="dash.stk.view_details">
                             Voir détails
                         </button>
                     </div>
@@ -406,20 +406,20 @@
                 <div class="bg-white rounded-lg shadow-sm border">
                     <div class="p-6 border-b">
                         <div class="flex items-center space-x-4">
-                            <input type="text" id="product-search" placeholder="Rechercher un produit..." 
-                                   class="flex-1 px-4 py-2 border rounded-lg" onkeyup="searchProducts()">
+                            <input type="text" id="product-search" placeholder="Rechercher un produit..."
+                                   class="flex-1 px-4 py-2 border rounded-lg" onkeyup="searchProducts()" data-i18n-placeholder="dash.stk.search_placeholder">
                             <select id="category-filter" class="border rounded-lg px-3 py-2" onchange="filterProducts()">
-                                <option value="">Toutes catégories</option>
+                                <option value="" data-i18n="dash.stk.all_categories">Toutes catégories</option>
                                 <option value="Services">Services</option>
                                 <option value="Produits">Produits</option>
                                 <option value="Formation">Formation</option>
                                 <option value="Autre">Autre</option>
                             </select>
                             <select id="stock-filter" class="border rounded-lg px-3 py-2" onchange="filterProducts()">
-                                <option value="">Tous les stocks</option>
-                                <option value="in-stock">En stock</option>
-                                <option value="low-stock">Stock faible</option>
-                                <option value="out-of-stock">Rupture</option>
+                                <option value="" data-i18n="dash.stk.stock_all">Tous les stocks</option>
+                                <option value="in-stock" data-i18n="dash.stk.stock_in">En stock</option>
+                                <option value="low-stock" data-i18n="dash.stk.stat_low_label">Stock faible</option>
+                                <option value="out-of-stock" data-i18n="dash.stk.stock_out">Rupture</option>
                             </select>
                         </div>
                     </div>
@@ -427,13 +427,13 @@
                         <table class="w-full">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left">Produit</th>
-                                    <th class="px-6 py-3 text-left">Catégorie</th>
-                                    <th class="px-6 py-3 text-left">Prix</th>
-                                    <th class="px-6 py-3 text-left">Stock</th>
-                                    <th class="px-6 py-3 text-left">Valeur</th>
-                                    <th class="px-6 py-3 text-left">Statut</th>
-                                    <th class="px-6 py-3 text-left">Actions</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.stk.col_product">Produit</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.stk.col_category">Catégorie</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.stk.col_price">Prix</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.stk.col_stock">Stock</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.stk.col_value">Valeur</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.stk.col_status">Statut</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.stk.col_actions">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="products-table">
@@ -967,7 +967,7 @@
 <div id="product-modal" class="modal">
     <div class="modal-content w-full max-w-md">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold">Nouveau Produit</h3>
+            <h3 class="text-lg font-semibold" data-i18n="dash.stk.modal_title">Nouveau Produit</h3>
             <button onclick="closeProductModal()" class="text-gray-500 hover:text-gray-700">
                 <i data-lucide="x"></i>
             </button>
@@ -975,19 +975,19 @@
         <form id="product-form" onsubmit="saveProduct(event)">
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Nom *</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.cli.field_name">Nom *</label>
                     <input type="text" name="name" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Prix (FCFA) *</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.stk.field_price">Prix (FCFA) *</label>
                     <input type="number" name="price" required min="0" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Stock initial</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.stk.field_initial_stock">Stock initial</label>
                     <input type="number" name="stock" min="0" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Catégorie</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.stk.field_category">Catégorie</label>
                     <select name="category" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                         <option value="Services">Services</option>
                         <option value="Produits">Produits</option>
@@ -996,15 +996,15 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Description</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.stk.field_description">Description</label>
                     <textarea name="description" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2"></textarea>
                 </div>
             </div>
             <div class="mt-6 flex space-x-3">
-                <button type="submit" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                <button type="submit" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700" data-i18n="dash.cli.submit_save">
                     Enregistrer
                 </button>
-                <button type="button" onclick="closeProductModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">
+                <button type="button" onclick="closeProductModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400" data-i18n="dash.action.cancel">
                     Annuler
                 </button>
             </div>
@@ -1136,7 +1136,7 @@
 <div id="stock-modal" class="modal">
     <div class="modal-content w-full max-w-md">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold">Ajuster Stock</h3>
+            <h3 class="text-lg font-semibold" data-i18n="dash.stk.adjust_modal_title">Ajuster Stock</h3>
             <button onclick="closeStockModal()" class="text-gray-500 hover:text-gray-700">
                 <i data-lucide="x"></i>
             </button>
@@ -1144,47 +1144,47 @@
         <form id="stock-form" onsubmit="saveStockAdjustment(event)">
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Produit *</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.stk.field_product">Produit *</label>
                     <select name="productId" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
-                        <option value="">Sélectionner un produit</option>
+                        <option value="" data-i18n="dash.inv.select_product_placeholder">Sélectionner un produit</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Stock actuel</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.stk.field_current_stock">Stock actuel</label>
                     <input type="number" id="current-stock" readonly class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-100">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Type d'ajustement</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.stk.field_adjustment_type">Type d'ajustement</label>
                     <select name="adjustmentType" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
-                        <option value="add">Ajouter stock</option>
-                        <option value="remove">Retirer stock</option>
-                        <option value="set">Définir stock</option>
+                        <option value="add" data-i18n="dash.stk.adj_add">Ajouter stock</option>
+                        <option value="remove" data-i18n="dash.stk.adj_remove">Retirer stock</option>
+                        <option value="set" data-i18n="dash.stk.adj_set">Définir stock</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Quantité *</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.stk.field_quantity">Quantité *</label>
                     <input type="number" name="quantity" required min="0" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Motif</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.stk.field_reason">Motif</label>
                     <select name="reason" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
-                        <option value="restock">Réapprovisionnement</option>
-                        <option value="sale">Vente</option>
-                        <option value="damage">Produit endommagé</option>
-                        <option value="inventory">Inventaire</option>
-                        <option value="other">Autre</option>
+                        <option value="restock" data-i18n="dash.stk.reason_restock">Réapprovisionnement</option>
+                        <option value="sale" data-i18n="dash.stk.reason_sale">Vente</option>
+                        <option value="damage" data-i18n="dash.stk.reason_damage">Produit endommagé</option>
+                        <option value="inventory" data-i18n="dash.stk.reason_inventory">Inventaire</option>
+                        <option value="other" data-i18n="dash.stk.reason_other">Autre</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Commentaire</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.stk.field_comment">Commentaire</label>
                     <textarea name="comment" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2"></textarea>
                 </div>
             </div>
             <div class="mt-6 flex space-x-3">
-                <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700" data-i18n="dash.stk.adjust_button">
                     Ajuster stock
                 </button>
-                <button type="button" onclick="closeStockModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">
+                <button type="button" onclick="closeStockModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400" data-i18n="dash.action.cancel">
                     Annuler
                 </button>
             </div>
@@ -2202,23 +2202,49 @@ class PayloopApp {
         if (!tbody) return;
 
         if (this.data.products.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Aucun produit enregistré</td></tr>';
+            tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">${payloopT('dash.stk.empty')}</td></tr>`;
             return;
         }
 
-        tbody.innerHTML = this.data.products.map(product => `
-            <tr>
-                <td class="px-6 py-4 font-medium">${product.name}</td>
-                <td class="px-6 py-4">${this.formatCurrency(product.price)}</td>
-                <td class="px-6 py-4">${product.stock !== null ? product.stock : 'N/A'}</td>
-                <td class="px-6 py-4">${product.category}</td>
-                <td class="px-6 py-4">
-                    <button onclick="app.deleteItem('products', ${product.id})" class="text-red-600 hover:text-red-800">
-                        <i data-lucide="trash-2" class="w-4 h-4"></i>
-                    </button>
-                </td>
-            </tr>
-        `).join('');
+        // Étape 9 : les colonnes du tableau ne correspondaient pas à l'ordre des en-têtes
+        // (Produit, Catégorie, Prix, Stock, Valeur, Statut, Actions), et les colonnes "Valeur"
+        // et "Statut" n'étaient jamais remplies — corrigé pour que chaque cellule soit sous le
+        // bon en-tête et que "Valeur" (prix × stock) et "Statut" (badge coloré) soient calculées.
+        const threshold = this.data.settings.lowStockThreshold;
+
+        tbody.innerHTML = this.data.products.map(product => {
+            const stock = product.stock;
+            const hasStock = stock !== null && stock !== undefined;
+
+            let statusBadge;
+            if (!hasStock) {
+                statusBadge = `<span class="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-800">${payloopT('dash.stk.status_unlimited')}</span>`;
+            } else if (stock === 0) {
+                statusBadge = `<span class="px-2 py-1 rounded-full text-xs bg-red-100 text-red-800">${payloopT('dash.stk.stock_out')}</span>`;
+            } else if (stock <= threshold) {
+                statusBadge = `<span class="px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">${payloopT('dash.stk.stat_low_label')}</span>`;
+            } else {
+                statusBadge = `<span class="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">${payloopT('dash.stk.stock_in')}</span>`;
+            }
+
+            const value = hasStock ? this.formatCurrency(product.price * stock) : 'N/A';
+
+            return `
+                <tr>
+                    <td class="px-6 py-4 font-medium">${product.name}</td>
+                    <td class="px-6 py-4">${product.category}</td>
+                    <td class="px-6 py-4">${this.formatCurrency(product.price)}</td>
+                    <td class="px-6 py-4">${hasStock ? stock : 'N/A'}</td>
+                    <td class="px-6 py-4">${value}</td>
+                    <td class="px-6 py-4">${statusBadge}</td>
+                    <td class="px-6 py-4">
+                        <button onclick="app.deleteItem('products', ${product.id})" class="text-red-600 hover:text-red-800">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
 
         lucide.createIcons();
     }
@@ -2387,8 +2413,8 @@ class PayloopApp {
         const alertsDiv = document.getElementById('stock-alerts');
         if (lowStockProducts > 0 || outOfStockProducts > 0) {
             alertsDiv.style.display = 'block';
-            document.getElementById('alerts-text').textContent = 
-                `${lowStockProducts} produits en stock faible, ${outOfStockProducts} en rupture`;
+            document.getElementById('alerts-text').textContent =
+                payloopTF('dash.stk.alerts_summary', lowStockProducts, outOfStockProducts);
         } else {
             alertsDiv.style.display = 'none';
         }
@@ -2953,9 +2979,9 @@ async function saveProduct(event) {
     try {
         await app.addProduct(productData);
         closeProductModal();
-        app.showNotification('Produit ajouté avec succès!', 'success');
+        app.showNotification(payloopT('dash.stk.notif_created'), 'success');
     } catch (error) {
-        app.showNotification(error.message || 'Erreur lors de la création du produit', 'error');
+        app.showNotification(error.message || payloopT('dash.stk.notif_create_error'), 'error');
     }
 }
 
@@ -3190,7 +3216,7 @@ function generateTaxReport() {
 // Stock management functions
 function openStockAdjustmentModal() {
     if (app.data.products.length === 0) {
-        app.showNotification('Veuillez d\'abord créer au moins un produit', 'warning');
+        app.showNotification(payloopT('dash.inv.notif_need_product'), 'warning');
         return;
     }
     
@@ -3211,9 +3237,9 @@ async function saveStockAdjustment(event) {
     try {
         await app.addStockAdjustment(adjustmentData);
         closeStockModal();
-        app.showNotification('Stock ajusté avec succès!', 'success');
+        app.showNotification(payloopT('dash.stk.notif_adjusted'), 'success');
     } catch (error) {
-        app.showNotification('Erreur lors de l\'ajustement du stock: ' + error.message, 'error');
+        app.showNotification(payloopT('dash.stk.notif_adjust_error') + error.message, 'error');
     }
 }
 
@@ -3263,7 +3289,7 @@ function generateInventoryReport() {
     }, 0);
     const lowStock = app.data.products.filter(p => p.stock !== null && p.stock <= 5).length;
     
-    app.showNotification(`Rapport généré: ${totalProducts} produits, valeur ${app.formatCurrency(stockValue)}`, 'success');
+    app.showNotification(payloopTF('dash.stk.notif_report', totalProducts, app.formatCurrency(stockValue)), 'success');
 }
 
 function viewStockAlerts() {
@@ -3274,23 +3300,23 @@ function viewStockAlerts() {
         p.stock !== null && p.stock === 0
     );
     
-    let alertMessage = 'Alertes de stock:\n\n';
-    
+    let alertMessage = payloopT('dash.stk.alert_title') + '\n\n';
+
     if (lowStockProducts.length > 0) {
-        alertMessage += 'Stock faible:\n';
+        alertMessage += payloopT('dash.stk.alert_low_stock_header') + '\n';
         lowStockProducts.forEach(product => {
-            alertMessage += `• ${product.name}: ${product.stock} restant(s)\n`;
+            alertMessage += `• ${product.name}: ${payloopTF('dash.stk.alert_remaining', product.stock)}\n`;
         });
         alertMessage += '\n';
     }
-    
+
     if (outOfStockProducts.length > 0) {
-        alertMessage += 'Rupture de stock:\n';
+        alertMessage += payloopT('dash.stk.alert_out_of_stock_header') + '\n';
         outOfStockProducts.forEach(product => {
-            alertMessage += `• ${product.name}: Stock épuisé\n`;
+            alertMessage += `• ${product.name}: ${payloopT('dash.stk.stat_out_sub')}\n`;
         });
     }
-    
+
     alert(alertMessage);
 }
 

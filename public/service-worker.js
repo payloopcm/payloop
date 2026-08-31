@@ -16,8 +16,11 @@
 // — cache encore augmenté.
 // Étape 9 : traduction FR/EN de la section Clients (tableau, formulaire), et "Client" devient
 // "Customer" en anglais partout sur le site — cache encore augmenté.
+// Étape 10 : traduction FR/EN de la section Stock & Produits (tableau, formulaire produit,
+// formulaire d'ajustement de stock), et correction d'un bug préexistant où les colonnes du
+// tableau des produits ne correspondaient pas aux bons en-têtes — cache encore augmenté.
 
-const CACHE_NAME = 'payloop-shell-v9';
+const CACHE_NAME = 'payloop-shell-v10';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [
