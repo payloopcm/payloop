@@ -12,8 +12,10 @@
 // Étape 6 : traduction FR/EN de la page de connexion — cache encore augmenté.
 // Étape 7 : police Plus Jakarta Sans et traduction FR/EN du tableau de bord (menu, barre du
 // haut, page d'accueil) — cache encore augmenté.
+// Étape 8 : traduction FR/EN de la section Factures (tableau, formulaire, facture imprimable)
+// — cache encore augmenté.
 
-const CACHE_NAME = 'payloop-shell-v7';
+const CACHE_NAME = 'payloop-shell-v8';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [

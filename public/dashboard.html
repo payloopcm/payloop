@@ -691,10 +691,10 @@
         <div id="invoices-view" class="view">
             <div class="space-y-6">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-2xl font-bold">Gestion Factures</h2>
+                    <h2 class="text-2xl font-bold" data-i18n="dash.title.invoices">Gestion Factures</h2>
                     <button onclick="openInvoiceModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
                         <i data-lucide="plus" class="mr-2"></i>
-                        Nouvelle facture
+                        <span data-i18n="dash.inv.new_button">Nouvelle facture</span>
                     </button>
 </div>
 
@@ -703,13 +703,13 @@
                         <table class="w-full">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left">N° Facture</th>
-                                    <th class="px-6 py-3 text-left">Client</th>
-                                    <th class="px-6 py-3 text-left">Montant HT</th>
-                                    <th class="px-6 py-3 text-left">TVA</th>
-                                    <th class="px-6 py-3 text-left">Total TTC</th>
-                                    <th class="px-6 py-3 text-left">Statut</th>
-                                    <th class="px-6 py-3 text-left">Actions</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.inv.col_number">N° Facture</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.inv.col_client">Client</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.inv.col_subtotal">Montant HT</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.inv.col_tax">TVA</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.inv.col_total">Total TTC</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.inv.col_status">Statut</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.inv.col_actions">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="invoices-table">
@@ -1016,7 +1016,7 @@
 <div id="invoice-modal" class="modal">
     <div class="modal-content w-full max-w-2xl">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold">Nouvelle Facture</h3>
+            <h3 class="text-lg font-semibold" data-i18n="dash.inv.modal_title">Nouvelle Facture</h3>
             <button onclick="closeInvoiceModal()" class="text-gray-500 hover:text-gray-700">
                 <i data-lucide="x"></i>
             </button>
@@ -1025,54 +1025,54 @@
             <div class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Client *</label>
+                        <label class="block text-sm font-medium text-gray-700" data-i18n="dash.inv.field_client">Client *</label>
                         <select name="clientId" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
-                            <option value="">Sélectionner un client</option>
+                            <option value="" data-i18n="dash.inv.select_client_placeholder">Sélectionner un client</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Date d'échéance</label>
+                        <label class="block text-sm font-medium text-gray-700" data-i18n="dash.inv.field_due_date">Date d'échéance</label>
                         <input type="date" name="dueDate" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                     </div>
                 </div>
-                
+
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Articles</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.inv.field_items">Articles</label>
                     <div id="invoice-items" class="space-y-2 mt-2">
                         <div class="invoice-item grid grid-cols-4 gap-2">
                             <select name="productId" class="border border-gray-300 rounded px-2 py-1" onchange="updateItemPrice(this)">
-                                <option value="">Sélectionner produit</option>
+                                <option value="" data-i18n="dash.inv.select_product_placeholder">Sélectionner produit</option>
                             </select>
-                            <input type="number" name="quantity" placeholder="Qté" min="1" value="1" class="border border-gray-300 rounded px-2 py-1" onchange="calculateItemTotal(this)">
-                            <input type="number" name="price" placeholder="Prix" min="0" class="border border-gray-300 rounded px-2 py-1" onchange="calculateItemTotal(this)">
-                            <input type="number" name="total" placeholder="Total" readonly class="border border-gray-300 rounded px-2 py-1 bg-gray-100">
+                            <input type="number" name="quantity" placeholder="Qté" min="1" value="1" class="border border-gray-300 rounded px-2 py-1" onchange="calculateItemTotal(this)" data-i18n-placeholder="dash.inv.qty_placeholder">
+                            <input type="number" name="price" placeholder="Prix" min="0" class="border border-gray-300 rounded px-2 py-1" onchange="calculateItemTotal(this)" data-i18n-placeholder="dash.inv.price_placeholder">
+                            <input type="number" name="total" placeholder="Total" readonly class="border border-gray-300 rounded px-2 py-1 bg-gray-100" data-i18n-placeholder="dash.inv.total_placeholder">
                         </div>
                     </div>
-                    <button type="button" onclick="addInvoiceItem()" class="mt-2 text-blue-600 text-sm">+ Ajouter article</button>
+                    <button type="button" onclick="addInvoiceItem()" class="mt-2 text-blue-600 text-sm" data-i18n="dash.inv.add_item">+ Ajouter article</button>
                 </div>
-                
+
                 <div class="border-t pt-4">
                     <div class="grid grid-cols-3 gap-4 text-sm">
                         <div>
-                            <label class="block font-medium">Total HT</label>
+                            <label class="block font-medium" data-i18n="dash.inv.field_subtotal">Total HT</label>
                             <input type="number" id="invoice-subtotal" readonly class="mt-1 block w-full border border-gray-300 rounded px-2 py-1 bg-gray-100">
                         </div>
                         <div>
-                            <label class="block font-medium">TVA (19.25%)</label>
+                            <label class="block font-medium" data-i18n="dash.inv.field_tax">TVA (19.25%)</label>
                             <input type="number" id="invoice-tax" readonly class="mt-1 block w-full border border-gray-300 rounded px-2 py-1 bg-gray-100">
                         </div>
                         <div>
-                            <label class="block font-medium">Total TTC</label>
+                            <label class="block font-medium" data-i18n="dash.inv.field_total_ttc">Total TTC</label>
                             <input type="number" id="invoice-total" readonly class="mt-1 block w-full border border-gray-300 rounded px-2 py-1 bg-gray-100 font-bold">
                         </div>
                     </div>
                 </div>
             </div>
             <div class="mt-6 flex space-x-3">
-                <button type="submit" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                <button type="submit" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700" data-i18n="dash.inv.submit_create">
                     Créer facture
                 </button>
-                <button type="button" onclick="closeInvoiceModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">
+                <button type="button" onclick="closeInvoiceModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400" data-i18n="dash.action.cancel">
                     Annuler
                 </button>
             </div>
@@ -1703,7 +1703,7 @@ class PayloopApp {
         await saveOfflineSnapshot(this.data);
         this.updateUI();
         this.updateConnectionBadge();
-        this.showNotification('Pas de connexion : facture enregistrée, elle sera envoyée automatiquement au retour du réseau', 'error');
+        this.showNotification(payloopT('dash.inv.notif_offline_created'), 'error');
         return invoice;
     }
 
@@ -1754,7 +1754,7 @@ class PayloopApp {
             try {
                 await apiRequest(`${endpoints[type]}/${id}`, { method: 'DELETE' });
             } catch (error) {
-                this.showNotification(error.message || 'Erreur lors de la suppression', 'error');
+                this.showNotification(error.message || payloopT('dash.generic.delete_error'), 'error');
                 return;
             }
         }
@@ -1776,7 +1776,7 @@ class PayloopApp {
             invoice.status = newStatus;
             await saveOfflineSnapshot(this.data);
             this.updateUI();
-            this.showNotification('Statut mis à jour localement (en attente de connexion)', 'success');
+            this.showNotification(payloopT('dash.inv.notif_status_updated_offline'), 'success');
             return;
         }
 
@@ -1787,7 +1787,7 @@ class PayloopApp {
             });
             invoice.status = newStatus;
             this.updateUI();
-            this.showNotification('Statut de la facture mis à jour', 'success');
+            this.showNotification(payloopT('dash.inv.notif_status_updated'), 'success');
         } catch (error) {
             // Étape 3 du mode hors-ligne : le serveur est injoignable — on applique quand
             // même le changement, et on l'enverra automatiquement au retour du réseau.
@@ -1798,11 +1798,11 @@ class PayloopApp {
                 await saveOfflineSnapshot(this.data);
                 this.updateUI();
                 this.updateConnectionBadge();
-                this.showNotification('Pas de connexion : statut enregistré, il sera envoyé automatiquement au retour du réseau', 'error');
+                this.showNotification(payloopT('dash.inv.notif_status_offline'), 'error');
                 return;
             }
             console.error('Erreur changement statut facture:', error);
-            this.showNotification(error.message || 'Erreur lors du changement de statut', 'error');
+            this.showNotification(error.message || payloopT('dash.inv.notif_status_error'), 'error');
             this.updateInvoicesTable(); // remet la liste déroulante sur l'ancien statut
         }
     }
@@ -2228,7 +2228,7 @@ class PayloopApp {
         if (!tbody) return;
 
         if (this.data.invoices.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">Aucune facture créée</td></tr>';
+            tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">${payloopT('dash.inv.empty')}</td></tr>`;
             return;
         }
 
@@ -2250,9 +2250,9 @@ class PayloopApp {
                 <tr>
                     <td class="px-6 py-4 font-mono text-sm">
                         ${invoice.number}
-                        ${invoice.pendingSync ? '<i data-lucide="clock" class="w-3 h-3 inline-block text-yellow-600 ml-1" title="En attente de synchronisation"></i>' : ''}
+                        ${invoice.pendingSync ? `<i data-lucide="clock" class="w-3 h-3 inline-block text-yellow-600 ml-1" title="${payloopT('dash.sync_pending_title')}"></i>` : ''}
                     </td>
-                    <td class="px-6 py-4">${client?.name || 'Client supprimé'}</td>
+                    <td class="px-6 py-4">${client?.name || payloopT('dash.inv.deleted_client')}</td>
                     <td class="px-6 py-4">${this.formatCurrency(invoice.subtotal)}</td>
                     <td class="px-6 py-4">${this.formatCurrency(invoice.tax)}</td>
                     <td class="px-6 py-4 font-bold">${this.formatCurrency(invoice.total)}</td>
@@ -2316,17 +2316,17 @@ class PayloopApp {
         // Update client selects
         const clientSelects = document.querySelectorAll('select[name="clientId"]');
         clientSelects.forEach(select => {
-            select.innerHTML = '<option value="">Sélectionner un client</option>' + 
-                this.data.clients.map(client => 
+            select.innerHTML = `<option value="">${payloopT('dash.inv.select_client_placeholder')}</option>` +
+                this.data.clients.map(client =>
                     `<option value="${client.id}">${client.name}</option>`
                 ).join('');
         });
 
-        // Update product selects  
+        // Update product selects
         const productSelects = document.querySelectorAll('select[name="productId"]');
         productSelects.forEach(select => {
-            select.innerHTML = '<option value="">Sélectionner produit</option>' + 
-                this.data.products.map(product => 
+            select.innerHTML = `<option value="">${payloopT('dash.inv.select_product_placeholder')}</option>` +
+                this.data.products.map(product =>
                     `<option value="${product.id}" data-price="${product.price}">${product.name}</option>`
                 ).join('');
         });
@@ -2615,15 +2615,15 @@ class PayloopApp {
 
     getStatusText(status) {
         const statusTexts = {
-            'brouillon': 'Brouillon',
-            'envoyee': 'Envoyée',
-            'en_attente_paiement': 'En attente de paiement',
-            'payee': 'Payée',
-            'annulee': 'Annulée',
+            'brouillon': payloopT('dash.status.draft'),
+            'envoyee': payloopT('dash.status.sent'),
+            'en_attente_paiement': payloopT('dash.status.awaiting_payment'),
+            'payee': payloopT('dash.status.paid'),
+            'annulee': payloopT('dash.status.cancelled'),
             // Anciens statuts locaux (vue Paiements, pas encore reliée à l'API)
-            'pending': 'En attente',
-            'partial': 'Partiel',
-            'overdue': 'En retard'
+            'pending': payloopT('dash.status.pending'),
+            'partial': payloopT('dash.status.partial'),
+            'overdue': payloopT('dash.status.overdue')
         };
         return statusTexts[status] || status;
     }
@@ -2824,7 +2824,7 @@ class PayloopApp {
                     total: parseFloat(it.total)
                 }));
             } catch (error) {
-                this.showNotification('Impossible de charger les lignes de la facture', 'error');
+                this.showNotification(payloopT('dash.inv.notif_load_items_error'), 'error');
                 return;
             }
         }
@@ -2832,28 +2832,28 @@ class PayloopApp {
         const client = this.data.clients.find(c => c.id == invoice.clientId);
 
         let invoiceHtml = `
-            <h2 class="text-xl font-bold mb-4">Facture ${invoice.number}</h2>
+            <h2 class="text-xl font-bold mb-4">${payloopTF('dash.inv.print_heading', invoice.number)}</h2>
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <div>
-                    <h3 class="font-semibold">Client:</h3>
-                    <p>${client?.name || 'Client inconnu'}</p>
+                    <h3 class="font-semibold">${payloopT('dash.inv.print_client_label')}</h3>
+                    <p>${client?.name || payloopT('dash.unknown_client')}</p>
                     <p>${client?.email || ''}</p>
                     <p>${client?.phone || ''}</p>
                 </div>
                 <div class="text-right">
-                    <p><strong>Date:</strong> ${this.formatDate(invoice.createdAt)}</p>
-                    <p><strong>Échéance:</strong> ${invoice.dueDate ? this.formatDate(invoice.dueDate) : 'Non définie'}</p>
-                    <p><strong>Statut:</strong> <span class="font-bold">${this.getStatusText(invoice.status)}</span></p>
+                    <p><strong>${payloopT('dash.inv.print_date_label')}</strong> ${this.formatDate(invoice.createdAt)}</p>
+                    <p><strong>${payloopT('dash.inv.print_due_label')}</strong> ${invoice.dueDate ? this.formatDate(invoice.dueDate) : payloopT('dash.inv.print_due_undefined')}</p>
+                    <p><strong>${payloopT('dash.inv.print_status_label')}</strong> <span class="font-bold">${this.getStatusText(invoice.status)}</span></p>
                 </div>
             </div>
-            
+
             <table class="w-full border border-gray-300 mb-4">
                 <thead class="bg-gray-100">
                     <tr>
-                        <th class="border border-gray-300 px-4 py-2 text-left">Article</th>
-                        <th class="border border-gray-300 px-4 py-2 text-right">Qté</th>
-                        <th class="border border-gray-300 px-4 py-2 text-right">Prix unit.</th>
-                        <th class="border border-gray-300 px-4 py-2 text-right">Total</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">${payloopT('dash.inv.print_col_item')}</th>
+                        <th class="border border-gray-300 px-4 py-2 text-right">${payloopT('dash.inv.print_col_qty')}</th>
+                        <th class="border border-gray-300 px-4 py-2 text-right">${payloopT('dash.inv.print_col_unit_price')}</th>
+                        <th class="border border-gray-300 px-4 py-2 text-right">${payloopT('dash.inv.print_col_total')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -2863,7 +2863,7 @@ class PayloopApp {
             const product = this.data.products.find(p => p.id == item.productId);
             invoiceHtml += `
                 <tr>
-                    <td class="border border-gray-300 px-4 py-2">${product?.name || 'Produit supprimé'}</td>
+                    <td class="border border-gray-300 px-4 py-2">${product?.name || payloopT('dash.inv.deleted_product')}</td>
                     <td class="border border-gray-300 px-4 py-2 text-right">${item.quantity}</td>
                     <td class="border border-gray-300 px-4 py-2 text-right">${this.formatCurrency(item.price)}</td>
                     <td class="border border-gray-300 px-4 py-2 text-right">${this.formatCurrency(item.quantity * item.price)}</td>
@@ -2874,20 +2874,21 @@ class PayloopApp {
         invoiceHtml += `
                 </tbody>
             </table>
-            
+
             <div class="text-right space-y-1">
-                <p><strong>Sous-total HT:</strong> ${this.formatCurrency(invoice.subtotal)}</p>
-                <p><strong>TVA (${this.data.settings.taxRate}%):</strong> ${this.formatCurrency(invoice.tax)}</p>
-                <p class="text-xl"><strong>Total TTC:</strong> ${this.formatCurrency(invoice.total)}</p>
+                <p><strong>${payloopT('dash.inv.print_subtotal_label')}</strong> ${this.formatCurrency(invoice.subtotal)}</p>
+                <p><strong>${payloopTF('dash.inv.print_tax_label', this.data.settings.taxRate)}</strong> ${this.formatCurrency(invoice.tax)}</p>
+                <p class="text-xl"><strong>${payloopT('dash.inv.print_total_label')}</strong> ${this.formatCurrency(invoice.total)}</p>
             </div>
         `;
 
         // Show in a modal or new window
+        const printLang = getPayloopLang();
         const printWindow = window.open('', '_blank');
         printWindow.document.write(`
-            <html>
+            <html lang="${printLang}">
                 <head>
-                    <title>Payloop — Facture</title>
+                    <title>${payloopT('dash.inv.print_title')}</title>
                     <style>
                         body { font-family: Arial, sans-serif; margin: 20px; }
                         table { border-collapse: collapse; }
@@ -2898,11 +2899,11 @@ class PayloopApp {
                     </style>
                 </head>
                 <body>
-                   
+
                     ${invoiceHtml}
                     <div class="mt-6">
-                        <button onclick="window.print()" class="bg-blue-600 text-white px-4 py-2 rounded mr-2">Imprimer</button>
-                        <button onclick="window.close()" class="bg-gray-600 text-white px-4 py-2 rounded">Fermer</button>
+                        <button onclick="window.print()" class="bg-blue-600 text-white px-4 py-2 rounded mr-2">${payloopT('dash.inv.print_button')}</button>
+                        <button onclick="window.close()" class="bg-gray-600 text-white px-4 py-2 rounded">${payloopT('dash.inv.print_close')}</button>
                     </div>
                 </body>
             </html>
@@ -2960,11 +2961,11 @@ async function saveProduct(event) {
 
 function openInvoiceModal() {
     if (app.data.clients.length === 0) {
-        app.showNotification('Veuillez d\'abord créer au moins un client', 'warning');
+        app.showNotification(payloopT('dash.inv.notif_need_client'), 'warning');
         return;
     }
     if (app.data.products.length === 0) {
-        app.showNotification('Veuillez d\'abord créer au moins un produit', 'warning');
+        app.showNotification(payloopT('dash.inv.notif_need_product'), 'warning');
         return;
     }
     
@@ -2988,14 +2989,14 @@ function addInvoiceItem() {
     newItem.className = 'invoice-item grid grid-cols-4 gap-2';
     newItem.innerHTML = `
         <select name="productId" class="border border-gray-300 rounded px-2 py-1" onchange="updateItemPrice(this)">
-            <option value="">Sélectionner produit</option>
-            ${app.data.products.map(product => 
+            <option value="">${payloopT('dash.inv.select_product_placeholder')}</option>
+            ${app.data.products.map(product =>
                 `<option value="${product.id}" data-price="${product.price}">${product.name}</option>`
             ).join('')}
         </select>
-        <input type="number" name="quantity" placeholder="Qté" min="1" value="1" class="border border-gray-300 rounded px-2 py-1" onchange="calculateItemTotal(this)">
-        <input type="number" name="price" placeholder="Prix" min="0" class="border border-gray-300 rounded px-2 py-1" onchange="calculateItemTotal(this)">
-        <input type="number" name="total" placeholder="Total" readonly class="border border-gray-300 rounded px-2 py-1 bg-gray-100">
+        <input type="number" name="quantity" placeholder="${payloopT('dash.inv.qty_placeholder')}" min="1" value="1" class="border border-gray-300 rounded px-2 py-1" onchange="calculateItemTotal(this)">
+        <input type="number" name="price" placeholder="${payloopT('dash.inv.price_placeholder')}" min="0" class="border border-gray-300 rounded px-2 py-1" onchange="calculateItemTotal(this)">
+        <input type="number" name="total" placeholder="${payloopT('dash.inv.total_placeholder')}" readonly class="border border-gray-300 rounded px-2 py-1 bg-gray-100">
     `;
     container.appendChild(newItem);
 }
@@ -3054,7 +3055,7 @@ async function saveInvoice(event) {
     });
     
     if (items.length === 0) {
-        app.showNotification('Veuillez ajouter au moins un article', 'warning');
+        app.showNotification(payloopT('dash.inv.notif_need_item'), 'warning');
         return;
     }
     
@@ -3070,10 +3071,10 @@ async function saveInvoice(event) {
         // Si la facture a été créée hors-ligne, addInvoice a déjà affiché la notification
         // adaptée ("en attente de connexion") — pas besoin d'en afficher une deuxième.
         if (!invoice.pendingSync) {
-            app.showNotification('Facture créée avec succès!', 'success');
+            app.showNotification(payloopT('dash.inv.notif_created'), 'success');
         }
     } catch (error) {
-        app.showNotification(error.message || 'Erreur lors de la création de la facture', 'error');
+        app.showNotification(error.message || payloopT('dash.inv.notif_create_error'), 'error');
     }
 }
 
