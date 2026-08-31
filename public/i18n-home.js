@@ -137,6 +137,8 @@ window.PAYLOOP_I18N = {
     'cta.text': 'Rejoignez les premiers commerçants à simplifier leur facturation avec PayLoop.',
 
     'footer.contact': 'Contact : contact@payloop.cm',
+    'footer.legal_link': 'Mentions légales',
+    'footer.privacy_link': 'Politique de confidentialité',
 
     'meta.title': 'PayLoop — Gestion automatisée pour PME africaines',
     'meta.description': 'PayLoop simplifie la facturation, le suivi des paiements, le stock et la fiscalité des PME camerounaises. Créez une facture conforme en quelques clics.',
@@ -278,6 +280,8 @@ window.PAYLOOP_I18N = {
     'cta.text': 'Join the first merchants simplifying their invoicing with PayLoop.',
 
     'footer.contact': 'Contact: contact@payloop.cm',
+    'footer.legal_link': 'Legal notice',
+    'footer.privacy_link': 'Privacy policy',
 
     'meta.title': 'PayLoop — Automated management for African SMEs',
     'meta.description': 'PayLoop simplifies invoicing, payment tracking, inventory and tax for Cameroonian SMEs. Create a compliant invoice in a few clicks.',

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="legal.cp.meta_title">Politique de confidentialité — PayLoop</title>
+    <meta name="robots" content="noindex">
+
+    <link rel="icon" type="image/png" href="/images/icon-favicon-192.png">
+    <link rel="apple-touch-icon" href="/images/icon-192.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#111827">
+    <link rel="stylesheet" href="/fonts/plus-jakarta-sans/plus-jakarta-sans.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body, .font-sans { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .lang-btn { color: #9ca3af; transition: color .15s; }
+        .lang-btn.lang-active { background: #fff; color: #111827; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+        .lang-btn:not(.lang-active):hover { color: #4b5563; }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+
+    <!-- ============================================ -->
+    <!-- EN-TÊTE (simplifié : pas de menu de navigation, ces pages n'ont pas de sections ancrées) -->
+    <!-- ============================================ -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-gray-200">
+        <div class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="/" class="flex items-center">
+                <img src="/images/logo-ht.png" alt="PayLoop" class="h-14 w-auto">
+            </a>
+            <div class="flex items-center gap-4">
+                <a href="/" class="hidden sm:inline-block text-sm font-medium text-gray-600 hover:text-gray-900" data-i18n="legal.nav.back_home">
+                    Retour à l'accueil
+                </a>
+                <div class="inline-flex items-center bg-gray-50 border border-gray-200 rounded-full p-1 text-xs font-medium whitespace-nowrap">
+                    <button id="lang-btn-fr" onclick="setLang('fr')" class="lang-btn flex items-center gap-1.5 px-3 py-1.5 rounded-full">
+                        <svg width="16" height="16" viewBox="0 0 20 20" class="rounded-sm"><rect width="20" height="20" fill="#fff"/><rect width="6.67" height="20" fill="#002654"/><rect x="13.33" width="6.67" height="20" fill="#ED2939"/></svg>
+                        <span>FR</span>
+                    </button>
+                    <button id="lang-btn-en" onclick="setLang('en')" class="lang-btn flex items-center gap-1.5 px-3 py-1.5 rounded-full">
+                        <svg width="16" height="16" viewBox="0 0 20 20" class="rounded-sm"><rect width="20" height="20" fill="#012169"/><path d="M0,0 L20,20 M20,0 L0,20" stroke="#fff" stroke-width="4"/><path d="M0,0 L20,20 M20,0 L0,20" stroke="#C8102E" stroke-width="2"/><path d="M10,0 V20 M0,10 H20" stroke="#fff" stroke-width="6"/><path d="M10,0 V20 M0,10 H20" stroke="#C8102E" stroke-width="3.6"/></svg>
+                        <span>EN</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================ -->
+    <!-- CONTENU -->
+    <!-- ============================================ -->
+    <main class="max-w-3xl mx-auto px-6 py-16">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-900" data-i18n="legal.cp.heading">Politique de confidentialité</h1>
+        <p class="mt-2 text-sm text-gray-500" data-i18n="legal.cp.updated">Dernière mise à jour : août 2026</p>
+        <p class="mt-4 text-gray-700 leading-relaxed" data-i18n="legal.cp.intro">
+            Cette page explique quelles données PayLoop collecte, pourquoi, et comment les consulter ou les supprimer.
+        </p>
+
+        <section class="mt-10">
+            <h2 class="text-xl font-semibold text-gray-900" data-i18n="legal.cp.section_data">Quelles données collectons-nous ?</h2>
+            <p class="mt-4 text-gray-700" data-i18n="legal.cp.data_intro">Lorsque tu utilises PayLoop, nous collectons :</p>
+            <ul class="mt-3 space-y-2 text-gray-700 list-disc list-inside">
+                <li data-i18n-html="legal.cp.data_item1"><strong>Ton compte</strong> : nom, prénom, email, mot de passe (chiffré, jamais stocké en clair)</li>
+                <li data-i18n-html="legal.cp.data_item2"><strong>Les données de ton entreprise</strong> : nom de l'entreprise, taux de TVA, paramètres de facturation</li>
+                <li data-i18n-html="legal.cp.data_item3"><strong>Tes données métier</strong> : clients, produits, factures et paiements que tu enregistres dans l'application</li>
+                <li data-i18n-html="legal.cp.data_item4"><strong>Les identifiants de paiement mobile money</strong> de ton entreprise, chiffrés en base de données, jamais en clair et jamais transmis à des tiers en dehors du prestataire de paiement concerné</li>
+            </ul>
+        </section>
+
+        <section class="mt-10">
+            <h2 class="text-xl font-semibold text-gray-900" data-i18n="legal.cp.section_why">Pourquoi ces données ?</h2>
+            <p class="mt-4 text-gray-700 leading-relaxed" data-i18n="legal.cp.why_p1">
+                Uniquement pour faire fonctionner le service : générer tes factures, suivre tes paiements, t'envoyer les notifications que tu as activées, et te permettre de retrouver tes données en te reconnectant.
+            </p>
+            <p class="mt-4 text-gray-700 leading-relaxed" data-i18n="legal.cp.why_p2">
+                Nous ne vendons ni ne louons vos données à des tiers.
+            </p>
+        </section>
+
+        <section class="mt-10">
+            <h2 class="text-xl font-semibold text-gray-900" data-i18n="legal.cp.section_access">Qui a accès à ces données ?</h2>
+            <ul class="mt-4 space-y-2 text-gray-700 list-disc list-inside">
+                <li data-i18n="legal.cp.access_item1">Toi seul as accès aux données de ton compte (clients, factures, paiements)</li>
+                <li data-i18n="legal.cp.access_item2">Notre hébergeur (Railway) stocke techniquement ces données, sans y accéder dans le cadre normal du service</li>
+                <li data-i18n="legal.cp.access_item3">Nos prestataires de paiement mobile money (actuellement CamPay) reçoivent uniquement les informations nécessaires pour déclencher un encaissement (montant, numéro de téléphone du client final)</li>
+            </ul>
+        </section>
+
+        <section class="mt-10">
+            <h2 class="text-xl font-semibold text-gray-900" data-i18n="legal.cp.section_retention">Combien de temps conservons-nous tes données ?</h2>
+            <p class="mt-4 text-gray-700 leading-relaxed" data-i18n="legal.cp.retention_p1">
+                Tant que ton compte est actif. Si tu supprimes ton compte, tes données sont supprimées sous 30 jours, sauf obligation légale de conservation (comptabilité, fiscalité).
+            </p>
+        </section>
+
+        <section class="mt-10">
+            <h2 class="text-xl font-semibold text-gray-900" data-i18n="legal.cp.section_cookies">Cookies</h2>
+            <p class="mt-4 text-gray-700 leading-relaxed" data-i18n="legal.cp.cookies_p1">
+                PayLoop n'utilise aucun cookie de suivi, de mesure d'audience ou de publicité. Le site utilise uniquement la mémoire technique de ton navigateur pour te garder connecté et retenir ta langue préférée. Ces informations restent sur ton appareil et ne sont partagées avec personne.
+            </p>
+        </section>
+
+        <section class="mt-10">
+            <h2 class="text-xl font-semibold text-gray-900" data-i18n="legal.cp.section_rights">Tes droits</h2>
+            <p class="mt-4 text-gray-700 leading-relaxed" data-i18n="legal.cp.rights_p1">
+                Conformément à la loi camerounaise sur la protection des données à caractère personnel, tu peux à tout moment demander l'accès, la correction ou la suppression de tes données en écrivant à contact@payloop.cm.
+            </p>
+        </section>
+
+        <section class="mt-10">
+            <h2 class="text-xl font-semibold text-gray-900" data-i18n="legal.cp.section_security">Sécurité</h2>
+            <p class="mt-4 text-gray-700 leading-relaxed" data-i18n="legal.cp.security_p1">
+                Les mots de passe sont chiffrés et ne sont jamais stockés en clair. Les identifiants de paiement de ton entreprise sont chiffrés en base de données. Les échanges avec le site sont sécurisés (HTTPS).
+            </p>
+        </section>
+    </main>
+
+    <!-- ============================================ -->
+    <!-- FOOTER -->
+    <!-- ============================================ -->
+    <footer class="bg-white text-gray-500 py-14 border-t border-gray-200">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="flex items-center">
+                <img src="/images/logo-ht.png" alt="PayLoop" class="h-11 w-auto">
+            </div>
+            <div class="text-sm text-center sm:text-right">
+                <div>payloop.cm</div>
+                <div data-i18n="legal.footer.contact">Contact : contact@payloop.cm</div>
+                <div class="mt-2 flex items-center justify-center sm:justify-end gap-4">
+                    <a href="/mentions-legales.html" class="hover:text-gray-700" data-i18n="legal.footer.legal_link">Mentions légales</a>
+                    <a href="/confidentialite.html" class="hover:text-gray-700" data-i18n="legal.footer.privacy_link">Politique de confidentialité</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Traduction FR/EN : le dictionnaire de textes (i18n-legal.js) doit être chargé avant le
+         moteur qui les applique (i18n.js). -->
+    <script src="/i18n-legal.js"></script>
+    <script src="/i18n.js"></script>
+</body>
+</html>
