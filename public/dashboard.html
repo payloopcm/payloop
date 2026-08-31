@@ -829,7 +829,7 @@
 <div id="profile-modal" class="modal">
     <div class="modal-content w-full max-w-md">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold">Mon profil</h3>
+            <h3 class="text-lg font-semibold" data-i18n="dash.dropdown_profile">Mon profil</h3>
             <button onclick="closeProfileModal()" class="text-gray-500 hover:text-gray-700">
                 <i data-lucide="x"></i>
             </button>
@@ -840,11 +840,11 @@
                 <span id="profile-avatar-letter" class="text-white text-xl font-medium">U</span>
             </div>
             <div>
-                <label for="profile-avatar-input" class="cursor-pointer text-sm text-blue-600 hover:text-blue-700 font-medium">
+                <label for="profile-avatar-input" class="cursor-pointer text-sm text-blue-600 hover:text-blue-700 font-medium" data-i18n="dash.prof.change_photo">
                     Changer la photo
                 </label>
                 <input type="file" id="profile-avatar-input" accept="image/*" class="hidden" onchange="handleAvatarChange(event)">
-                <p class="text-xs text-gray-500 mt-1">JPG ou PNG, 2 Mo maximum</p>
+                <p class="text-xs text-gray-500 mt-1" data-i18n="dash.prof.photo_hint">JPG ou PNG, 2 Mo maximum</p>
             </div>
         </div>
 
@@ -852,21 +852,21 @@
             <div class="space-y-4">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Prénom</label>
+                        <label class="block text-sm font-medium text-gray-700" data-i18n="dash.prof.field_first_name">Prénom</label>
                         <input type="text" name="first_name" id="profile-first-name" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Nom</label>
+                        <label class="block text-sm font-medium text-gray-700" data-i18n="dash.prof.field_last_name">Nom</label>
                         <input type="text" name="last_name" id="profile-last-name" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Email *</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.prof.field_email">Email *</label>
                     <input type="email" name="email" id="profile-email" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                 </div>
             </div>
             <div class="mt-6">
-                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700" data-i18n="dash.prof.save_button">
                     Enregistrer les modifications
                 </button>
             </div>
@@ -874,24 +874,24 @@
 
         <div class="border-t border-gray-200 my-6"></div>
 
-        <h4 class="text-sm font-semibold text-gray-900 mb-3">Changer le mot de passe</h4>
+        <h4 class="text-sm font-semibold text-gray-900 mb-3" data-i18n="dash.prof.password_heading">Changer le mot de passe</h4>
         <form id="password-form" onsubmit="changePassword(event)">
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Mot de passe actuel</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.prof.field_current_password">Mot de passe actuel</label>
                     <input type="password" name="current_password" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Nouveau mot de passe</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.prof.field_new_password">Nouveau mot de passe</label>
                     <input type="password" name="new_password" required minlength="6" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Confirmer le nouveau mot de passe</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.prof.field_confirm_password">Confirmer le nouveau mot de passe</label>
                     <input type="password" name="confirm_password" required minlength="6" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                 </div>
             </div>
             <div class="mt-6">
-                <button type="submit" class="w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-900">
+                <button type="submit" class="w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-900" data-i18n="dash.prof.password_heading">
                     Changer le mot de passe
                 </button>
             </div>
@@ -903,7 +903,7 @@
 <div id="settings-modal" class="modal">
     <div class="modal-content w-full max-w-md">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold">Mes paramètres</h3>
+            <h3 class="text-lg font-semibold" data-i18n="dash.dropdown_settings">Mes paramètres</h3>
             <button onclick="closeSettingsModal()" class="text-gray-500 hover:text-gray-700">
                 <i data-lucide="x"></i>
             </button>
@@ -911,16 +911,16 @@
         <form id="settings-form" onsubmit="saveSettings(event)">
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Nom de l'entreprise</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_company_name">Nom de l'entreprise</label>
                     <input type="text" name="company_name" id="settings-company-name" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
-                    <p class="text-xs text-gray-500 mt-1">Affiché sur vos factures et rapports.</p>
+                    <p class="text-xs text-gray-500 mt-1" data-i18n="dash.set.company_name_hint">Affiché sur vos factures et rapports.</p>
                 </div>
 
                 <div class="border-t border-gray-200 pt-4">
                     <div class="flex items-center justify-between">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">TVA</label>
-                            <p class="text-xs text-gray-500 mt-1">Désactivez si vous êtes soumis à l'Impôt libératoire (exonéré de TVA).</p>
+                            <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_vat">TVA</label>
+                            <p class="text-xs text-gray-500 mt-1" data-i18n="dash.set.vat_hint">Désactivez si vous êtes soumis à l'Impôt libératoire (exonéré de TVA).</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-4">
                             <input type="checkbox" name="tax_enabled" id="settings-tax-enabled" class="sr-only peer" onchange="toggleTaxRateField()">
@@ -929,22 +929,22 @@
                         </label>
                     </div>
                     <div id="settings-tax-rate-wrapper" class="mt-3">
-                        <label class="block text-sm font-medium text-gray-700">Taux de TVA (%)</label>
+                        <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_vat_rate">Taux de TVA (%)</label>
                         <input type="number" name="tax_rate" id="settings-tax-rate" step="0.01" min="0" max="100" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                     </div>
                 </div>
 
                 <div class="border-t border-gray-200 pt-4">
-                    <label class="block text-sm font-medium text-gray-700">Seuil d'alerte de stock faible</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_low_stock_threshold">Seuil d'alerte de stock faible</label>
                     <input type="number" name="low_stock_threshold" id="settings-low-stock-threshold" min="0" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
-                    <p class="text-xs text-gray-500 mt-1">Un produit est signalé « stock faible » en dessous de cette quantité.</p>
+                    <p class="text-xs text-gray-500 mt-1" data-i18n="dash.set.low_stock_hint">Un produit est signalé « stock faible » en dessous de cette quantité.</p>
                 </div>
 
                 <div class="border-t border-gray-200 pt-4">
                     <div class="flex items-center justify-between">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Notifications</label>
-                            <p class="text-xs text-gray-500 mt-1">Affiche des rappels (factures en retard, stock faible) à l'ouverture de l'application.</p>
+                            <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_notifications">Notifications</label>
+                            <p class="text-xs text-gray-500 mt-1" data-i18n="dash.set.notifications_hint">Affiche des rappels (factures en retard, stock faible) à l'ouverture de l'application.</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-4">
                             <input type="checkbox" name="notifications_enabled" id="settings-notifications-enabled" class="sr-only peer">
@@ -955,7 +955,7 @@
                 </div>
             </div>
             <div class="mt-6">
-                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700" data-i18n="dash.set.save_button">
                     Enregistrer les paramètres
                 </button>
             </div>
@@ -3898,7 +3898,7 @@ window.payloopOnLangChange = function (lang) {
                 document.getElementById('password-form').reset();
                 document.getElementById('profile-modal').classList.add('active');
             } catch (error) {
-                app.showNotification(error.message || 'Erreur lors du chargement du profil', 'error');
+                app.showNotification(error.message || payloopT('dash.prof.notif_load_error'), 'error');
             }
         }
 
@@ -3918,9 +3918,9 @@ window.payloopOnLangChange = function (lang) {
                 });
                 localStorage.setItem('user', JSON.stringify(res.user));
                 updateUserDisplay(res.user);
-                app.showNotification('Profil mis à jour avec succès !', 'success');
+                app.showNotification(payloopT('dash.prof.notif_save_success'), 'success');
             } catch (error) {
-                app.showNotification(error.message || 'Erreur lors de la mise à jour du profil', 'error');
+                app.showNotification(error.message || payloopT('dash.prof.notif_save_error'), 'error');
             }
         }
 
@@ -3930,7 +3930,7 @@ window.payloopOnLangChange = function (lang) {
             const { current_password, new_password, confirm_password } = Object.fromEntries(formData.entries());
 
             if (new_password !== confirm_password) {
-                app.showNotification('Les deux mots de passe ne correspondent pas', 'error');
+                app.showNotification(payloopT('dash.prof.notif_password_mismatch'), 'error');
                 return;
             }
 
@@ -3940,9 +3940,9 @@ window.payloopOnLangChange = function (lang) {
                     body: JSON.stringify({ current_password, new_password })
                 });
                 event.target.reset();
-                app.showNotification('Mot de passe changé avec succès !', 'success');
+                app.showNotification(payloopT('dash.prof.notif_password_success'), 'success');
             } catch (error) {
-                app.showNotification(error.message || 'Erreur lors du changement de mot de passe', 'error');
+                app.showNotification(error.message || payloopT('dash.prof.notif_password_error'), 'error');
             }
         }
 
@@ -3979,7 +3979,7 @@ window.payloopOnLangChange = function (lang) {
             if (!file) return;
 
             if (!file.type.startsWith('image/')) {
-                app.showNotification('Veuillez choisir une image', 'error');
+                app.showNotification(payloopT('dash.prof.notif_avatar_invalid'), 'error');
                 return;
             }
 
@@ -3994,9 +3994,9 @@ window.payloopOnLangChange = function (lang) {
                 localStorage.setItem('user', JSON.stringify(user));
                 updateUserDisplay(user);
                 setAvatarDisplay('profile-avatar-preview', 'profile-avatar-letter', user);
-                app.showNotification('Photo de profil mise à jour !', 'success');
+                app.showNotification(payloopT('dash.prof.notif_avatar_success'), 'success');
             } catch (error) {
-                app.showNotification(error.message || 'Erreur lors de l\'envoi de la photo', 'error');
+                app.showNotification(error.message || payloopT('dash.prof.notif_avatar_error'), 'error');
             }
         }
 
@@ -4005,7 +4005,7 @@ window.payloopOnLangChange = function (lang) {
             const container = document.getElementById(containerId);
             if (!container) return;
             if (user.avatar_data) {
-                container.innerHTML = `<img src="${user.avatar_data}" class="w-full h-full object-cover" alt="Photo de profil">`;
+                container.innerHTML = `<img src="${user.avatar_data}" class="w-full h-full object-cover" alt="${payloopT('dash.prof.avatar_alt')}">`;
             } else {
                 const letter = (user.first_name || user.email || 'U').charAt(0).toUpperCase();
                 container.innerHTML = `<span id="${letterId}" class="text-white font-medium">${letter}</span>`;
@@ -4067,14 +4067,14 @@ window.payloopOnLangChange = function (lang) {
                 app.applySettings(res.settings);
                 app.updateUI();
                 closeSettingsModal();
-                app.showNotification('Paramètres mis à jour avec succès !', 'success');
+                app.showNotification(payloopT('dash.set.notif_save_success'), 'success');
             } catch (error) {
-                app.showNotification(error.message || 'Erreur lors de la mise à jour des paramètres', 'error');
+                app.showNotification(error.message || payloopT('dash.set.notif_save_error'), 'error');
             }
         }
 
         function logout() {
-            if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+            if (confirm(payloopT('dash.logout_confirm'))) {
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
                 window.location.href = '/login.html';

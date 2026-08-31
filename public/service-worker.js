@@ -40,8 +40,11 @@
 // Étape 16 : traduction FR/EN de la section Rapports (rapport mensuel, statistiques fiscales), et
 // le PDF du rapport mensuel téléchargeable suit désormais lui aussi la langue active — cache
 // encore augmenté.
+// Étape 17 : traduction FR/EN des fenêtres "Mon profil" (informations, changement de mot de
+// passe, photo) et "Mes paramètres" (entreprise, TVA, seuil de stock, notifications), ainsi que
+// le message de confirmation de déconnexion — cache encore augmenté.
 
-const CACHE_NAME = 'payloop-shell-v16';
+const CACHE_NAME = 'payloop-shell-v17';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [
