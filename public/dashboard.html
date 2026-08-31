@@ -725,10 +725,10 @@
         <div id="payments-view" class="view">
             <div class="space-y-6">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-2xl font-bold">Gestion Paiements</h2>
+                    <h2 class="text-2xl font-bold" data-i18n="dash.pay.heading">Gestion Paiements</h2>
                     <button onclick="openPaymentModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700">
                         <i data-lucide="plus" class="mr-2"></i>
-                        Enregistrer paiement
+                        <span data-i18n="dash.pay.new_button">Enregistrer paiement</span>
                     </button>
 </div>
 
@@ -737,12 +737,12 @@
                         <table class="w-full">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left">Date</th>
-                                    <th class="px-6 py-3 text-left">Facture</th>
-                                    <th class="px-6 py-3 text-left">Client</th>
-                                    <th class="px-6 py-3 text-left">Montant</th>
-                                    <th class="px-6 py-3 text-left">Méthode</th>
-                                    <th class="px-6 py-3 text-left">Actions</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.pay.col_date">Date</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.pay.col_invoice">Facture</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.inv.col_client">Client</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.pay.col_amount">Montant</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.pay.col_method">Méthode</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.inv.col_actions">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="payments-table">
@@ -1084,7 +1084,7 @@
 <div id="payment-modal" class="modal">
     <div class="modal-content w-full max-w-md">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold">Enregistrer Paiement</h3>
+            <h3 class="text-lg font-semibold" data-i18n="dash.pay.modal_title">Enregistrer Paiement</h3>
             <button onclick="closePaymentModal()" class="text-gray-500 hover:text-gray-700">
                 <i data-lucide="x"></i>
             </button>
@@ -1092,39 +1092,39 @@
         <form id="payment-form" onsubmit="savePayment(event)">
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Facture *</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.pay.field_invoice">Facture *</label>
                     <select name="invoiceId" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
-                        <option value="">Sélectionner une facture</option>
+                        <option value="" data-i18n="dash.pay.select_invoice_placeholder">Sélectionner une facture</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Montant (FCFA) *</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.pay.field_amount">Montant (FCFA) *</label>
                     <input type="number" name="amount" required min="0" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Méthode de paiement</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.pay.field_method">Méthode de paiement</label>
                     <select name="method" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                         <option value="MTN Mobile Money">MTN Mobile Money</option>
                         <option value="Orange Money">Orange Money</option>
-                        <option value="Espèces">Espèces</option>
-                        <option value="Virement">Virement bancaire</option>
-                        <option value="Chèque">Chèque</option>
+                        <option value="Espèces" data-i18n="dash.pay.method_cash">Espèces</option>
+                        <option value="Virement" data-i18n="dash.pay.method_transfer">Virement bancaire</option>
+                        <option value="Chèque" data-i18n="dash.pay.method_check">Chèque</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Date</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.pay.field_date">Date</label>
                     <input type="date" name="date" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Référence</label>
-                    <input type="text" name="reference" placeholder="Numéro de transaction" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.pay.field_reference">Référence</label>
+                    <input type="text" name="reference" placeholder="Numéro de transaction" data-i18n-placeholder="dash.pay.reference_placeholder" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                 </div>
             </div>
             <div class="mt-6 flex space-x-3">
-                <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700" data-i18n="dash.cli.submit_save">
                     Enregistrer
                 </button>
-                <button type="button" onclick="closePaymentModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">
+                <button type="button" onclick="closePaymentModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400" data-i18n="dash.action.cancel">
                     Annuler
                 </button>
             </div>
@@ -2324,21 +2324,32 @@ class PayloopApp {
         if (!tbody) return;
 
         if (this.data.payments.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">Aucun paiement enregistré</td></tr>';
+            tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">${payloopT('dash.pay.empty')}</td></tr>`;
             return;
         }
+
+        // Étape 12 : la méthode de paiement (ex : "Espèces", "Virement") est enregistrée en
+        // base en français — comme pour la catégorie des produits, seul le libellé affiché est
+        // traduit ; MTN Mobile Money et Orange Money restent des noms de marque, non traduits.
+        const methodLabelKeys = {
+            'Espèces': 'dash.pay.method_cash',
+            'Virement': 'dash.pay.method_transfer',
+            'Chèque': 'dash.pay.method_check'
+        };
 
         tbody.innerHTML = this.data.payments.map(payment => {
             const invoice = this.data.invoices.find(inv => inv.id == payment.invoiceId);
             const client = this.data.clients.find(c => c.id == invoice?.clientId);
-            
+            const methodKey = methodLabelKeys[payment.method];
+            const methodLabel = methodKey ? payloopT(methodKey) : payment.method;
+
             return `
                 <tr>
                     <td class="px-6 py-4">${this.formatDate(payment.date)}</td>
-                    <td class="px-6 py-4 font-mono text-sm">${invoice?.number || 'Facture supprimée'}</td>
-                    <td class="px-6 py-4">${client?.name || 'Client inconnu'}</td>
+                    <td class="px-6 py-4 font-mono text-sm">${invoice?.number || payloopT('dash.pay.deleted_invoice')}</td>
+                    <td class="px-6 py-4">${client?.name || payloopT('dash.unknown_client')}</td>
                     <td class="px-6 py-4 font-bold">${this.formatCurrency(payment.amount)}</td>
-                    <td class="px-6 py-4">${payment.method}</td>
+                    <td class="px-6 py-4">${methodLabel}</td>
                     <td class="px-6 py-4">
                         <button onclick="app.deleteItem('payments', ${payment.id})" class="text-red-600 hover:text-red-800">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
@@ -2374,7 +2385,7 @@ class PayloopApp {
         const invoiceSelects = document.querySelectorAll('#payment-form select[name="invoiceId"]');
         const unpaidInvoices = this.data.invoices.filter(inv => inv.status !== 'payee');
         invoiceSelects.forEach(select => {
-            select.innerHTML = '<option value="">Sélectionner une facture</option>' + 
+            select.innerHTML = `<option value="">${payloopT('dash.pay.select_invoice_placeholder')}</option>` +
                 unpaidInvoices.map(invoice => {
                     const client = this.data.clients.find(c => c.id == invoice.clientId);
                     return `<option value="${invoice.id}">${invoice.number} - ${client?.name} (${this.formatCurrency(invoice.total)})</option>`;
@@ -3119,7 +3130,7 @@ async function saveInvoice(event) {
 
 function openPaymentModal() {
     if (app.data.invoices.filter(inv => inv.status !== 'payee').length === 0) {
-        app.showNotification('Aucune facture impayée trouvée', 'warning');
+        app.showNotification(payloopT('dash.pay.notif_no_unpaid_invoice'), 'warning');
         return;
     }
     
@@ -3144,9 +3155,9 @@ async function savePayment(event) {
     try {
         await app.addPayment(paymentData);
         closePaymentModal();
-        app.showNotification('Paiement enregistré avec succès!', 'success');
+        app.showNotification(payloopT('dash.pay.notif_created'), 'success');
     } catch (error) {
-        app.showNotification(error.message || 'Erreur lors de l\'enregistrement du paiement', 'error');
+        app.showNotification(error.message || payloopT('dash.pay.notif_create_error'), 'error');
     }
 }
 

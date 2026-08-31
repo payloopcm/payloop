@@ -23,8 +23,11 @@
 // (Produits/Formation/Autre) — la valeur enregistrée reste en français, seul l'affichage
 // change selon la langue, et le filtre par catégorie a été sécurisé pour continuer à
 // fonctionner correctement en anglais — cache encore augmenté.
+// Étape 12 : traduction FR/EN de la section Paiements (tableau, formulaire "Enregistrer
+// paiement") — la méthode de paiement (Espèces/Virement/Chèque) reste enregistrée en
+// français, seul le libellé affiché change selon la langue — cache encore augmenté.
 
-const CACHE_NAME = 'payloop-shell-v11';
+const CACHE_NAME = 'payloop-shell-v12';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [
