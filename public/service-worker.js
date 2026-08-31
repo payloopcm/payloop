@@ -34,8 +34,11 @@
 // suit désormais lui aussi la langue active (en-têtes, exemples, noms d'onglets) — la
 // reconnaissance des feuilles à l'import a été mise à jour pour accepter les noms français
 // et anglais — cache encore augmenté.
+// Étape 15 : traduction FR/EN de la section Fiscalité (calculateur, cartes, rapports), les noms
+// de mois de la liste des périodes s'affichent désormais dans la bonne langue, et le fichier de
+// déclaration TVA téléchargeable en Excel suit lui aussi la langue active — cache encore augmenté.
 
-const CACHE_NAME = 'payloop-shell-v14';
+const CACHE_NAME = 'payloop-shell-v15';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [

@@ -551,16 +551,16 @@
         <div id="taxes-view" class="view">
             <div class="space-y-6">
                 <div class="flex justify-between items-center flex-wrap gap-3">
-                    <h2 class="text-2xl font-bold">Gestion Fiscale</h2>
+                    <h2 class="text-2xl font-bold" data-i18n="dash.tax.heading">Gestion Fiscale</h2>
                     <div class="flex items-center space-x-3">
                         <select id="tax-period-select" class="border border-gray-300 rounded-lg px-3 py-2 text-sm"></select>
                         <button onclick="generateTaxDeclaration()" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
                             <i data-lucide="file-text" class="mr-2"></i>
-                            Déclaration TVA
+                            <span data-i18n="dash.tax.declaration_button">Déclaration TVA</span>
                         </button>
                         <button onclick="calculateTaxes()" class="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700">
                             <i data-lucide="calculator" class="mr-2"></i>
-                            Calculer impôts
+                            <span data-i18n="dash.tax.calculate_button">Calculer impôts</span>
                         </button>
                     </div>
                 </div>
@@ -570,9 +570,9 @@
                     <div class="bg-white p-6 rounded-lg shadow-sm border">
                         <h3 class="font-semibold text-gray-700 mb-4" id="vat-collected-title">TVA collectée</h3>
                         <div class="text-2xl font-bold text-blue-600" id="vat-collected">0 FCFA</div>
-                        <div class="text-sm text-gray-600 mt-1">Sur CA facturé de la période sélectionnée</div>
+                        <div class="text-sm text-gray-600 mt-1" data-i18n="dash.tax.vat_collected_sub">Sur CA facturé de la période sélectionnée</div>
                         <div class="mt-4">
-                            <div class="text-xs text-gray-500 mb-1">Période sélectionnée</div>
+                            <div class="text-xs text-gray-500 mb-1" data-i18n="dash.tax.selected_period_label">Période sélectionnée</div>
                             <div class="w-full bg-gray-200 rounded-full h-2">
                                 <div class="bg-blue-600 h-2 rounded-full" style="width: 75%"></div>
                             </div>
@@ -581,37 +581,37 @@
                     </div>
 
                     <div class="bg-white p-6 rounded-lg shadow-sm border">
-                        <h3 class="font-semibold text-gray-700 mb-4">CA HT de la période</h3>
+                        <h3 class="font-semibold text-gray-700 mb-4" data-i18n="dash.tax.revenue_ht_title">CA HT de la période</h3>
                         <div class="text-2xl font-bold text-green-600" id="monthly-revenue-ht">0 FCFA</div>
-                        <div class="text-sm text-gray-600 mt-1">Chiffre d'affaires HT</div>
+                        <div class="text-sm text-gray-600 mt-1" data-i18n="dash.tax.revenue_ht_sub">Chiffre d'affaires HT</div>
                         <div class="mt-4 space-y-2">
                             <div class="flex justify-between text-sm">
-                                <span>Factures payées:</span>
+                                <span data-i18n="dash.tax.paid_invoices_label">Factures payées:</span>
                                 <span class="font-medium" id="paid-invoices-tax">0</span>
                             </div>
                             <div class="flex justify-between text-sm">
-                                <span>En attente:</span>
+                                <span data-i18n="dash.tax.pending_label">En attente:</span>
                                 <span class="font-medium" id="pending-invoices-tax">0</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="bg-white p-6 rounded-lg shadow-sm border">
-                        <h3 class="font-semibold text-gray-700 mb-4">Obligations fiscales</h3>
+                        <h3 class="font-semibold text-gray-700 mb-4" data-i18n="dash.tax.obligations_title">Obligations fiscales</h3>
                         <div class="space-y-3">
                             <div class="flex items-center justify-between p-2 bg-yellow-50 border border-yellow-200 rounded">
                                 <div class="text-sm">
-                                    <div class="font-medium">TVA mensuelle</div>
-                                    <div class="text-gray-600">À déclarer avant le 15</div>
+                                    <div class="font-medium" data-i18n="dash.tax.vat_monthly_label">TVA mensuelle</div>
+                                    <div class="text-gray-600" data-i18n="dash.tax.vat_monthly_sub">À déclarer avant le 15</div>
                                 </div>
-                                <div class="text-yellow-600 font-bold">Due</div>
+                                <div class="text-yellow-600 font-bold" data-i18n="dash.tax.status_due">Due</div>
                             </div>
                             <div class="flex items-center justify-between p-2 bg-green-50 border border-green-200 rounded">
                                 <div class="text-sm">
-                                    <div class="font-medium">IRPP</div>
-                                    <div class="text-gray-600">Déclaration annuelle</div>
+                                    <div class="font-medium" data-i18n="dash.tax.irpp_label">IRPP</div>
+                                    <div class="text-gray-600" data-i18n="dash.tax.irpp_annual_sub">Déclaration annuelle</div>
                                 </div>
-                                <div class="text-green-600 font-bold">OK</div>
+                                <div class="text-green-600 font-bold" data-i18n="dash.tax.status_ok">OK</div>
                             </div>
                         </div>
                     </div>
@@ -619,34 +619,34 @@
 
                 <!-- Tax Calculator -->
                 <div class="bg-white rounded-lg shadow-sm border p-6">
-                    <h3 class="text-lg font-semibold mb-4">Calculateur fiscal</h3>
+                    <h3 class="text-lg font-semibold mb-4" data-i18n="dash.tax.calculator_title">Calculateur fiscal</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Chiffre d'affaires HT (FCFA)</label>
-                            <input type="number" id="tax-calc-revenue" class="w-full border border-gray-300 rounded-lg px-3 py-2" 
-                                   placeholder="Entrez votre CA HT" onchange="calculateTaxEstimate()">
+                            <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="dash.tax.field_revenue">Chiffre d'affaires HT (FCFA)</label>
+                            <input type="number" id="tax-calc-revenue" class="w-full border border-gray-300 rounded-lg px-3 py-2"
+                                   placeholder="Entrez votre CA HT" data-i18n-placeholder="dash.tax.revenue_placeholder" onchange="calculateTaxEstimate()">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Période</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="dash.tax.field_period">Période</label>
                             <select id="tax-calc-period" class="w-full border border-gray-300 rounded-lg px-3 py-2" onchange="calculateTaxEstimate()">
-                                <option value="monthly">Mensuel</option>
-                                <option value="quarterly">Trimestriel</option>
-                                <option value="annual">Annuel</option>
+                                <option value="monthly" data-i18n="dash.tax.period_monthly">Mensuel</option>
+                                <option value="quarterly" data-i18n="dash.tax.period_quarterly">Trimestriel</option>
+                                <option value="annual" data-i18n="dash.tax.period_annual">Annuel</option>
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="p-4 bg-blue-50 rounded-lg">
-                            <div class="text-sm text-blue-600">TVA à payer (19.25%)</div>
+                            <div class="text-sm text-blue-600" data-i18n="dash.tax.calc_vat_label">TVA à payer (19.25%)</div>
                             <div class="text-xl font-bold text-blue-600" id="calc-vat">0 FCFA</div>
                         </div>
                         <div class="p-4 bg-green-50 rounded-lg">
-                            <div class="text-sm text-green-600">CA TTC</div>
+                            <div class="text-sm text-green-600" data-i18n="dash.tax.calc_ttc_label">CA TTC</div>
                             <div class="text-xl font-bold text-green-600" id="calc-ttc">0 FCFA</div>
                         </div>
                         <div class="p-4 bg-purple-50 rounded-lg">
-                            <div class="text-sm text-purple-600">IRPP estimé (20%)</div>
+                            <div class="text-sm text-purple-600" data-i18n="dash.tax.calc_irpp_label">IRPP estimé (20%)</div>
                             <div class="text-xl font-bold text-purple-600" id="calc-irpp">0 FCFA</div>
                         </div>
                     </div>
@@ -655,29 +655,29 @@
                 <!-- Tax Reports -->
                 <div class="bg-white rounded-lg shadow-sm border">
                     <div class="p-6 border-b">
-                        <h3 class="text-lg font-semibold">Rapports fiscaux</h3>
+                        <h3 class="text-lg font-semibold" data-i18n="dash.tax.reports_title">Rapports fiscaux</h3>
                     </div>
                     <div class="p-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <h4 class="font-medium mb-3">Déclaration TVA actuelle</h4>
+                                <h4 class="font-medium mb-3" data-i18n="dash.tax.current_declaration_title">Déclaration TVA actuelle</h4>
                                 <div id="current-tax-report" class="space-y-2 text-sm">
                                     <!-- Populated by JavaScript -->
                                 </div>
                                 <button onclick="generateTaxDeclaration()" class="mt-4 w-full py-2 bg-blue-600 text-white rounded">
-                                    Télécharger rapport TVA (Excel)
+                                    <span data-i18n="dash.tax.download_vat_button">Télécharger rapport TVA (Excel)</span>
                                 </button>
                             </div>
                             <div>
-                                <h4 class="font-medium mb-3">Actions recommandées</h4>
+                                <h4 class="font-medium mb-3" data-i18n="dash.tax.recommended_actions_title">Actions recommandées</h4>
                                 <div class="space-y-2 text-sm">
                                     <div class="p-3 bg-yellow-50 border border-yellow-200 rounded">
-                                        <div class="font-medium">Déclaration mensuelle</div>
-                                        <div class="text-gray-600">Préparer votre déclaration TVA</div>
+                                        <div class="font-medium" data-i18n="dash.tax.monthly_declaration_label">Déclaration mensuelle</div>
+                                        <div class="text-gray-600" data-i18n="dash.tax.monthly_declaration_sub">Préparer votre déclaration TVA</div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border border-blue-200 rounded">
-                                        <div class="font-medium">Sauvegarde fiscale</div>
-                                        <div class="text-gray-600">Archiver vos documents</div>
+                                        <div class="font-medium" data-i18n="dash.tax.fiscal_backup_label">Sauvegarde fiscale</div>
+                                        <div class="text-gray-600" data-i18n="dash.tax.fiscal_backup_sub">Archiver vos documents</div>
                                     </div>
                                 </div>
                             </div>
@@ -2484,7 +2484,7 @@ class PayloopApp {
 
         const vatTitleElement = document.getElementById('vat-collected-title');
         if (vatTitleElement) {
-            vatTitleElement.textContent = `TVA collectée (${this.data.settings.taxRate}%)`;
+            vatTitleElement.textContent = payloopTF('dash.tax.vat_collected_title_with_rate', this.data.settings.taxRate);
         }
 
         // Update tax period
@@ -2509,23 +2509,23 @@ class PayloopApp {
 
         container.innerHTML = `
             <div class="flex justify-between text-gray-500">
-                <span>Période:</span>
+                <span>${payloopT('dash.tax.report_period_label')}</span>
                 <span class="font-medium">${periodLabel}</span>
             </div>
             <div class="flex justify-between">
-                <span>CA HT:</span>
+                <span>${payloopT('dash.tax.report_ca_ht_label')}</span>
                 <span class="font-bold">${this.formatCurrency(totalRevenue)}</span>
             </div>
             <div class="flex justify-between">
-                <span>TVA collectée:</span>
+                <span>${payloopT('dash.tax.report_vat_collected_label')}</span>
                 <span class="font-bold">${this.formatCurrency(totalTax)}</span>
             </div>
             <div class="flex justify-between">
-                <span>Factures payées:</span>
+                <span>${payloopT('dash.tax.paid_invoices_label')}</span>
                 <span class="font-bold">${paidInvoices.length}</span>
             </div>
             <div class="flex justify-between border-t pt-2">
-                <span>TVA à déclarer:</span>
+                <span>${payloopT('dash.tax.report_vat_to_declare_label')}</span>
                 <span class="font-bold text-blue-600">${this.formatCurrency(totalTax)}</span>
             </div>
         `;
@@ -3664,25 +3664,36 @@ function populateTaxPeriodSelect() {
     const select = document.getElementById('tax-period-select');
     if (!select) return;
 
+    // On garde la sélection actuelle pour la restaurer après avoir régénéré la liste
+    // (utile quand cette fonction est rappelée suite à un changement de langue).
+    const previousValue = select.value;
+    const isEn = (typeof getPayloopLang === 'function') && getPayloopLang() === 'en';
+    const locale = isEn ? 'en-US' : 'fr-FR';
+
     const now = new Date();
     const options = [];
     for (let i = 1; i <= 24; i++) {
         const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
         const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        let label = d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+        let label = d.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
         label = label.charAt(0).toUpperCase() + label.slice(1);
         options.push(`<option value="${value}">${label}</option>`);
     }
     select.innerHTML = options.join('');
+    if (previousValue && Array.from(select.options).some(o => o.value === previousValue)) {
+        select.value = previousValue;
+    }
 }
 
 // Lit la période choisie dans le sélecteur (année/mois). Si le sélecteur n'est pas encore
 // rempli, se replie sur le mois précédent.
 function getSelectedTaxPeriod() {
+    const isEn = (typeof getPayloopLang === 'function') && getPayloopLang() === 'en';
+    const locale = isEn ? 'en-US' : 'fr-FR';
     const select = document.getElementById('tax-period-select');
     if (select && select.value) {
         const [y, m] = select.value.split('-').map(Number);
-        const label = new Date(y, m - 1, 1).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+        const label = new Date(y, m - 1, 1).toLocaleDateString(locale, { month: 'long', year: 'numeric' });
         return { year: y, month: m - 1, label };
     }
     const now = new Date();
@@ -3690,7 +3701,7 @@ function getSelectedTaxPeriod() {
     return {
         year: prev.getFullYear(),
         month: prev.getMonth(),
-        label: prev.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+        label: prev.toLocaleDateString(locale, { month: 'long', year: 'numeric' })
     };
 }
 
@@ -3702,7 +3713,7 @@ function generateTaxDeclaration() {
     const paidInvoices = app.getInvoicesForTaxPeriod(period.year, period.month).filter(inv => inv.status === 'payee');
 
     if (paidInvoices.length === 0) {
-        app.showNotification(`Aucune facture payée pour ${period.label} : rien à déclarer`, 'warning');
+        app.showNotification(payloopTF('dash.tax.notif_no_paid_invoices', period.label), 'warning');
         return;
     }
 
@@ -3710,39 +3721,45 @@ function generateTaxDeclaration() {
     const totalTVA = paidInvoices.reduce((sum, inv) => sum + inv.tax, 0);
     const totalTTC = totalHT + totalTVA;
 
+    // Le fichier Excel exporté suit lui aussi la langue active de l'appli (même principe que
+    // le modèle Excel de la section Migration) : en-têtes, libellés et noms d'onglets changent
+    // selon getPayloopLang(), mais la structure du fichier reste identique dans les deux langues.
+    const isEn = (typeof getPayloopLang === 'function') && getPayloopLang() === 'en';
+    const dateLocale = isEn ? 'en-US' : 'fr-FR';
+
     const summarySheet = XLSX.utils.aoa_to_sheet([
-        ['Déclaration TVA'],
-        ['Entreprise', app.data.settings.companyName],
-        ['Période', periodLabel],
-        ['Généré le', new Date().toLocaleDateString('fr-FR')],
+        [payloopT('dash.tax.xls_title')],
+        [payloopT('dash.tax.xls_company'), app.data.settings.companyName],
+        [payloopT('dash.tax.xls_period'), periodLabel],
+        [payloopT('dash.tax.xls_generated_on'), new Date().toLocaleDateString(dateLocale)],
         [],
-        ['CA HT', totalHT],
-        [`TVA collectée (${app.data.settings.taxRate}%)`, totalTVA],
-        ['CA TTC', totalTTC],
-        ['Nombre de factures payées', paidInvoices.length]
+        [payloopT('dash.tax.xls_ca_ht'), totalHT],
+        [payloopTF('dash.tax.xls_vat_collected_rate', app.data.settings.taxRate), totalTVA],
+        [payloopT('dash.tax.xls_ca_ttc'), totalTTC],
+        [payloopT('dash.tax.xls_paid_invoices_count'), paidInvoices.length]
     ]);
 
     const detailRows = paidInvoices.map(inv => {
         const client = app.data.clients.find(c => c.id == inv.clientId);
         return {
-            'N° Facture': inv.number,
-            'Client': client ? client.name : '-',
-            'Date': app.formatDate(inv.dateEmission || inv.createdAt),
-            'CA HT': inv.subtotal,
-            'TVA': inv.tax,
-            'TTC': inv.total
+            [payloopT('dash.tax.xls_col_invoice_number')]: inv.number,
+            [payloopT('dash.tax.xls_col_client')]: client ? client.name : payloopT('dash.tax.xls_no_client'),
+            [payloopT('dash.tax.xls_col_date')]: app.formatDate(inv.dateEmission || inv.createdAt),
+            [payloopT('dash.tax.xls_col_ca_ht')]: inv.subtotal,
+            [payloopT('dash.tax.xls_col_vat')]: inv.tax,
+            [payloopT('dash.tax.xls_col_ttc')]: inv.total
         };
     });
     const detailSheet = XLSX.utils.json_to_sheet(detailRows);
 
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, summarySheet, 'Résumé');
-    XLSX.utils.book_append_sheet(workbook, detailSheet, 'Factures');
+    XLSX.utils.book_append_sheet(workbook, summarySheet, payloopT('dash.tax.xls_sheet_summary'));
+    XLSX.utils.book_append_sheet(workbook, detailSheet, payloopT('dash.tax.xls_sheet_invoices'));
 
     const fileName = `declaration-tva-${period.year}-${String(period.month + 1).padStart(2, '0')}.xlsx`;
     XLSX.writeFile(workbook, fileName);
 
-    app.showNotification(`Déclaration TVA téléchargée (${period.label}) : ${app.formatCurrency(totalTVA)} de TVA`, 'success');
+    app.showNotification(payloopTF('dash.tax.notif_declaration_downloaded', period.label, app.formatCurrency(totalTVA)), 'success');
 }
 
 function calculateTaxes() {
@@ -3751,7 +3768,7 @@ function calculateTaxes() {
     const totalRevenue = paidInvoices.reduce((sum, inv) => sum + inv.subtotal, 0);
     const totalTax = paidInvoices.reduce((sum, inv) => sum + inv.tax, 0);
 
-    app.showNotification(`Calcul fiscal (${period.label}): CA HT ${app.formatCurrency(totalRevenue)}, TVA ${app.formatCurrency(totalTax)}`, 'success');
+    app.showNotification(payloopTF('dash.tax.notif_calc_result', period.label, app.formatCurrency(totalRevenue), app.formatCurrency(totalTax)), 'success');
 }
 
 // Update existing functions to handle new views
@@ -3812,6 +3829,16 @@ window.payloopOnLangChange = function (lang) {
     // généré en JavaScript — on le redessine pour qu'il change de langue lui aussi.
     if (typeof updateImportFormatInfo === 'function') {
         updateImportFormatInfo();
+    }
+    // La liste déroulante des périodes (Fiscalité) affiche des noms de mois générés en
+    // JavaScript ("janvier 2026" / "January 2026") — on la redessine dans la nouvelle langue
+    // tout en gardant la période actuellement sélectionnée, puis on rafraîchit les chiffres
+    // affichés (qui utilisent aussi le libellé de période traduit).
+    if (typeof populateTaxPeriodSelect === 'function') {
+        populateTaxPeriodSelect();
+        if (typeof app !== 'undefined' && app && typeof app.updateTaxData === 'function') {
+            app.updateTaxData();
+        }
     }
 };
 </script>
