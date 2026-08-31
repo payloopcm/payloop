@@ -1427,7 +1427,9 @@ class PayloopApp {
                 description: p.description,
                 price: parseFloat(p.prix),
                 stock: p.stock,
-                category: 'Produits',
+                // Étape 15 : la catégorie est maintenant réellement enregistrée en base
+                // (avant, elle était toujours réinitialisée à "Produits" ici).
+                category: p.category || 'Produits',
                 createdAt: p.created_at
             }));
 
@@ -1589,7 +1591,8 @@ class PayloopApp {
                 nom: productData.name,
                 description: productData.description || null,
                 prix: parseFloat(productData.price),
-                stock: productData.stock ? parseInt(productData.stock) : 0
+                stock: productData.stock ? parseInt(productData.stock) : 0,
+                category: productData.category || 'Produits'
             })
         });
         const p = result.product;
@@ -1599,9 +1602,8 @@ class PayloopApp {
             description: p.description,
             price: parseFloat(p.prix),
             stock: p.stock,
-            // La catégorie n'existe pas dans la base : gardée seulement le temps de la session,
-            // elle repassera à "Produits" au prochain chargement.
-            category: productData.category || 'Produits',
+            // Étape 15 : la catégorie est maintenant réellement enregistrée en base.
+            category: p.category || 'Produits',
             createdAt: p.created_at
         };
         this.data.products.push(product);
@@ -3416,6 +3418,27 @@ const PRODUCT_COLUMN_ALIASES = {
     description: ['description']
 };
 
+// Étape 15 : la catégorie est enregistrée en base sous une valeur française fixe
+// (Services/Produits/Formation/Autre), quelle que soit la langue du fichier importé.
+// On ramène donc les équivalents anglais du modèle téléchargeable (voir downloadTemplate)
+// vers ces mêmes valeurs, sinon le produit importé ne serait ni traduit correctement
+// ni reconnu par le filtre par catégorie.
+const PRODUCT_CATEGORY_ALIASES = {
+    'services': 'Services',
+    'produits': 'Produits',
+    'products': 'Produits',
+    'formation': 'Formation',
+    'training': 'Formation',
+    'autre': 'Autre',
+    'other': 'Autre'
+};
+
+function normalizeProductCategory(value) {
+    if (!value) return 'Produits';
+    const normalized = PRODUCT_CATEGORY_ALIASES[String(value).trim().toLowerCase()];
+    return normalized || value;
+}
+
 // Devine si une feuille/liste contient des clients ou des produits : d'abord par le nom
 // de la feuille (ex: "Clients"/"Customers"), sinon par les colonnes présentes. Renvoie
 // null si ambigu.
@@ -3498,6 +3521,7 @@ function processImport() {
             } else if (importType === 'products') {
                 for (const item of rows) {
                     if (item.name && item.price) {
+                        item.category = normalizeProductCategory(item.category);
                         try {
                             await app.addProduct(item);
                             importedCount++;
