@@ -410,10 +410,10 @@
                                    class="flex-1 px-4 py-2 border rounded-lg" onkeyup="searchProducts()" data-i18n-placeholder="dash.stk.search_placeholder">
                             <select id="category-filter" class="border rounded-lg px-3 py-2" onchange="filterProducts()">
                                 <option value="" data-i18n="dash.stk.all_categories">Toutes catégories</option>
-                                <option value="Services">Services</option>
-                                <option value="Produits">Produits</option>
-                                <option value="Formation">Formation</option>
-                                <option value="Autre">Autre</option>
+                                <option value="Services" data-i18n="dash.stk.cat_services">Services</option>
+                                <option value="Produits" data-i18n="dash.stk.cat_produits">Produits</option>
+                                <option value="Formation" data-i18n="dash.stk.cat_formation">Formation</option>
+                                <option value="Autre" data-i18n="dash.stk.cat_autre">Autre</option>
                             </select>
                             <select id="stock-filter" class="border rounded-lg px-3 py-2" onchange="filterProducts()">
                                 <option value="" data-i18n="dash.stk.stock_all">Tous les stocks</option>
@@ -989,10 +989,10 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700" data-i18n="dash.stk.field_category">Catégorie</label>
                     <select name="category" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
-                        <option value="Services">Services</option>
-                        <option value="Produits">Produits</option>
-                        <option value="Formation">Formation</option>
-                        <option value="Autre">Autre</option>
+                        <option value="Services" data-i18n="dash.stk.cat_services">Services</option>
+                        <option value="Produits" data-i18n="dash.stk.cat_produits">Produits</option>
+                        <option value="Formation" data-i18n="dash.stk.cat_formation">Formation</option>
+                        <option value="Autre" data-i18n="dash.stk.cat_autre">Autre</option>
                     </select>
                 </div>
                 <div>
@@ -2212,6 +2212,17 @@ class PayloopApp {
         // bon en-tête et que "Valeur" (prix × stock) et "Statut" (badge coloré) soient calculées.
         const threshold = this.data.settings.lowStockThreshold;
 
+        // Étape 10 : la catégorie est stockée en base en français (Services/Produits/Formation/
+        // Autre) et ne doit pas changer selon la langue affichée — seul le libellé visible est
+        // traduit ; la vraie valeur reste dans l'attribut data-category de la ligne, pour que le
+        // filtre par catégorie continue de fonctionner correctement en anglais.
+        const categoryLabelKeys = {
+            'Services': 'dash.stk.cat_services',
+            'Produits': 'dash.stk.cat_produits',
+            'Formation': 'dash.stk.cat_formation',
+            'Autre': 'dash.stk.cat_autre'
+        };
+
         tbody.innerHTML = this.data.products.map(product => {
             const stock = product.stock;
             const hasStock = stock !== null && stock !== undefined;
@@ -2228,11 +2239,13 @@ class PayloopApp {
             }
 
             const value = hasStock ? this.formatCurrency(product.price * stock) : 'N/A';
+            const categoryKey = categoryLabelKeys[product.category];
+            const categoryLabel = categoryKey ? payloopT(categoryKey) : product.category;
 
             return `
-                <tr>
+                <tr data-category="${product.category}">
                     <td class="px-6 py-4 font-medium">${product.name}</td>
-                    <td class="px-6 py-4">${product.category}</td>
+                    <td class="px-6 py-4">${categoryLabel}</td>
                     <td class="px-6 py-4">${this.formatCurrency(product.price)}</td>
                     <td class="px-6 py-4">${hasStock ? stock : 'N/A'}</td>
                     <td class="px-6 py-4">${value}</td>
@@ -3259,7 +3272,9 @@ function filterProducts() {
         if (cells.length === 0) return; // Skip header row
         
         const name = cells[0].textContent.toLowerCase();
-        const category = cells[1].textContent;
+        // Étape 10 : on lit la catégorie réelle (non traduite) depuis data-category plutôt que
+        // le texte affiché dans la cellule, qui peut être traduit en anglais.
+        const category = row.dataset.category || cells[1].textContent;
         const stockCell = cells[3].textContent;
         
         // Search filter

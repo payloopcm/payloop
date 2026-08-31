@@ -19,8 +19,12 @@
 // Étape 10 : traduction FR/EN de la section Stock & Produits (tableau, formulaire produit,
 // formulaire d'ajustement de stock), et correction d'un bug préexistant où les colonnes du
 // tableau des produits ne correspondaient pas aux bons en-têtes — cache encore augmenté.
+// Étape 11 : traduction du libellé de catégorie affiché dans la section Stock & Produits
+// (Produits/Formation/Autre) — la valeur enregistrée reste en français, seul l'affichage
+// change selon la langue, et le filtre par catégorie a été sécurisé pour continuer à
+// fonctionner correctement en anglais — cache encore augmenté.
 
-const CACHE_NAME = 'payloop-shell-v10';
+const CACHE_NAME = 'payloop-shell-v11';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [
