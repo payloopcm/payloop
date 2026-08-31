@@ -2331,16 +2331,20 @@ class PayloopApp {
         // Étape 12 : la méthode de paiement (ex : "Espèces", "Virement") est enregistrée en
         // base en français — comme pour la catégorie des produits, seul le libellé affiché est
         // traduit ; MTN Mobile Money et Orange Money restent des noms de marque, non traduits.
+        // Étape 13 : certains paiements plus anciens ont été enregistrés sans accent et en
+        // minuscules ("especes" au lieu de "Espèces") — on ignore la casse et les accents pour
+        // que ces anciennes valeurs soient elles aussi reconnues et traduites correctement.
         const methodLabelKeys = {
-            'Espèces': 'dash.pay.method_cash',
-            'Virement': 'dash.pay.method_transfer',
-            'Chèque': 'dash.pay.method_check'
+            'especes': 'dash.pay.method_cash',
+            'virement': 'dash.pay.method_transfer',
+            'cheque': 'dash.pay.method_check'
         };
+        const normalizeMethod = (s) => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
         tbody.innerHTML = this.data.payments.map(payment => {
             const invoice = this.data.invoices.find(inv => inv.id == payment.invoiceId);
             const client = this.data.clients.find(c => c.id == invoice?.clientId);
-            const methodKey = methodLabelKeys[payment.method];
+            const methodKey = methodLabelKeys[normalizeMethod(payment.method)];
             const methodLabel = methodKey ? payloopT(methodKey) : payment.method;
 
             return `
