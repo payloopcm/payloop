@@ -43,8 +43,13 @@
 // Étape 17 : traduction FR/EN des fenêtres "Mon profil" (informations, changement de mot de
 // passe, photo) et "Mes paramètres" (entreprise, TVA, seuil de stock, notifications), ainsi que
 // le message de confirmation de déconnexion — cache encore augmenté.
+// Étape 18 : ajout des pages Mentions légales et Politique de confidentialité, avec leurs liens
+// dans le pied de page de l'accueil (i18n-home.js a de nouvelles clés) — cache encore augmenté.
+// Ce numéro de cache avait été oublié lors de la mise en ligne de ces pages : sans cette
+// étape, les visiteurs ayant déjà utilisé le site avant cet ajout auraient gardé indéfiniment
+// l'ancienne version de i18n-home.js en cache, sans les nouveaux liens traduits.
 
-const CACHE_NAME = 'payloop-shell-v17';
+const CACHE_NAME = 'payloop-shell-v18';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [
