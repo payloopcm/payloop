@@ -29,8 +29,13 @@
 // Étape 13 : correction d'anciens paiements enregistrés sans accent et en minuscules
 // ("especes" au lieu de "Espèces") qui n'étaient pas reconnus pour la traduction — cache
 // encore augmenté.
+// Étape 14 : traduction FR/EN de la section Migration (page, fenêtre d'import, historique,
+// notifications, confirmations de suppression), et le fichier modèle Excel téléchargeable
+// suit désormais lui aussi la langue active (en-têtes, exemples, noms d'onglets) — la
+// reconnaissance des feuilles à l'import a été mise à jour pour accepter les noms français
+// et anglais — cache encore augmenté.
 
-const CACHE_NAME = 'payloop-shell-v13';
+const CACHE_NAME = 'payloop-shell-v14';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [

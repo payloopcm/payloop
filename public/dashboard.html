@@ -449,42 +449,42 @@
         <div id="migration-view" class="view">
             <div class="space-y-6">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-2xl font-bold">Migration & Import de données</h2>
+                    <h2 class="text-2xl font-bold" data-i18n="dash.mig.heading">Migration & Import de données</h2>
                     <div class="flex space-x-3">
                         <button onclick="downloadTemplate()" class="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700">
                             <i data-lucide="download" class="mr-2"></i>
-                            Template Excel
+                            <span data-i18n="dash.mig.template_button">Template Excel</span>
                         </button>
                         <button onclick="openMigrationModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
                             <i data-lucide="upload" class="mr-2"></i>
-                            Importer données
+                            <span data-i18n="dash.mig.import_button">Importer données</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- Migration Status -->
                 <div class="bg-white rounded-lg shadow-sm border p-6">
-                    <h3 class="text-lg font-semibold mb-4">État des données</h3>
+                    <h3 class="text-lg font-semibold mb-4" data-i18n="dash.mig.status_heading">État des données</h3>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div class="text-center p-4 bg-blue-50 rounded-lg">
                             <div class="text-2xl font-bold text-blue-600" id="migration-clients-count">0</div>
-                            <div class="text-blue-800 font-medium">Clients</div>
-                            <div class="text-sm text-blue-600 mt-1">Importés</div>
+                            <div class="text-blue-800 font-medium" data-i18n="dash.nav.clients">Clients</div>
+                            <div class="text-sm text-blue-600 mt-1" data-i18n="dash.mig.sub_clients">Importés</div>
                         </div>
                         <div class="text-center p-4 bg-green-50 rounded-lg">
                             <div class="text-2xl font-bold text-green-600" id="migration-products-count">0</div>
-                            <div class="text-green-800 font-medium">Produits</div>
-                            <div class="text-sm text-green-600 mt-1">En catalogue</div>
+                            <div class="text-green-800 font-medium" data-i18n="dash.stk.cat_produits">Produits</div>
+                            <div class="text-sm text-green-600 mt-1" data-i18n="dash.mig.sub_products">En catalogue</div>
                         </div>
                         <div class="text-center p-4 bg-yellow-50 rounded-lg">
                             <div class="text-2xl font-bold text-yellow-600" id="migration-invoices-count">0</div>
-                            <div class="text-yellow-800 font-medium">Factures</div>
-                            <div class="text-sm text-yellow-600 mt-1">Créées</div>
+                            <div class="text-yellow-800 font-medium" data-i18n="dash.nav.invoices">Factures</div>
+                            <div class="text-sm text-yellow-600 mt-1" data-i18n="dash.mig.sub_invoices">Créées</div>
                         </div>
                         <div class="text-center p-4 bg-purple-50 rounded-lg">
                             <div class="text-2xl font-bold text-purple-600" id="migration-payments-count">0</div>
-                            <div class="text-purple-800 font-medium">Paiements</div>
-                            <div class="text-sm text-purple-600 mt-1">Enregistrés</div>
+                            <div class="text-purple-800 font-medium" data-i18n="dash.nav.payments">Paiements</div>
+                            <div class="text-sm text-purple-600 mt-1" data-i18n="dash.mig.sub_payments">Enregistrés</div>
                         </div>
                     </div>
                 </div>
@@ -492,44 +492,44 @@
                 <!-- Migration Tools -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white rounded-lg shadow-sm border p-6">
-                        <h3 class="text-lg font-semibold mb-4">Import depuis Excel/CSV</h3>
+                        <h3 class="text-lg font-semibold mb-4" data-i18n="dash.mig.import_section_heading">Import depuis Excel/CSV</h3>
                         <div class="space-y-4">
                             <div id="migration-dropzone" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                                 <div class="mx-auto w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                                     <i data-lucide="upload-cloud" class="text-blue-600 w-6 h-6"></i>
                                 </div>
-                                <h4 class="font-medium mb-2">Glissez vos fichiers ici</h4>
-                                <p class="text-sm text-gray-600 mb-4">Ou cliquez pour sélectionner</p>
+                                <h4 class="font-medium mb-2" data-i18n="dash.mig.dropzone_title">Glissez vos fichiers ici</h4>
+                                <p class="text-sm text-gray-600 mb-4" data-i18n="dash.mig.dropzone_subtitle">Ou cliquez pour sélectionner</p>
                                 <input type="file" id="migration-file" accept=".xlsx,.xls,.csv,.json" multiple class="hidden">
                                 <button onclick="document.getElementById('migration-file').click()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                                    Sélectionner fichiers
+                                    <span data-i18n="dash.mig.select_files_button">Sélectionner fichiers</span>
                                 </button>
                             </div>
                             <div class="text-sm text-gray-600">
-                                <p><strong>Formats supportés:</strong> Excel (.xlsx, .xls), CSV, JSON</p>
-                                <p><strong>Types de données:</strong> Clients, Produits (le type de chaque feuille/fichier est détecté automatiquement)</p>
+                                <p><strong data-i18n="dash.mig.formats_supported_label">Formats supportés:</strong> Excel (.xlsx, .xls), CSV, JSON</p>
+                                <p><strong data-i18n="dash.mig.data_types_label">Types de données:</strong> <span data-i18n="dash.mig.data_types_value">Clients, Produits (le type de chaque feuille/fichier est détecté automatiquement)</span></p>
                             </div>
                         </div>
                     </div>
 
                     <div class="bg-white rounded-lg shadow-sm border p-6">
-                        <h3 class="text-lg font-semibold mb-4">Outils de migration</h3>
+                        <h3 class="text-lg font-semibold mb-4" data-i18n="dash.mig.tools_heading">Outils de migration</h3>
                         <div class="space-y-3">
                             <button onclick="validateImportData()" class="w-full p-3 border border-green-300 text-green-700 rounded-lg hover:bg-green-50">
                                 <i data-lucide="check-circle" class="w-4 h-4 mx-auto mb-1"></i>
-                                <div class="text-sm">Valider données</div>
+                                <div class="text-sm" data-i18n="dash.mig.validate_button">Valider données</div>
                             </button>
                             <button onclick="cleanupData()" class="w-full p-3 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50">
                                 <i data-lucide="refresh-cw" class="w-4 h-4 mx-auto mb-1"></i>
-                                <div class="text-sm">Nettoyer doublons</div>
+                                <div class="text-sm" data-i18n="dash.mig.cleanup_button">Nettoyer doublons</div>
                             </button>
                             <button onclick="backupData()" class="w-full p-3 border border-purple-300 text-purple-700 rounded-lg hover:bg-purple-50">
                                 <i data-lucide="download" class="w-4 h-4 mx-auto mb-1"></i>
-                                <div class="text-sm">Sauvegarder</div>
+                                <div class="text-sm" data-i18n="dash.mig.backup_button">Sauvegarder</div>
                             </button>
                             <button onclick="resetAllData()" class="w-full p-3 border border-red-300 text-red-700 rounded-lg hover:bg-red-50">
                                 <i data-lucide="trash-2" class="w-4 h-4 mx-auto mb-1"></i>
-                                <div class="text-sm">Réinitialiser tout</div>
+                                <div class="text-sm" data-i18n="dash.mig.reset_button">Réinitialiser tout</div>
                             </button>
                         </div>
                     </div>
@@ -538,10 +538,10 @@
                 <!-- Migration History -->
                 <div class="bg-white rounded-lg shadow-sm border">
                     <div class="p-6 border-b">
-                        <h3 class="text-lg font-semibold">Historique des imports</h3>
+                        <h3 class="text-lg font-semibold" data-i18n="dash.mig.history_heading">Historique des imports</h3>
                     </div>
                     <div id="migration-history" class="p-6">
-                        <p class="text-gray-500 text-center">Aucun import effectué</p>
+                        <p class="text-gray-500 text-center" data-i18n="dash.mig.history_empty">Aucun import effectué</p>
                     </div>
                 </div>
             </div>
@@ -1196,36 +1196,36 @@
 <div id="migration-modal" class="modal">
     <div class="modal-content w-full max-w-lg">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold">Import de données</h3>
+            <h3 class="text-lg font-semibold" data-i18n="dash.mig.modal_title">Import de données</h3>
             <button onclick="closeMigrationModal()" class="text-gray-500 hover:text-gray-700">
                 <i data-lucide="x"></i>
             </button>
         </div>
         <div class="space-y-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Type de données</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="dash.mig.field_type">Type de données</label>
                 <select id="import-type" class="w-full border border-gray-300 rounded-lg px-3 py-2">
-                    <option value="clients">Clients</option>
-                    <option value="products">Produits</option>
-                    <option value="invoices">Factures</option>
+                    <option value="clients" data-i18n="dash.nav.clients">Clients</option>
+                    <option value="products" data-i18n="dash.stk.cat_produits">Produits</option>
+                    <option value="invoices" data-i18n="dash.nav.invoices">Factures</option>
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Fichier</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="dash.mig.field_file">Fichier</label>
                 <input type="file" id="import-data-file" accept=".xlsx,.xls,.csv,.json" class="w-full border border-gray-300 rounded-lg px-3 py-2">
             </div>
             <div class="bg-blue-50 border border-blue-200 rounded p-3">
-                <h4 class="font-medium text-blue-800">Format requis:</h4>
+                <h4 class="font-medium text-blue-800" data-i18n="dash.mig.format_required_label">Format requis:</h4>
                 <div class="text-sm text-blue-700 mt-1" id="format-info">
                     Pour les clients: Nom, Email, Téléphone, Adresse
                 </div>
             </div>
         </div>
         <div class="mt-6 flex space-x-3">
-            <button onclick="processImport()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+            <button onclick="processImport()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700" data-i18n="dash.mig.import_submit_button">
                 Importer
             </button>
-            <button onclick="closeMigrationModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">
+            <button onclick="closeMigrationModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400" data-i18n="dash.action.cancel">
                 Annuler
             </button>
         </div>
@@ -2032,12 +2032,12 @@ class PayloopApp {
         this.updateUI();
 
         if (!anyRecognized) {
-            this.showNotification('Type de données non reconnu (renommez la feuille "Clients" ou "Produits", ou vérifiez les colonnes)', 'warning');
+            this.showNotification(payloopT('dash.mig.notif_type_not_recognized'), 'warning');
         } else if (totalClients + totalProducts === 0) {
-            this.showNotification('Aucune ligne valide trouvée dans le(s) fichier(s)', 'warning');
+            this.showNotification(payloopT('dash.mig.notif_no_valid_rows_files'), 'warning');
         } else {
-            let msg = `${totalClients} client(s), ${totalProducts} produit(s) importé(s)`;
-            if (totalFailed > 0) msg += `, ${totalFailed} échec(s) — voir la console`;
+            let msg = payloopTF('dash.mig.notif_dropzone_result', totalClients, totalProducts);
+            if (totalFailed > 0) msg += payloopTF('dash.mig.notif_failures_suffix', totalFailed);
             this.showNotification(msg, totalFailed > 0 ? 'warning' : 'success');
         }
     }
@@ -2580,22 +2580,22 @@ class PayloopApp {
         if (!container) return;
 
         if (!this.data.migrationHistory || this.data.migrationHistory.length === 0) {
-            container.innerHTML = '<p class="text-gray-500 text-center">Aucun import effectué</p>';
+            container.innerHTML = `<p class="text-gray-500 text-center">${payloopT('dash.mig.history_empty')}</p>`;
             return;
         }
 
         const sortedHistory = [...this.data.migrationHistory].sort((a, b) => (new Date(b.date) - new Date(a.date)) || (b.id - a.id));
 
         container.innerHTML = sortedHistory.map(entry => {
-            const typeLabel = entry.type === 'clients' ? 'Clients' : entry.type === 'products' ? 'Produits' : 'Clients + Produits';
+            const typeLabel = entry.type === 'clients' ? payloopT('dash.nav.clients') : entry.type === 'products' ? payloopT('dash.stk.cat_produits') : payloopT('dash.mig.type_both');
             const dateLabel = new Date(entry.date).toLocaleString('fr-FR');
             return `
                 <div class="flex items-center justify-between py-3 border-b last:border-b-0">
                     <div>
-                        <div class="font-medium">${entry.fileName || 'Fichier'}</div>
+                        <div class="font-medium">${entry.fileName || payloopT('dash.mig.file_fallback')}</div>
                         <div class="text-sm text-gray-500">${typeLabel} · ${dateLabel}</div>
                     </div>
-                    <div class="text-sm text-green-700 font-medium">${entry.itemsImported} importé(s)</div>
+                    <div class="text-sm text-green-700 font-medium">${payloopTF('dash.mig.items_imported_suffix', entry.itemsImported)}</div>
                 </div>
             `;
         }).join('');
@@ -2825,7 +2825,7 @@ class PayloopApp {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
-        this.showNotification('Données exportées avec succès!', 'success');
+        this.showNotification(payloopT('dash.mig.notif_export_success'), 'success');
     }
 
     importData() {
@@ -3363,13 +3363,13 @@ function closeMigrationModal() {
 function updateImportFormatInfo() {
     const importType = document.getElementById('import-type').value;
     const formatInfo = document.getElementById('format-info');
-    
+
     const formats = {
-        'clients': 'Pour les clients: Nom, Email, Téléphone, Adresse',
-        'products': 'Pour les produits: Nom, Prix, Stock, Catégorie, Description',
-        'invoices': 'Pour les factures: Client, Articles, Montants, Dates'
+        'clients': payloopT('dash.mig.format_clients'),
+        'products': payloopT('dash.mig.format_products'),
+        'invoices': payloopT('dash.mig.format_invoices')
     };
-    
+
     formatInfo.textContent = formats[importType] || '';
 }
 
@@ -3415,9 +3415,10 @@ const PRODUCT_COLUMN_ALIASES = {
 };
 
 // Devine si une feuille/liste contient des clients ou des produits : d'abord par le nom
-// de la feuille (ex: "Clients"), sinon par les colonnes présentes. Renvoie null si ambigu.
+// de la feuille (ex: "Clients"/"Customers"), sinon par les colonnes présentes. Renvoie
+// null si ambigu.
 function detectImportKind(rows, sheetNameNormalized) {
-    if (sheetNameNormalized.includes('client')) return 'clients';
+    if (sheetNameNormalized.includes('client') || sheetNameNormalized.includes('customer')) return 'clients';
     if (sheetNameNormalized.includes('produit') || sheetNameNormalized.includes('product')) return 'products';
     if (!rows || rows.length === 0) return null;
     const headers = Object.keys(rows[0]).map(normalizeHeader);
@@ -3433,12 +3434,12 @@ function processImport() {
     const file = document.getElementById('import-data-file').files[0];
 
     if (!file) {
-        app.showNotification('Veuillez sélectionner un fichier', 'warning');
+        app.showNotification(payloopT('dash.mig.notif_select_file'), 'warning');
         return;
     }
 
     if (importType === 'invoices') {
-        app.showNotification('L\'import de factures n\'est pas encore disponible, seuls Clients et Produits le sont', 'warning');
+        app.showNotification(payloopT('dash.mig.notif_invoices_not_supported'), 'warning');
         return;
     }
 
@@ -3446,7 +3447,7 @@ function processImport() {
     const isSpreadsheet = /\.(xlsx|xls|csv)$/i.test(file.name);
 
     if (!isJson && !isSpreadsheet) {
-        app.showNotification('Format non supporté : utilisez un fichier .xlsx, .xls, .csv ou .json', 'error');
+        app.showNotification(payloopT('dash.mig.notif_unsupported_format'), 'error');
         return;
     }
 
@@ -3458,16 +3459,17 @@ function processImport() {
             if (isJson) {
                 rows = JSON.parse(e.target.result);
                 if (!Array.isArray(rows)) {
-                    throw new Error('Le fichier JSON doit contenir une liste d\'éléments');
+                    throw new Error(payloopT('dash.mig.error_json_not_array'));
                 }
             } else {
                 // Fichier Excel/CSV : on lit la feuille qui correspond au type importé
-                // (ou la première feuille si le fichier n'a pas ce nom précis)
+                // (ou la première feuille si le fichier n'a pas ce nom précis). Le modèle
+                // téléchargé peut être en français ou en anglais (voir downloadTemplate),
+                // donc on accepte les deux noms d'onglet possibles.
                 const workbook = XLSX.read(e.target.result, { type: 'array' });
-                const preferredSheetName = importType === 'clients' ? 'Clients' : 'Produits';
-                const sheetName = workbook.SheetNames.includes(preferredSheetName)
-                    ? preferredSheetName
-                    : workbook.SheetNames[0];
+                const preferredSheetNames = importType === 'clients' ? ['Clients', 'Customers'] : ['Produits', 'Products'];
+                const sheetName = workbook.SheetNames.find(name => preferredSheetNames.includes(name))
+                    || workbook.SheetNames[0];
                 // raw: false garde les valeurs telles qu'affichées (texte), pour ne pas perdre
                 // le "+" ou un zéro initial d'un numéro de téléphone saisi sans guillemets
                 const rawRows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: '', raw: false });
@@ -3516,15 +3518,16 @@ function processImport() {
             closeMigrationModal();
 
             if (failedCount > 0) {
-                app.showNotification(`${importedCount} importé(s), ${failedCount} échec(s) — voir la console du navigateur`, 'warning');
+                app.showNotification(payloopTF('dash.mig.notif_partial', importedCount, failedCount), 'warning');
             } else if (importedCount === 0) {
-                app.showNotification('Aucune ligne valide trouvée dans le fichier (vérifiez les en-têtes de colonnes)', 'warning');
+                app.showNotification(payloopT('dash.mig.notif_no_valid_rows_file'), 'warning');
             } else {
-                app.showNotification(`${importedCount} ${importType === 'clients' ? 'client(s)' : 'produit(s)'} importé(s) avec succès!`, 'success');
+                const successKey = importType === 'clients' ? 'dash.mig.notif_import_success_clients' : 'dash.mig.notif_import_success_products';
+                app.showNotification(payloopTF(successKey, importedCount), 'success');
             }
 
         } catch (error) {
-            app.showNotification('Erreur lors de l\'import: ' + error.message, 'error');
+            app.showNotification(payloopT('dash.mig.notif_import_error') + error.message, 'error');
         }
     };
 
@@ -3538,26 +3541,37 @@ function processImport() {
 function downloadTemplate() {
     // Vrai fichier Excel (.xlsx), avec une feuille par type de données —
     // à remplir puis à réimporter tel quel via "Importer données"
-    const clientsSheet = XLSX.utils.json_to_sheet([
+    // Étape 14 : le contenu du modèle (en-têtes de colonnes, exemples, noms d'onglets) suit
+    // maintenant la langue active du tableau de bord — voir aussi processImport() et
+    // detectImportKind() qui reconnaissent désormais les noms d'onglets dans les deux langues.
+    const isEn = (typeof getPayloopLang === 'function') && getPayloopLang() === 'en';
+
+    const clientsSheet = XLSX.utils.json_to_sheet(isEn ? [
+        { Name: 'Example Customer 1', Email: 'client1@example.com', Phone: '+237 600 000 001', Address: 'Douala, Cameroon' },
+        { Name: 'Example Customer 2', Email: 'client2@example.com', Phone: '+237 600 000 002', Address: 'Yaoundé, Cameroon' }
+    ] : [
         { Nom: 'Exemple Client 1', Email: 'client1@example.com', Telephone: '+237 600 000 001', Adresse: 'Douala, Cameroun' },
         { Nom: 'Exemple Client 2', Email: 'client2@example.com', Telephone: '+237 600 000 002', Adresse: 'Yaoundé, Cameroun' }
     ]);
-    const produitsSheet = XLSX.utils.json_to_sheet([
+    const produitsSheet = XLSX.utils.json_to_sheet(isEn ? [
+        { Name: 'Example Product 1', Price: 10000, Stock: 50, Category: 'Products', Description: 'Product description' },
+        { Name: 'Example Service 1', Price: 25000, Stock: '', Category: 'Services', Description: 'Service description' }
+    ] : [
         { Nom: 'Produit Exemple 1', Prix: 10000, Stock: 50, Categorie: 'Produits', Description: 'Description du produit' },
         { Nom: 'Service Exemple 1', Prix: 25000, Stock: '', Categorie: 'Services', Description: 'Description du service' }
     ]);
 
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, clientsSheet, 'Clients');
-    XLSX.utils.book_append_sheet(workbook, produitsSheet, 'Produits');
+    XLSX.utils.book_append_sheet(workbook, clientsSheet, isEn ? 'Customers' : 'Clients');
+    XLSX.utils.book_append_sheet(workbook, produitsSheet, isEn ? 'Products' : 'Produits');
     XLSX.writeFile(workbook, 'payloop_template.xlsx');
 
-    app.showNotification('Template Excel téléchargé!', 'success');
+    app.showNotification(payloopT('dash.mig.notif_template_downloaded'), 'success');
 }
 
 function validateImportData() {
     const totalItems = app.data.clients.length + app.data.products.length + app.data.invoices.length;
-    app.showNotification(`Validation: ${totalItems} éléments au total, données cohérentes`, 'success');
+    app.showNotification(payloopTF('dash.mig.notif_validation', totalItems), 'success');
 }
 
 async function cleanupData() {
@@ -3574,11 +3588,11 @@ async function cleanupData() {
     });
 
     if (duplicates.length === 0) {
-        app.showNotification('Aucun doublon trouvé', 'info');
+        app.showNotification(payloopT('dash.mig.notif_no_duplicates'), 'info');
         return;
     }
 
-    if (!confirm(`${duplicates.length} doublon(s) trouvé(s). Les supprimer supprimera aussi définitivement leurs factures et paiements associés. Continuer ?`)) {
+    if (!confirm(payloopTF('dash.mig.confirm_duplicates', duplicates.length))) {
         return;
     }
 
@@ -3586,7 +3600,7 @@ async function cleanupData() {
         await app.deleteItem('clients', client.id);
     }
 
-    app.showNotification(`${duplicates.length} doublon(s) supprimé(s)`, 'success');
+    app.showNotification(payloopTF('dash.mig.notif_duplicates_removed', duplicates.length), 'success');
 }
 
 function backupData() {
@@ -3594,17 +3608,13 @@ function backupData() {
 }
 
 async function resetAllData() {
-    const premiereConfirmation = confirm(
-        'Cette action va supprimer DÉFINITIVEMENT tous vos clients, produits, factures et paiements ' +
-        'dans la base de données PayLoop. Ce n\'est pas juste un rafraîchissement de l\'affichage : ' +
-        'c\'est une vraie suppression, sans retour en arrière possible.\n\nContinuer ?'
-    );
+    const premiereConfirmation = confirm(payloopT('dash.mig.confirm_reset_1'));
     if (!premiereConfirmation) return;
 
-    const secondeConfirmation = confirm('Dernière confirmation : voulez-vous vraiment TOUT supprimer ?');
+    const secondeConfirmation = confirm(payloopT('dash.mig.confirm_reset_2'));
     if (!secondeConfirmation) return;
 
-    app.showNotification('Suppression en cours...', 'info');
+    app.showNotification(payloopT('dash.mig.notif_deleting'), 'info');
 
     try {
         // Supprimer tous les clients supprime aussi en cascade leurs factures, lignes de facture et paiements
@@ -3618,9 +3628,9 @@ async function resetAllData() {
 
         await app.loadData();
         app.updateUI();
-        app.showNotification('Toutes les données ont été supprimées', 'success');
+        app.showNotification(payloopT('dash.mig.notif_reset_success'), 'success');
     } catch (error) {
-        app.showNotification(error.message || 'Erreur lors de la suppression', 'error');
+        app.showNotification(error.message || payloopT('dash.mig.notif_reset_error'), 'error');
         await app.loadData();
         app.updateUI();
     }
@@ -3797,6 +3807,11 @@ window.payloopOnLangChange = function (lang) {
             'reports': payloopT('dash.title.reports')
         };
         titleEl.textContent = titles[app.currentView] || payloopT('dash.title.dashboard');
+    }
+    // Le texte d'aide "Format requis" de la fenêtre d'import (Migration) est lui aussi
+    // généré en JavaScript — on le redessine pour qu'il change de langue lui aussi.
+    if (typeof updateImportFormatInfo === 'function') {
+        updateImportFormatInfo();
     }
 };
 </script>
