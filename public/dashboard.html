@@ -291,19 +291,19 @@
         <div id="clients-view" class="view">
             <div class="space-y-6">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-2xl font-bold">Gestion Clients</h2>
+                    <h2 class="text-2xl font-bold" data-i18n="dash.title.clients">Gestion Clients</h2>
                     <button onclick="openClientModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
                         <i data-lucide="plus" class="mr-2"></i>
-                        Nouveau client
+                        <span data-i18n="dash.cli.new_button">Nouveau client</span>
                     </button>
 </div>
 
                 <div class="bg-white rounded-lg shadow-sm border">
                     <div class="p-6 border-b">
                         <div class="flex items-center space-x-4">
-                            <input type="text" id="client-search" placeholder="Rechercher un client..." 
-                                   class="flex-1 px-4 py-2 border rounded-lg" onkeyup="searchClients()">
-                            <button onclick="searchClients()" class="px-4 py-2 bg-blue-600 text-white rounded-lg">
+                            <input type="text" id="client-search" placeholder="Rechercher un client..."
+                                   class="flex-1 px-4 py-2 border rounded-lg" onkeyup="searchClients()" data-i18n-placeholder="dash.cli.search_placeholder">
+                            <button onclick="searchClients()" class="px-4 py-2 bg-blue-600 text-white rounded-lg" data-i18n="dash.cli.search_button">
                                 Rechercher
                             </button>
                         </div>
@@ -312,11 +312,11 @@
                         <table class="w-full">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left">Nom</th>
-                                    <th class="px-6 py-3 text-left">Email</th>
-                                    <th class="px-6 py-3 text-left">Téléphone</th>
-                                    <th class="px-6 py-3 text-left">CA Total</th>
-                                    <th class="px-6 py-3 text-left">Actions</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.cli.col_name">Nom</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.cli.col_email">Email</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.cli.col_phone">Téléphone</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.cli.col_revenue">CA Total</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.cli.col_actions">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="clients-table">
@@ -789,7 +789,7 @@
 <div id="client-modal" class="modal">
     <div class="modal-content w-full max-w-md">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold">Nouveau Client</h3>
+            <h3 class="text-lg font-semibold" data-i18n="dash.cli.modal_title">Nouveau Client</h3>
             <button onclick="closeClientModal()" class="text-gray-500 hover:text-gray-700">
                 <i data-lucide="x"></i>
             </button>
@@ -797,27 +797,27 @@
         <form id="client-form" onsubmit="saveClient(event)">
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Nom *</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.cli.field_name">Nom *</label>
                     <input type="text" name="name" required class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.cli.field_email">Email</label>
                     <input type="email" name="email" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Téléphone</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.cli.field_phone">Téléphone</label>
                     <input type="tel" name="phone" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Adresse</label>
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.cli.field_address">Adresse</label>
                     <textarea name="address" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2"></textarea>
                 </div>
             </div>
             <div class="mt-6 flex space-x-3">
-                <button type="submit" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                <button type="submit" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700" data-i18n="dash.cli.submit_save">
                     Enregistrer
                 </button>
-                <button type="button" onclick="closeClientModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">
+                <button type="button" onclick="closeClientModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400" data-i18n="dash.action.cancel">
                     Annuler
                 </button>
             </div>
@@ -2176,7 +2176,7 @@ class PayloopApp {
         if (!tbody) return;
 
         if (this.data.clients.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Aucun client enregistré</td></tr>';
+            tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">${payloopT('dash.cli.empty')}</td></tr>`;
             return;
         }
 
@@ -2930,9 +2930,9 @@ async function saveClient(event) {
     try {
         await app.addClient(clientData);
         closeClientModal();
-        app.showNotification('Client ajouté avec succès!', 'success');
+        app.showNotification(payloopT('dash.cli.notif_created'), 'success');
     } catch (error) {
-        app.showNotification(error.message || 'Erreur lors de la création du client', 'error');
+        app.showNotification(error.message || payloopT('dash.cli.notif_create_error'), 'error');
     }
 }
 

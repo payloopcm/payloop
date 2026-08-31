@@ -14,8 +14,10 @@
 // haut, page d'accueil) — cache encore augmenté.
 // Étape 8 : traduction FR/EN de la section Factures (tableau, formulaire, facture imprimable)
 // — cache encore augmenté.
+// Étape 9 : traduction FR/EN de la section Clients (tableau, formulaire), et "Client" devient
+// "Customer" en anglais partout sur le site — cache encore augmenté.
 
-const CACHE_NAME = 'payloop-shell-v8';
+const CACHE_NAME = 'payloop-shell-v9';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [
