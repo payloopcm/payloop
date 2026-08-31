@@ -48,8 +48,11 @@
 // Ce numéro de cache avait été oublié lors de la mise en ligne de ces pages : sans cette
 // étape, les visiteurs ayant déjà utilisé le site avant cet ajout auraient gardé indéfiniment
 // l'ancienne version de i18n-home.js en cache, sans les nouveaux liens traduits.
+// Étape 19 : nouvelle esthétique du tableau de bord (police IBM Plex Sans à la place de Plus
+// Jakarta Sans, couleurs plus sobres) — la police de connexion (login.html) reste Plus Jakarta
+// Sans pour l'instant, donc les deux polices sont mises en cache — cache encore augmenté.
 
-const CACHE_NAME = 'payloop-shell-v18';
+const CACHE_NAME = 'payloop-shell-v19';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [
@@ -77,6 +80,15 @@ const PRECACHE_URLS = [
   '/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-ext-500-normal.woff2',
   '/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-ext-600-normal.woff2',
   '/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-ext-700-normal.woff2',
+  '/fonts/ibm-plex-sans/ibm-plex-sans.css',
+  '/fonts/ibm-plex-sans/ibm-plex-sans-latin-400-normal.woff2',
+  '/fonts/ibm-plex-sans/ibm-plex-sans-latin-500-normal.woff2',
+  '/fonts/ibm-plex-sans/ibm-plex-sans-latin-600-normal.woff2',
+  '/fonts/ibm-plex-sans/ibm-plex-sans-latin-700-normal.woff2',
+  '/fonts/ibm-plex-sans/ibm-plex-sans-latin-ext-400-normal.woff2',
+  '/fonts/ibm-plex-sans/ibm-plex-sans-latin-ext-500-normal.woff2',
+  '/fonts/ibm-plex-sans/ibm-plex-sans-latin-ext-600-normal.woff2',
+  '/fonts/ibm-plex-sans/ibm-plex-sans-latin-ext-700-normal.woff2',
 ];
 
 self.addEventListener('install', (event) => {

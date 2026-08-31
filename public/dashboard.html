@@ -8,7 +8,7 @@
     <link rel="apple-touch-icon" href="/images/icon-192.png">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#111827">
-    <link rel="stylesheet" href="/fonts/plus-jakarta-sans/plus-jakarta-sans.css">
+    <link rel="stylesheet" href="/fonts/ibm-plex-sans/ibm-plex-sans.css">
     <script src="/offline-store.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
@@ -16,7 +16,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        body, .font-sans { font-family: 'Plus Jakarta Sans', sans-serif; }
+        body, .font-sans { font-family: 'IBM Plex Sans', sans-serif; }
         .lucide { width: 20px; height: 20px; }
         /* Bouton FR/EN : la langue active est en blanc avec une ombre légère, l'autre reste grisée. */
         .lang-btn { color: #9ca3af; transition: color .15s; }
@@ -29,9 +29,8 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
-        .sidebar-item:hover { transform: translateX(4px); transition: transform 0.2s ease; }
-        .stat-card { transition: all 0.3s ease; }
-        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .stat-card { transition: border-color 0.15s ease; }
+        .stat-card:hover { border-color: #cbd5e1; }
         
         .view { display: none; }
         .view.active { display: block; }
@@ -229,8 +228,8 @@
                                 <p class="text-2xl font-bold text-gray-900 mt-2" id="total-revenue">0 FCFA</p>
                                 <div class="text-sm text-gray-500" data-i18n="dash.stat_revenue_sub">Ce mois</div>
                             </div>
-                            <div class="p-3 rounded-full bg-blue-100">
-                                <i data-lucide="banknote" class="text-blue-600"></i>
+                            <div class="p-3 rounded-full bg-slate-100">
+                                <i data-lucide="banknote" class="text-slate-700"></i>
                             </div>
                         </div>
                     </div>
@@ -242,8 +241,8 @@
                                 <p class="text-2xl font-bold text-gray-900 mt-2" id="paid-invoices-count">0</p>
                                 <div class="text-sm text-gray-500" data-i18n="dash.stat_total">Total</div>
                             </div>
-                            <div class="p-3 rounded-full bg-green-100">
-                                <i data-lucide="check-circle" class="text-green-600"></i>
+                            <div class="p-3 rounded-full bg-slate-100">
+                                <i data-lucide="check-circle" class="text-slate-700"></i>
                             </div>
                         </div>
                     </div>
@@ -255,8 +254,8 @@
                                 <p class="text-2xl font-bold text-gray-900 mt-2" id="active-clients-count">0</p>
                                 <div class="text-sm text-gray-500" data-i18n="dash.stat_total">Total</div>
                             </div>
-                            <div class="p-3 rounded-full bg-purple-100">
-                                <i data-lucide="users" class="text-purple-600"></i>
+                            <div class="p-3 rounded-full bg-slate-100">
+                                <i data-lucide="users" class="text-slate-700"></i>
                             </div>
                         </div>
                     </div>
@@ -268,8 +267,8 @@
                                 <p class="text-2xl font-bold text-gray-900 mt-2" id="products-count">0</p>
                                 <div class="text-sm text-gray-500" data-i18n="dash.stat_products_sub">Articles</div>
                             </div>
-                            <div class="p-3 rounded-full bg-yellow-100">
-                                <i data-lucide="package" class="text-yellow-600"></i>
+                            <div class="p-3 rounded-full bg-slate-100">
+                                <i data-lucide="package" class="text-slate-700"></i>
                             </div>
                         </div>
                     </div>
@@ -338,11 +337,11 @@
                             <i data-lucide="plus" class="mr-2"></i>
                             <span data-i18n="dash.stk.new_button">Nouveau produit</span>
                         </button>
-                        <button onclick="openStockAdjustmentModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700">
+                        <button onclick="openStockAdjustmentModal()" class="bg-white text-slate-700 border border-slate-300 px-4 py-2 rounded-lg flex items-center hover:bg-slate-50">
                             <i data-lucide="package" class="mr-2"></i>
                             <span data-i18n="dash.stk.adjust_button">Ajuster stock</span>
                         </button>
-                        <button onclick="generateInventoryReport()" class="bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-purple-700">
+                        <button onclick="generateInventoryReport()" class="bg-white text-slate-700 border border-slate-300 px-4 py-2 rounded-lg flex items-center hover:bg-slate-50">
                             <i data-lucide="file-text" class="mr-2"></i>
                             <span data-i18n="dash.stk.report_button">Rapport stock</span>
                         </button>
@@ -451,7 +450,7 @@
                 <div class="flex justify-between items-center">
                     <h2 class="text-2xl font-bold" data-i18n="dash.mig.heading">Migration & Import de données</h2>
                     <div class="flex space-x-3">
-                        <button onclick="downloadTemplate()" class="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700">
+                        <button onclick="downloadTemplate()" class="bg-white text-slate-700 border border-slate-300 px-4 py-2 rounded-lg flex items-center hover:bg-slate-50">
                             <i data-lucide="download" class="mr-2"></i>
                             <span data-i18n="dash.mig.template_button">Template Excel</span>
                         </button>
@@ -466,25 +465,25 @@
                 <div class="bg-white rounded-lg shadow-sm border p-6">
                     <h3 class="text-lg font-semibold mb-4" data-i18n="dash.mig.status_heading">État des données</h3>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div class="text-center p-4 bg-blue-50 rounded-lg">
-                            <div class="text-2xl font-bold text-blue-600" id="migration-clients-count">0</div>
-                            <div class="text-blue-800 font-medium" data-i18n="dash.nav.clients">Clients</div>
-                            <div class="text-sm text-blue-600 mt-1" data-i18n="dash.mig.sub_clients">Importés</div>
+                        <div class="text-center p-4 bg-slate-50 rounded-lg">
+                            <div class="text-2xl font-bold text-slate-800" id="migration-clients-count">0</div>
+                            <div class="text-slate-700 font-medium" data-i18n="dash.nav.clients">Clients</div>
+                            <div class="text-sm text-slate-500 mt-1" data-i18n="dash.mig.sub_clients">Importés</div>
                         </div>
-                        <div class="text-center p-4 bg-green-50 rounded-lg">
-                            <div class="text-2xl font-bold text-green-600" id="migration-products-count">0</div>
-                            <div class="text-green-800 font-medium" data-i18n="dash.stk.cat_produits">Produits</div>
-                            <div class="text-sm text-green-600 mt-1" data-i18n="dash.mig.sub_products">En catalogue</div>
+                        <div class="text-center p-4 bg-slate-50 rounded-lg">
+                            <div class="text-2xl font-bold text-slate-800" id="migration-products-count">0</div>
+                            <div class="text-slate-700 font-medium" data-i18n="dash.stk.cat_produits">Produits</div>
+                            <div class="text-sm text-slate-500 mt-1" data-i18n="dash.mig.sub_products">En catalogue</div>
                         </div>
-                        <div class="text-center p-4 bg-yellow-50 rounded-lg">
-                            <div class="text-2xl font-bold text-yellow-600" id="migration-invoices-count">0</div>
-                            <div class="text-yellow-800 font-medium" data-i18n="dash.nav.invoices">Factures</div>
-                            <div class="text-sm text-yellow-600 mt-1" data-i18n="dash.mig.sub_invoices">Créées</div>
+                        <div class="text-center p-4 bg-slate-50 rounded-lg">
+                            <div class="text-2xl font-bold text-slate-800" id="migration-invoices-count">0</div>
+                            <div class="text-slate-700 font-medium" data-i18n="dash.nav.invoices">Factures</div>
+                            <div class="text-sm text-slate-500 mt-1" data-i18n="dash.mig.sub_invoices">Créées</div>
                         </div>
-                        <div class="text-center p-4 bg-purple-50 rounded-lg">
-                            <div class="text-2xl font-bold text-purple-600" id="migration-payments-count">0</div>
-                            <div class="text-purple-800 font-medium" data-i18n="dash.nav.payments">Paiements</div>
-                            <div class="text-sm text-purple-600 mt-1" data-i18n="dash.mig.sub_payments">Enregistrés</div>
+                        <div class="text-center p-4 bg-slate-50 rounded-lg">
+                            <div class="text-2xl font-bold text-slate-800" id="migration-payments-count">0</div>
+                            <div class="text-slate-700 font-medium" data-i18n="dash.nav.payments">Paiements</div>
+                            <div class="text-sm text-slate-500 mt-1" data-i18n="dash.mig.sub_payments">Enregistrés</div>
                         </div>
                     </div>
                 </div>
@@ -515,15 +514,15 @@
                     <div class="bg-white rounded-lg shadow-sm border p-6">
                         <h3 class="text-lg font-semibold mb-4" data-i18n="dash.mig.tools_heading">Outils de migration</h3>
                         <div class="space-y-3">
-                            <button onclick="validateImportData()" class="w-full p-3 border border-green-300 text-green-700 rounded-lg hover:bg-green-50">
+                            <button onclick="validateImportData()" class="w-full p-3 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50">
                                 <i data-lucide="check-circle" class="w-4 h-4 mx-auto mb-1"></i>
                                 <div class="text-sm" data-i18n="dash.mig.validate_button">Valider données</div>
                             </button>
-                            <button onclick="cleanupData()" class="w-full p-3 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50">
+                            <button onclick="cleanupData()" class="w-full p-3 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50">
                                 <i data-lucide="refresh-cw" class="w-4 h-4 mx-auto mb-1"></i>
                                 <div class="text-sm" data-i18n="dash.mig.cleanup_button">Nettoyer doublons</div>
                             </button>
-                            <button onclick="backupData()" class="w-full p-3 border border-purple-300 text-purple-700 rounded-lg hover:bg-purple-50">
+                            <button onclick="backupData()" class="w-full p-3 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50">
                                 <i data-lucide="download" class="w-4 h-4 mx-auto mb-1"></i>
                                 <div class="text-sm" data-i18n="dash.mig.backup_button">Sauvegarder</div>
                             </button>
@@ -558,7 +557,7 @@
                             <i data-lucide="file-text" class="mr-2"></i>
                             <span data-i18n="dash.tax.declaration_button">Déclaration TVA</span>
                         </button>
-                        <button onclick="calculateTaxes()" class="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700">
+                        <button onclick="calculateTaxes()" class="bg-white text-slate-700 border border-slate-300 px-4 py-2 rounded-lg flex items-center hover:bg-slate-50">
                             <i data-lucide="calculator" class="mr-2"></i>
                             <span data-i18n="dash.tax.calculate_button">Calculer impôts</span>
                         </button>
@@ -637,17 +636,17 @@
                     </div>
 
                     <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="p-4 bg-blue-50 rounded-lg">
-                            <div class="text-sm text-blue-600" data-i18n="dash.tax.calc_vat_label">TVA à payer (19.25%)</div>
-                            <div class="text-xl font-bold text-blue-600" id="calc-vat">0 FCFA</div>
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <div class="text-sm text-slate-600" data-i18n="dash.tax.calc_vat_label">TVA à payer (19.25%)</div>
+                            <div class="text-xl font-bold text-slate-800" id="calc-vat">0 FCFA</div>
                         </div>
-                        <div class="p-4 bg-green-50 rounded-lg">
-                            <div class="text-sm text-green-600" data-i18n="dash.tax.calc_ttc_label">CA TTC</div>
-                            <div class="text-xl font-bold text-green-600" id="calc-ttc">0 FCFA</div>
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <div class="text-sm text-slate-600" data-i18n="dash.tax.calc_ttc_label">CA TTC</div>
+                            <div class="text-xl font-bold text-slate-800" id="calc-ttc">0 FCFA</div>
                         </div>
-                        <div class="p-4 bg-purple-50 rounded-lg">
-                            <div class="text-sm text-purple-600" data-i18n="dash.tax.calc_irpp_label">IRPP estimé (20%)</div>
-                            <div class="text-xl font-bold text-purple-600" id="calc-irpp">0 FCFA</div>
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <div class="text-sm text-slate-600" data-i18n="dash.tax.calc_irpp_label">IRPP estimé (20%)</div>
+                            <div class="text-xl font-bold text-slate-800" id="calc-irpp">0 FCFA</div>
                         </div>
                     </div>
                 </div>
@@ -726,7 +725,7 @@
             <div class="space-y-6">
                 <div class="flex justify-between items-center">
                     <h2 class="text-2xl font-bold" data-i18n="dash.pay.heading">Gestion Paiements</h2>
-                    <button onclick="openPaymentModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-green-700">
+                    <button onclick="openPaymentModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
                         <i data-lucide="plus" class="mr-2"></i>
                         <span data-i18n="dash.pay.new_button">Enregistrer paiement</span>
                     </button>
@@ -775,7 +774,7 @@
                         <div id="tax-report" class="space-y-2">
                             <!-- Populated by JavaScript -->
                         </div>
-                        <button onclick="generateTaxReport()" class="mt-4 w-full py-2 bg-green-600 text-white rounded">
+                        <button onclick="generateTaxReport()" class="mt-4 w-full py-2 bg-blue-600 text-white rounded">
                             <span data-i18n="dash.rep.calculate_vat_button">Calculer TVA</span>
                         </button>
                     </div>
@@ -1121,7 +1120,7 @@
                 </div>
             </div>
             <div class="mt-6 flex space-x-3">
-                <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700" data-i18n="dash.cli.submit_save">
+                <button type="submit" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700" data-i18n="dash.cli.submit_save">
                     Enregistrer
                 </button>
                 <button type="button" onclick="closePaymentModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400" data-i18n="dash.action.cancel">
@@ -1181,7 +1180,7 @@
                 </div>
             </div>
             <div class="mt-6 flex space-x-3">
-                <button type="submit" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700" data-i18n="dash.stk.adjust_button">
+                <button type="submit" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700" data-i18n="dash.stk.adjust_button">
                     Ajuster stock
                 </button>
                 <button type="button" onclick="closeStockModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400" data-i18n="dash.action.cancel">
