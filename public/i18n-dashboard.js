@@ -399,6 +399,10 @@ window.PAYLOOP_I18N = {
     'dash.set.notif_save_error': 'Erreur lors de la mise à jour des paramètres',
     'dash.set.notif_save_partial': 'Enregistré. Il reste des informations à compléter.',
 
+    // Bandeau de mise à jour de l'application
+    'dash.maj.disponible': 'Une nouvelle version de PayLoop est disponible.',
+    'dash.maj.recharger': 'Recharger',
+
     // Actions sur une ligne de facture
     'dash.inv.action_view': 'Voir le détail',
     'dash.inv.action_pdf': 'Ouvrir le PDF',
@@ -860,6 +864,9 @@ window.PAYLOOP_I18N = {
     'dash.set.notif_save_success': 'Settings updated successfully!',
     'dash.set.notif_save_error': 'Error updating settings',
     'dash.set.notif_save_partial': 'Saved. Some information is still missing.',
+
+    'dash.maj.disponible': 'A new version of PayLoop is available.',
+    'dash.maj.recharger': 'Reload',
 
     'dash.inv.action_view': 'View details',
     'dash.inv.action_pdf': 'Open PDF',

@@ -4451,11 +4451,107 @@ window.payloopOnLangChange = function (lang) {
             }
         }
 
-        // Étape 1 du mode hors-ligne : enregistre le Service Worker qui met l'appli en cache
-        // pour qu'elle puisse s'afficher même sans connexion.
+        // ------------------------------------------------------------------
+        // Service Worker : mise en cache hors-ligne, et prise en compte des
+        // mises à jour.
+        //
+        // Le problème que ceci résout : les fichiers de l'appli (traductions,
+        // scripts) sont servis depuis le cache. Quand une nouvelle version est
+        // déployée, le navigateur installe bien le nouveau Service Worker,
+        // mais la page déjà ouverte continue d'utiliser les fichiers qu'elle a
+        // chargés au démarrage. L'utilisateur voit donc l'ancienne version
+        // jusqu'à ce qu'il pense à fermer son onglet — sans rien qui le lui
+        // dise. Il faut recharger la page une fois le nouveau cache en place.
+        //
+        // Recharger d'office serait brutal : quelqu'un en train de saisir une
+        // facture perdrait sa saisie. On ne recharge donc tout seul que si
+        // rien n'est en cours, et sinon on propose un bouton.
+        // ------------------------------------------------------------------
         if ('serviceWorker' in navigator) {
+            let saisieEnCours = false;
+            let rechargementLance = false;
+
+            // Toute frappe dans un champ compte comme un travail en cours,
+            // jusqu'au prochain envoi de formulaire.
+            document.addEventListener('input', () => { saisieEnCours = true; }, true);
+            document.addEventListener('submit', () => { saisieEnCours = false; }, true);
+
+            const travailEnCours = () =>
+                saisieEnCours || !!document.querySelector('.modal.active');
+
+            function proposerRechargement() {
+                if (document.getElementById('maj-banniere')) return;
+
+                const barre = document.createElement('div');
+                barre.id = 'maj-banniere';
+                barre.style.cssText =
+                    'position:fixed; left:50%; bottom:24px; transform:translateX(-50%);' +
+                    'z-index:9999; display:flex; align-items:center; gap:14px;' +
+                    'background:#0f2b46; color:#fff; padding:12px 18px; border-radius:10px;' +
+                    'box-shadow:0 8px 24px rgba(0,0,0,.25); font-size:14px; max-width:92vw;';
+
+                const texte = document.createElement('span');
+                texte.textContent = payloopT('dash.maj.disponible');
+
+                const bouton = document.createElement('button');
+                bouton.textContent = payloopT('dash.maj.recharger');
+                bouton.style.cssText =
+                    'background:#10b981; color:#fff; border:0; border-radius:7px;' +
+                    'padding:7px 14px; font-weight:600; cursor:pointer; white-space:nowrap;';
+                bouton.onclick = () => location.reload();
+
+                barre.append(texte, bouton);
+                document.body.appendChild(barre);
+            }
+
+            function nouvelleVersion() {
+                if (rechargementLance) return;
+                rechargementLance = true;
+                if (travailEnCours()) {
+                    proposerRechargement();
+                } else {
+                    location.reload();
+                }
+            }
+
+            // À la toute première visite, la page n'est contrôlée par aucun
+            // Service Worker : celui-ci s'installe puis prend la main, ce qui
+            // déclenche aussi « controllerchange ». Ce n'est pas une mise à
+            // jour et il ne faut pas recharger — la page vient de charger ses
+            // fichiers depuis le réseau, ils sont déjà à jour.
+            const etaitControlee = !!navigator.serviceWorker.controller;
+
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (etaitControlee) nouvelleVersion();
+            });
+
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js').catch((err) => {
+                navigator.serviceWorker.register('/service-worker.js').then((reg) => {
+                    // Deuxième voie de détection, plus directe : un nouveau
+                    // Service Worker vient de finir son installation alors
+                    // qu'un autre contrôle déjà la page.
+                    reg.addEventListener('updatefound', () => {
+                        const arrivant = reg.installing;
+                        if (!arrivant) return;
+                        arrivant.addEventListener('statechange', () => {
+                            if (arrivant.state === 'installed' && navigator.serviceWorker.controller) {
+                                nouvelleVersion();
+                            }
+                        });
+                    });
+
+                    // Cas d'un onglet resté ouvert : le navigateur ne vérifie
+                    // les mises à jour que de loin en loin. On vérifie nous-
+                    // mêmes au retour sur l'onglet, sans dépasser une fois
+                    // par quart d'heure pour ne pas marteler le serveur.
+                    let dernierControle = Date.now();
+                    document.addEventListener('visibilitychange', () => {
+                        if (document.visibilityState !== 'visible') return;
+                        if (Date.now() - dernierControle < 15 * 60 * 1000) return;
+                        dernierControle = Date.now();
+                        reg.update().catch(() => {});
+                    });
+                }).catch((err) => {
                     console.error('Échec de l\'enregistrement du Service Worker :', err);
                 });
             });
