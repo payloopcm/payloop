@@ -19,6 +19,14 @@ window.PAYLOOP_I18N = {
     'register.submit_loading': 'Inscription...',
     'register.success': 'Inscription réussie ! Redirection...',
     'register.error_default': 'Erreur lors de l’inscription',
+
+    // Activation du compte par email
+    'register.verifiez_mail': 'Compte créé. Ouvrez le lien que nous venons d’envoyer à {0} pour activer votre compte.',
+    'register.mail_non_envoye': 'Compte créé. Si vous ne recevez rien d’ici quelques minutes, utilisez « Renvoyer le lien » depuis l’onglet Connexion.',
+    'login.compte_non_active': 'Votre compte n’est pas encore activé. Ouvrez le lien reçu par email.',
+    'login.renvoyer_lien': 'Renvoyer le lien d’activation',
+    'login.renvoi_en_cours': 'Envoi...',
+    'login.renvoi_ok': 'Si ce compte existe et n’est pas activé, un nouveau lien vient de partir.',
   },
   en: {
     'login.meta_title': 'Login - PayLoop',
@@ -39,5 +47,12 @@ window.PAYLOOP_I18N = {
     'register.submit_loading': 'Signing up...',
     'register.success': 'Registration successful! Redirecting...',
     'register.error_default': 'Registration error',
+
+    'register.verifiez_mail': 'Account created. Open the link we just sent to {0} to activate it.',
+    'register.mail_non_envoye': 'Account created. If nothing arrives within a few minutes, use "Resend link" from the Log in tab.',
+    'login.compte_non_active': 'Your account is not active yet. Open the link you received by email.',
+    'login.renvoyer_lien': 'Resend activation link',
+    'login.renvoi_en_cours': 'Sending...',
+    'login.renvoi_ok': 'If this account exists and is not active, a new link has just been sent.',
   }
 };
