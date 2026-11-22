@@ -938,9 +938,9 @@
                         <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_forme_juridique">Forme juridique</label>
                         <select name="forme_juridique" id="settings-forme-juridique" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                             <option value="">—</option>
-                            <option value="Ets">Ets (Établissement)</option>
+                            <option value="Ets" data-i18n="dash.set.forme_ets">Ets (Établissement)</option>
                             <option value="SARL">SARL</option>
-                            <option value="SARL Unipersonnelle">SARL Unipersonnelle</option>
+                            <option value="SARL Unipersonnelle" data-i18n="dash.set.forme_sarlu">SARL Unipersonnelle</option>
                             <option value="SA">SA</option>
                             <option value="SAS">SAS</option>
                             <option value="SNC">SNC</option>
@@ -968,7 +968,7 @@
                        data-i18n="dash.set.section_coordonnees">Coordonnées</p>
 
                     <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_adresse">Adresse</label>
-                    <input type="text" name="adresse" id="settings-adresse" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="Rue, quartier, immeuble">
+                    <input type="text" name="adresse" id="settings-adresse" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2" data-i18n-placeholder="dash.set.ph_adresse" placeholder="Rue, quartier, immeuble">
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                         <div>
@@ -988,7 +988,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_telephone">Téléphone</label>
-                            <input type="text" name="telephone" id="settings-telephone" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="+237 6 XX XX XX XX">
+                            <input type="text" name="telephone" id="settings-telephone" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2" data-i18n-placeholder="dash.set.ph_telephone" placeholder="+237 6 XX XX XX XX">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_email_contact">Email</label>
@@ -1018,7 +1018,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_centre_impots">Centre des impôts</label>
-                            <input type="text" name="centre_impots" id="settings-centre-impots" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="CDI Douala 1er">
+                            <input type="text" name="centre_impots" id="settings-centre-impots" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2" data-i18n-placeholder="dash.set.ph_centre_impots" placeholder="CDI Douala 1er">
                         </div>
                     </div>
 
@@ -1053,7 +1053,7 @@
                        data-i18n="dash.set.section_pied">Bas de facture</p>
 
                     <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_conditions">Conditions de règlement</label>
-                    <input type="text" name="conditions_reglement" id="settings-conditions-reglement" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="Paiement à 30 jours. Pénalité de 1,5 %/mois de retard.">
+                    <input type="text" name="conditions_reglement" id="settings-conditions-reglement" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2" data-i18n-placeholder="dash.set.ph_conditions" placeholder="Paiement à 30 jours. Pénalité de 1,5 %/mois de retard.">
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                         <div>
@@ -1827,7 +1827,10 @@ class PayloopApp {
         const payload = {
             client_id: parseInt(invoiceData.clientId),
             items,
-            date_echeance: invoiceData.dueDate || null
+            date_echeance: invoiceData.dueDate || null,
+            // Langue du PDF, figée à la création : la facture envoyée au client
+            // doit rester identique si l'interface change de langue plus tard.
+            langue: (typeof getPayloopLang === 'function' ? getPayloopLang() : 'fr')
         };
 
         let result;
@@ -4037,6 +4040,12 @@ window.payloopOnLangChange = function (lang) {
     if (!app) return;
     app.updateUI();
     app.updateConnectionBadge();
+    // Le bandeau de conformité est écrit en JavaScript à l'ouverture de la
+    // fiche entreprise : si elle est ouverte au moment du changement de
+    // langue, il faut le redessiner.
+    if (document.querySelector('#settings-modal.active')) {
+        rafraichirConformite();
+    }
     // Le nom affiché dans la barre du haut (ex : "Ibrahim Lamaro") n'est pas un texte traduit,
     // donc on le redessine avec les vraies données de l'utilisateur pour ne pas le remplacer
     // par le texte générique "Utilisateur"/"User" du dictionnaire.
@@ -4334,13 +4343,21 @@ window.payloopOnLangChange = function (lang) {
                     bandeau.className = 'mb-4 rounded-lg px-4 py-3 text-sm bg-green-50 border border-green-200 text-green-800';
                     bandeau.textContent = payloopT('dash.set.conformite_ok');
                 } else {
+                    // Le serveur renvoie des codes de champs en plus des
+                    // libellés français : on traduit à partir des codes, pour
+                    // que le bandeau suive la langue choisie. Les libellés ne
+                    // servent que si une ancienne version de l'API répond.
+                    const lignes = (d.manquants_codes && d.manquants_codes.length)
+                        ? d.manquants_codes.map(c => payloopT('dash.conf.' + c))
+                        : (d.manquants || []);
+
                     bandeau.className = 'mb-4 rounded-lg px-4 py-3 text-sm bg-amber-50 border border-amber-200 text-amber-900';
                     bandeau.innerHTML =
                         '<strong>' + payloopT('dash.set.conformite_ko') + '</strong><ul class="mt-2 ml-4 list-disc">' +
-                        d.manquants.map(m => '<li></li>').join('') + '</ul>';
-                    // Les libellés viennent du serveur : on les pose en texte,
-                    // jamais en HTML.
-                    bandeau.querySelectorAll('li').forEach((li, i) => { li.textContent = d.manquants[i]; });
+                        lignes.map(() => '<li></li>').join('') + '</ul>';
+                    // Ces textes peuvent venir du serveur : on les pose en
+                    // contenu texte, jamais en HTML.
+                    bandeau.querySelectorAll('li').forEach((li, i) => { li.textContent = lignes[i]; });
                 }
             } catch (e) {
                 // Hors ligne ou serveur injoignable : pas de bandeau plutôt
@@ -4397,8 +4414,11 @@ window.payloopOnLangChange = function (lang) {
 
                 // Un NIU mal formé n'empêche pas d'enregistrer, mais il faut le
                 // dire : la facture ne sera pas conforme avec.
-                if (res.avertissements && res.avertissements.length) {
-                    app.showNotification(res.avertissements.join(' '), 'error');
+                const alertes = (res.avertissements_codes && res.avertissements_codes.length)
+                    ? res.avertissements_codes.map(c => payloopT('dash.conf.' + c))
+                    : (res.avertissements || []);
+                if (alertes.length) {
+                    app.showNotification(alertes.join(' '), 'error');
                 }
 
                 // La fiche reste ouverte si elle est encore incomplète : fermer
