@@ -131,6 +131,15 @@
             <i data-lucide="trending-up" class="mr-3"></i>
             <span data-i18n="dash.nav.reports">Rapports</span>
         </div>
+
+        <!-- Mon entreprise : ouvre la fiche entreprise (modale "Mes paramètres").
+             Pas de data-view ici : ce n'est pas une vue, donc showView() ne doit
+             pas se déclencher. Le listener .sidebar-item lit item.dataset.view,
+             qui est undefined, et ne fait rien ; seul le onclick s'exécute. -->
+        <div onclick="openSettingsModal()" class="sidebar-item flex items-center px-6 py-3 cursor-pointer transition-all hover:bg-gray-800 mt-2 border-t border-gray-800">
+            <i data-lucide="building-2" class="mr-3"></i>
+            <span data-i18n="dash.nav.company">Mon entreprise</span>
+        </div>
     </nav>
 </div>
 
@@ -898,21 +907,126 @@
     </div>
 </div>
 
-<!-- Settings Modal ("Mes paramètres") -->
+<!-- Settings Modal ("Mon entreprise") -->
 <div id="settings-modal" class="modal">
-    <div class="modal-content w-full max-w-md">
+    <div class="modal-content w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold" data-i18n="dash.dropdown_settings">Mes paramètres</h3>
+            <h3 class="text-lg font-semibold" data-i18n="dash.nav.company">Mon entreprise</h3>
             <button onclick="closeSettingsModal()" class="text-gray-500 hover:text-gray-700">
                 <i data-lucide="x"></i>
             </button>
         </div>
+
+        <!-- Bandeau de conformité : rempli par rafraichirConformite() -->
+        <div id="conformite-bandeau" class="hidden mb-4 rounded-lg px-4 py-3 text-sm"></div>
+
         <form id="settings-form" onsubmit="saveSettings(event)">
             <div class="space-y-4">
+
+                <!-- ---------------------------------------- identité légale -->
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500"
+                   data-i18n="dash.set.section_identite">Identité légale</p>
+
                 <div>
                     <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_company_name">Nom de l'entreprise</label>
                     <input type="text" name="company_name" id="settings-company-name" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                     <p class="text-xs text-gray-500 mt-1" data-i18n="dash.set.company_name_hint">Affiché sur vos factures et rapports.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_forme_juridique">Forme juridique</label>
+                        <select name="forme_juridique" id="settings-forme-juridique" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                            <option value="">—</option>
+                            <option value="Ets">Ets (Établissement)</option>
+                            <option value="SARL">SARL</option>
+                            <option value="SARL Unipersonnelle">SARL Unipersonnelle</option>
+                            <option value="SA">SA</option>
+                            <option value="SAS">SAS</option>
+                            <option value="SNC">SNC</option>
+                            <option value="GIE">GIE</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_capital">Capital social (FCFA)</label>
+                        <input type="number" name="capital_social" id="settings-capital-social" min="0" step="1" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_niu">NIU</label>
+                        <input type="text" name="niu" id="settings-niu" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 uppercase" placeholder="M0226XXXXXXXX">
+                        <p class="text-xs text-gray-500 mt-1" data-i18n="dash.set.niu_hint">Numéro d'Identifiant Unique, délivré par la DGI. Sans lui, votre client ne peut pas déduire sa TVA.</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_rccm">RCCM</label>
+                        <input type="text" name="rccm" id="settings-rccm" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="CM-DLA-01-2026-B12-00000">
+                    </div>
+                </div>
+
+                <!-- ------------------------------------------- coordonnées -->
+                <div class="border-t border-gray-200 pt-4">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3"
+                       data-i18n="dash.set.section_coordonnees">Coordonnées</p>
+
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_adresse">Adresse</label>
+                    <input type="text" name="adresse" id="settings-adresse" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="Rue, quartier, immeuble">
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_ville">Ville</label>
+                            <input type="text" name="ville" id="settings-ville" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_pays">Pays</label>
+                            <input type="text" name="pays" id="settings-pays" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_bp">Boîte postale</label>
+                            <input type="text" name="boite_postale" id="settings-boite-postale" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_telephone">Téléphone</label>
+                            <input type="text" name="telephone" id="settings-telephone" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="+237 6 XX XX XX XX">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_email_contact">Email</label>
+                            <input type="email" name="email_contact" id="settings-email-contact" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_site_web">Site web</label>
+                            <input type="text" name="site_web" id="settings-site-web" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- --------------------------------------------- fiscalité -->
+                <div class="border-t border-gray-200 pt-4">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3"
+                       data-i18n="dash.set.section_fiscalite">Fiscalité</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_regime">Régime fiscal</label>
+                            <select name="regime_fiscal" id="settings-regime-fiscal" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                                <option value="">—</option>
+                                <option value="reel" data-i18n="dash.set.regime_reel">Régime du réel</option>
+                                <option value="simplifie" data-i18n="dash.set.regime_simplifie">Régime simplifié</option>
+                                <option value="liberatoire" data-i18n="dash.set.regime_liberatoire">Impôt libératoire</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_centre_impots">Centre des impôts</label>
+                            <input type="text" name="centre_impots" id="settings-centre-impots" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="CDI Douala 1er">
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_mention_tva">Mention de TVA personnalisée</label>
+                        <input type="text" name="mention_tva_personnalisee" id="settings-mention-tva" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                        <p class="text-xs text-gray-500 mt-1" data-i18n="dash.set.mention_tva_hint">À remplir si vous êtes exonéré au titre de l'article 128 du CGI (enseignement agréé, produits pharmaceutiques, produits de première nécessité). Cette phrase remplace alors la mention automatique.</p>
+                    </div>
                 </div>
 
                 <div class="border-t border-gray-200 pt-4">
@@ -933,7 +1047,35 @@
                     </div>
                 </div>
 
+                <!-- ----------------------------------------- bas de facture -->
                 <div class="border-t border-gray-200 pt-4">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3"
+                       data-i18n="dash.set.section_pied">Bas de facture</p>
+
+                    <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_conditions">Conditions de règlement</label>
+                    <input type="text" name="conditions_reglement" id="settings-conditions-reglement" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="Paiement à 30 jours. Pénalité de 1,5 %/mois de retard.">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_banque">Banque</label>
+                            <input type="text" name="banque_nom" id="settings-banque-nom" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_rib">RIB</label>
+                            <input type="text" name="banque_rib" id="settings-banque-rib" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_pied_page">Mentions de pied de page</label>
+                        <input type="text" name="pied_de_page" id="settings-pied-de-page" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                    </div>
+                </div>
+
+                <!-- ------------------------------------------- application -->
+                <div class="border-t border-gray-200 pt-4">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3"
+                       data-i18n="dash.set.section_application">Application</p>
                     <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_low_stock_threshold">Seuil d'alerte de stock faible</label>
                     <input type="number" name="low_stock_threshold" id="settings-low-stock-threshold" min="0" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
                     <p class="text-xs text-gray-500 mt-1" data-i18n="dash.set.low_stock_hint">Un produit est signalé « stock faible » en dessous de cette quantité.</p>
@@ -1281,6 +1423,61 @@ async function apiRequest(path, options = {}) {
 
     return data;
 }
+/**
+ * Ouvre ou télécharge le PDF d'une facture.
+ *
+ * L'endpoint exige le jeton JWT : un simple <a href> partirait sans en-tête
+ * Authorization et recevrait une 401. On récupère donc le fichier en blob,
+ * puis on le confie au navigateur.
+ *
+ * apiRequest() ne convient pas ici : elle fait toujours un res.json(), ce qui
+ * échouerait sur un PDF.
+ */
+async function ouvrirPdf(id, telecharger, numero) {
+    const token = getToken();
+    const url = `${API_URL}/invoices/${id}/pdf${telecharger ? '?download=1' : ''}`;
+
+    try {
+        const res = await fetch(url, {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+
+        if (res.status === 401 || res.status === 403) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+            return;
+        }
+        if (!res.ok) throw new Error('pdf');
+
+        const blob = await res.blob();
+        const lien = URL.createObjectURL(blob);
+
+        if (telecharger) {
+            // Le nom vient du numéro de facture déjà affiché dans le tableau.
+            //
+            // Le serveur le met aussi dans Content-Disposition, mais le front
+            // et l'API sont sur deux domaines : sans Access-Control-Expose-
+            // Headers, le navigateur masque cet en-tête à fetch() et le fichier
+            // s'enregistrerait sous "facture.pdf".
+            const a = document.createElement('a');
+            a.href = lien;
+            a.download = (numero ? String(numero).replace(/[^A-Za-z0-9._-]/g, '_') : 'facture') + '.pdf';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        } else {
+            window.open(lien, '_blank');
+        }
+
+        // Laisser le temps à l'onglet ou au téléchargement de s'emparer du blob
+        // avant de libérer la mémoire.
+        setTimeout(() => URL.revokeObjectURL(lien), 60000);
+    } catch (e) {
+        if (window.app) app.showNotification(payloopT('dash.inv.pdf_error'), 'error');
+    }
+}
+
 // Application State Management
 class PayloopApp {
     constructor() {
@@ -1352,6 +1549,12 @@ class PayloopApp {
         this.data.settings.taxRateConfigured = parseFloat(settings.tax_rate ?? this.data.settings.taxRate);
         this.data.settings.taxRate = this.data.settings.taxEnabled ? this.data.settings.taxRateConfigured : 0;
         this.data.settings.notificationsEnabled = settings.notifications_enabled !== false;
+
+        // La fiche entreprise ("Mon entreprise") compte une vingtaine de champs
+        // légaux que le reste de l'application n'utilise pas. Plutôt que de les
+        // recopier un par un ci-dessus, on garde la réponse brute du serveur :
+        // c'est elle que le formulaire relit à l'ouverture.
+        this.data.settingsRaw = settings;
     }
 
     // Notifications : affiche des rappels (factures en retard, stock faible) à l'ouverture
@@ -2305,10 +2508,17 @@ class PayloopApp {
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex space-x-2">
-                            <button onclick="app.viewInvoice('${invoice.id}')" class="text-blue-600 hover:text-blue-800">
+                            <button onclick="app.viewInvoice('${invoice.id}')" class="text-blue-600 hover:text-blue-800" title="${payloopT('dash.inv.action_view')}">
                                 <i data-lucide="eye" class="w-4 h-4"></i>
                             </button>
-                            <button onclick="app.deleteItem('invoices', '${invoice.id}')" class="text-red-600 hover:text-red-800">
+                            ${invoice.pendingSync ? '' : `
+                            <button onclick="ouvrirPdf('${invoice.id}', false)" class="text-green-600 hover:text-green-800" title="${payloopT('dash.inv.action_pdf')}">
+                                <i data-lucide="file-text" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="ouvrirPdf('${invoice.id}', true, '${invoice.number}')" class="text-green-600 hover:text-green-800" title="${payloopT('dash.inv.action_download')}">
+                                <i data-lucide="download" class="w-4 h-4"></i>
+                            </button>`}
+                            <button onclick="app.deleteItem('invoices', '${invoice.id}')" class="text-red-600 hover:text-red-800" title="${payloopT('dash.inv.action_delete')}">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -4046,16 +4256,97 @@ window.payloopOnLangChange = function (lang) {
         }
 
         // "Mes paramètres" — ouvre la fenêtre avec les valeurs actuellement chargées
+        // Champs texte de la fiche entreprise : nom du champ côté serveur →
+        // identifiant de l'input. Les cases à cocher et le taux de TVA sont
+        // traités à part, leur valeur ne se lit pas de la même façon.
+        const CHAMPS_ENTREPRISE = {
+            company_name: 'settings-company-name',
+            forme_juridique: 'settings-forme-juridique',
+            capital_social: 'settings-capital-social',
+            niu: 'settings-niu',
+            rccm: 'settings-rccm',
+            adresse: 'settings-adresse',
+            ville: 'settings-ville',
+            pays: 'settings-pays',
+            boite_postale: 'settings-boite-postale',
+            telephone: 'settings-telephone',
+            email_contact: 'settings-email-contact',
+            site_web: 'settings-site-web',
+            regime_fiscal: 'settings-regime-fiscal',
+            centre_impots: 'settings-centre-impots',
+            mention_tva_personnalisee: 'settings-mention-tva',
+            conditions_reglement: 'settings-conditions-reglement',
+            banque_nom: 'settings-banque-nom',
+            banque_rib: 'settings-banque-rib',
+            pied_de_page: 'settings-pied-de-page'
+        };
+
         function openSettingsModal() {
             document.getElementById('userDropdown').classList.add('hidden');
             const s = app.data.settings;
-            document.getElementById('settings-company-name').value = s.companyName || '';
+            const brut = app.data.settingsRaw || {};
+
+            for (const [champ, id] of Object.entries(CHAMPS_ENTREPRISE)) {
+                const input = document.getElementById(id);
+                if (!input) continue;
+                const valeur = brut[champ];
+                // Une valeur enregistrée hors de la liste déroulante (saisie
+                // par une version antérieure) serait sinon perdue au premier
+                // enregistrement : on l'ajoute comme option.
+                if (input.tagName === 'SELECT' && valeur &&
+                    !Array.from(input.options).some(o => o.value === valeur)) {
+                    input.add(new Option(valeur, valeur));
+                }
+                input.value = valeur === null || valeur === undefined ? '' : valeur;
+            }
+
+            // Le nom par défaut de la base n'est pas une raison sociale : on le
+            // laisse vide pour que le champ se voie comme à remplir.
+            const nom = document.getElementById('settings-company-name');
+            if (nom.value === 'Mon Entreprise') nom.value = '';
+            if (!nom.value && s.companyName && s.companyName !== 'Mon Entreprise') {
+                nom.value = s.companyName;
+            }
+
             document.getElementById('settings-tax-enabled').checked = s.taxEnabled !== false;
             document.getElementById('settings-tax-rate').value = s.taxRateConfigured ?? s.taxRate ?? 19.25;
             document.getElementById('settings-low-stock-threshold').value = s.lowStockThreshold ?? 5;
             document.getElementById('settings-notifications-enabled').checked = s.notificationsEnabled !== false;
             toggleTaxRateField();
             document.getElementById('settings-modal').classList.add('active');
+            rafraichirConformite();
+        }
+
+        /**
+         * Affiche l'état de conformité de la fiche entreprise.
+         * C'est le serveur qui décide : la même règle sert à bloquer l'émission
+         * d'une facture, donc l'interface ne doit pas en avoir sa propre version.
+         */
+        async function rafraichirConformite() {
+            const bandeau = document.getElementById('conformite-bandeau');
+            if (!bandeau) return;
+
+            try {
+                const d = await apiRequest('/settings/conformite');
+                bandeau.classList.remove('hidden');
+
+                if (d.peut_facturer) {
+                    bandeau.className = 'mb-4 rounded-lg px-4 py-3 text-sm bg-green-50 border border-green-200 text-green-800';
+                    bandeau.textContent = payloopT('dash.set.conformite_ok');
+                } else {
+                    bandeau.className = 'mb-4 rounded-lg px-4 py-3 text-sm bg-amber-50 border border-amber-200 text-amber-900';
+                    bandeau.innerHTML =
+                        '<strong>' + payloopT('dash.set.conformite_ko') + '</strong><ul class="mt-2 ml-4 list-disc">' +
+                        d.manquants.map(m => '<li></li>').join('') + '</ul>';
+                    // Les libellés viennent du serveur : on les pose en texte,
+                    // jamais en HTML.
+                    bandeau.querySelectorAll('li').forEach((li, i) => { li.textContent = d.manquants[i]; });
+                }
+            } catch (e) {
+                // Hors ligne ou serveur injoignable : pas de bandeau plutôt
+                // qu'un bandeau faux.
+                bandeau.classList.add('hidden');
+            }
         }
 
         function closeSettingsModal() {
@@ -4075,12 +4366,26 @@ window.payloopOnLangChange = function (lang) {
             const notificationsEnabled = document.getElementById('settings-notifications-enabled').checked;
 
             const payload = {
-                company_name: formData.get('company_name'),
                 tax_enabled: taxEnabled,
                 tax_rate: parseFloat(formData.get('tax_rate')) || 0,
                 low_stock_threshold: parseInt(formData.get('low_stock_threshold'), 10) || 0,
-                notifications_enabled: notificationsEnabled
+                notifications_enabled: notificationsEnabled,
+                // La TVA n'est pas collectée quand elle est désactivée : les
+                // deux réglages disent la même chose et doivent rester d'accord.
+                assujetti_tva: taxEnabled
             };
+
+            for (const champ of Object.keys(CHAMPS_ENTREPRISE)) {
+                let v = formData.get(champ);
+                if (v === null) continue;
+                v = String(v).trim();
+                if (champ === 'niu') v = v.toUpperCase();
+                if (champ === 'capital_social') {
+                    payload[champ] = v === '' ? null : Number(v);
+                    continue;
+                }
+                payload[champ] = v === '' ? null : v;
+            }
 
             try {
                 const res = await apiRequest('/settings', {
@@ -4089,6 +4394,21 @@ window.payloopOnLangChange = function (lang) {
                 });
                 app.applySettings(res.settings);
                 app.updateUI();
+
+                // Un NIU mal formé n'empêche pas d'enregistrer, mais il faut le
+                // dire : la facture ne sera pas conforme avec.
+                if (res.avertissements && res.avertissements.length) {
+                    app.showNotification(res.avertissements.join(' '), 'error');
+                }
+
+                // La fiche reste ouverte si elle est encore incomplète : fermer
+                // laisserait croire que tout est en ordre.
+                if (res.conformite && res.conformite.peut_facturer === false) {
+                    rafraichirConformite();
+                    app.showNotification(payloopT('dash.set.notif_save_partial'), 'success');
+                    return;
+                }
+
                 closeSettingsModal();
                 app.showNotification(payloopT('dash.set.notif_save_success'), 'success');
             } catch (error) {
