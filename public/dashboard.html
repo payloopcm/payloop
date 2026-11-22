@@ -1047,10 +1047,19 @@
                     </div>
                 </div>
 
-                <!-- ----------------------------------------- bas de facture -->
+                <!-- -------------------------------------------- la facture -->
                 <div class="border-t border-gray-200 pt-4">
                     <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3"
-                       data-i18n="dash.set.section_pied">Bas de facture</p>
+                       data-i18n="dash.set.section_pied">La facture</p>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_langue_facture">Langue des factures</label>
+                        <select name="langue_facture" id="settings-langue-facture" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2">
+                            <option value="fr" data-i18n="dash.set.langue_fr">Français</option>
+                            <option value="en" data-i18n="dash.set.langue_en">Anglais</option>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1" data-i18n="dash.set.langue_facture_hint">Langue des PDF envoyés à vos clients. Indépendante de la langue de l'application. Chaque facture conserve la langue en vigueur le jour de sa création.</p>
+                    </div>
 
                     <label class="block text-sm font-medium text-gray-700" data-i18n="dash.set.field_conditions">Conditions de règlement</label>
                     <input type="text" name="conditions_reglement" id="settings-conditions-reglement" class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2" data-i18n-placeholder="dash.set.ph_conditions" placeholder="Paiement à 30 jours. Pénalité de 1,5 %/mois de retard.">
@@ -1827,10 +1836,7 @@ class PayloopApp {
         const payload = {
             client_id: parseInt(invoiceData.clientId),
             items,
-            date_echeance: invoiceData.dueDate || null,
-            // Langue du PDF, figée à la création : la facture envoyée au client
-            // doit rester identique si l'interface change de langue plus tard.
-            langue: (typeof getPayloopLang === 'function' ? getPayloopLang() : 'fr')
+            date_echeance: invoiceData.dueDate || null
         };
 
         let result;
@@ -4287,7 +4293,8 @@ window.payloopOnLangChange = function (lang) {
             conditions_reglement: 'settings-conditions-reglement',
             banque_nom: 'settings-banque-nom',
             banque_rib: 'settings-banque-rib',
-            pied_de_page: 'settings-pied-de-page'
+            pied_de_page: 'settings-pied-de-page',
+            langue_facture: 'settings-langue-facture'
         };
 
         function openSettingsModal() {
