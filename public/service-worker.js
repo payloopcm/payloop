@@ -52,7 +52,14 @@
 // Jakarta Sans, couleurs plus sobres) — la police de connexion (login.html) reste Plus Jakarta
 // Sans pour l'instant, donc les deux polices sont mises en cache — cache encore augmenté.
 
-const CACHE_NAME = 'payloop-shell-v19';
+// Étape 20 : module de conformité de facturation — « Mon entreprise » dans le menu de gauche,
+// fiche entreprise étendue aux mentions légales obligatoires (NIU, RCCM, forme juridique,
+// régime fiscal), boutons PDF sur les lignes de facture, et traduction anglaise de tout cet
+// ensemble, y compris le PDF lui-même. i18n-dashboard.js a gagné une quarantaine de clés et
+// doit impérativement être rechargé : il est servi depuis le cache en priorité, donc sans
+// cette incrémentation les navigateurs déjà venus afficheraient les noms de clés bruts
+// (« dash.set.conformite_ko ») à la place des textes.
+const CACHE_NAME = 'payloop-shell-v20';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [
