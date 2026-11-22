@@ -66,6 +66,11 @@
 
                     <div id="loginError" class="hidden text-red-600 text-sm"></div>
                     <div id="loginSuccess" class="hidden text-green-600 text-sm"></div>
+                    <!-- Apparaît uniquement si la connexion échoue parce que le
+                         compte n'a jamais été activé. -->
+                    <button type="button" id="renvoyerLien" onclick="renvoyerActivation()"
+                            class="hidden w-full text-sm text-green-700 underline hover:text-green-800"
+                            data-i18n="login.renvoyer_lien">Renvoyer le lien d’activation</button>
 
                     <button type="submit" id="loginButton"
                             class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none" data-i18n="login.submit">
@@ -154,6 +159,7 @@
 
             errorDiv.classList.add('hidden');
             successDiv.classList.add('hidden');
+            document.getElementById('renvoyerLien').classList.add('hidden');
             button.textContent = payloopT('login.submit_loading');
             button.disabled = true;
 
@@ -165,6 +171,18 @@
                 });
 
                 const data = await response.json();
+
+                // Compte créé mais jamais activé : on le dit, et on propose
+                // le renvoi du lien plutôt que de laisser l'utilisateur face
+                // à un message qu'il ne peut pas résoudre.
+                if (response.status === 403 && data.code === 'COMPTE_NON_ACTIVE') {
+                    errorDiv.textContent = payloopT('login.compte_non_active');
+                    errorDiv.classList.remove('hidden');
+                    document.getElementById('renvoyerLien').classList.remove('hidden');
+                    button.textContent = payloopT('login.submit');
+                    button.disabled = false;
+                    return;
+                }
 
                 if (!response.ok) {
                     throw new Error(data.error || payloopT('login.error_default'));
@@ -218,15 +236,16 @@
                     throw new Error(data.error || payloopT('register.error_default'));
                 }
 
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data.user));
-
-                successDiv.textContent = payloopT('register.success');
+                // L'API ne renvoie plus de jeton : le compte doit d'abord être
+                // activé depuis le lien reçu par email. On reste donc sur cette
+                // page, avec la consigne, au lieu d'ouvrir le tableau de bord.
+                successDiv.textContent = data.email_envoye === false
+                    ? payloopT('register.mail_non_envoye')
+                    : payloopTF('register.verifiez_mail', email);
                 successDiv.classList.remove('hidden');
-
-                setTimeout(() => {
-                    window.location.href = '/dashboard.html';
-                }, 1000);
+                document.getElementById('registerForm').reset();
+                button.textContent = payloopT('register.submit');
+                button.disabled = false;
 
             } catch (error) {
                 errorDiv.textContent = error.message;
@@ -235,6 +254,32 @@
                 button.disabled = false;
             }
         });
+
+        // Renvoi du lien d'activation depuis l'onglet Connexion.
+        async function renvoyerActivation() {
+            const email = document.getElementById('loginEmail').value;
+            const bouton = document.getElementById('renvoyerLien');
+            const errorDiv = document.getElementById('loginError');
+            const successDiv = document.getElementById('loginSuccess');
+            if (!email) { document.getElementById('loginEmail').focus(); return; }
+
+            bouton.disabled = true;
+            bouton.textContent = payloopT('login.renvoi_en_cours');
+            try {
+                await fetch(`${API_URL}/auth/renvoyer-activation`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, langue: getPayloopLang() })
+                });
+            } catch (e) { /* la réponse du serveur est neutre de toute façon */ }
+
+            errorDiv.classList.add('hidden');
+            successDiv.textContent = payloopT('login.renvoi_ok');
+            successDiv.classList.remove('hidden');
+            bouton.classList.add('hidden');
+            bouton.disabled = false;
+            bouton.textContent = payloopT('login.renvoyer_lien');
+        }
 
         // Étape 1 du mode hors-ligne : enregistre le Service Worker qui met l'appli en cache
         // pour qu'elle puisse s'afficher même sans connexion.

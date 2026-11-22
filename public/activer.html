@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="act.meta_title">Activation du compte - PayLoop</title>
+    <link rel="icon" type="image/png" href="/images/icon-favicon-192.png">
+    <link rel="apple-touch-icon" href="/images/icon-192.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#111827">
+    <link rel="stylesheet" href="/fonts/plus-jakarta-sans/plus-jakarta-sans.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body, .font-sans { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .lang-btn { color: #9ca3af; transition: color .15s; }
+        .lang-btn.lang-active { background: #fff; color: #111827; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+        .lang-btn:not(.lang-active):hover { color: #4b5563; }
+        @keyframes tourne { to { transform: rotate(360deg); } }
+        .tourne { animation: tourne 1s linear infinite; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="fixed top-4 right-4 inline-flex items-center bg-gray-100 border border-gray-200 rounded-full p-1 text-xs font-medium">
+        <button id="lang-btn-fr" onclick="setLang('fr')" class="lang-btn flex items-center gap-1.5 px-3 py-1.5 rounded-full">
+            <svg width="16" height="16" viewBox="0 0 20 20" class="rounded-sm"><rect width="20" height="20" fill="#fff"/><rect width="6.67" height="20" fill="#002654"/><rect x="13.33" width="6.67" height="20" fill="#ED2939"/></svg>
+            <span>FR</span>
+        </button>
+        <button id="lang-btn-en" onclick="setLang('en')" class="lang-btn flex items-center gap-1.5 px-3 py-1.5 rounded-full">
+            <svg width="16" height="16" viewBox="0 0 20 20" class="rounded-sm"><rect width="20" height="20" fill="#012169"/><path d="M0,0 L20,20 M20,0 L0,20" stroke="#fff" stroke-width="4"/><path d="M0,0 L20,20 M20,0 L0,20" stroke="#C8102E" stroke-width="2"/><path d="M10,0 V20 M0,10 H20" stroke="#fff" stroke-width="6"/><path d="M10,0 V20 M0,10 H20" stroke="#C8102E" stroke-width="3.6"/></svg>
+            <span>EN</span>
+        </button>
+    </div>
+
+    <div class="min-h-screen flex items-center justify-center py-12 px-4">
+        <div class="max-w-md w-full">
+            <div class="text-center mb-8">
+                <img src="/images/icon-favicon-192.png" alt="PayLoop" class="mx-auto h-12 w-auto mb-4 filter brightness-0">
+                <h1 class="text-3xl font-bold text-gray-900">PayLoop</h1>
+            </div>
+
+            <div class="bg-white py-10 px-6 shadow rounded-lg text-center">
+
+                <!-- Pendant la vérification -->
+                <div id="etat-attente">
+                    <svg class="tourne mx-auto h-10 w-10 text-green-600 mb-5" fill="none" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" opacity="0.2"></circle>
+                        <path d="M22 12a10 10 0 0 0-10-10" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                    </svg>
+                    <p class="text-gray-600" data-i18n="act.en_cours">Activation de votre compte…</p>
+                </div>
+
+                <!-- Compte activé -->
+                <div id="etat-succes" class="hidden">
+                    <div class="mx-auto h-14 w-14 rounded-full bg-green-100 flex items-center justify-center mb-5">
+                        <svg class="h-7 w-7 text-green-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2" data-i18n="act.succes_titre">Compte activé</h2>
+                    <p class="text-gray-600 mb-6" data-i18n="act.succes_texte">Votre adresse est confirmée. Vous pouvez maintenant vous connecter à PayLoop.</p>
+                    <a href="/login.html" class="inline-block w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700" data-i18n="act.aller_connexion">Se connecter</a>
+                </div>
+
+                <!-- Échec -->
+                <div id="etat-echec" class="hidden">
+                    <div class="mx-auto h-14 w-14 rounded-full bg-amber-100 flex items-center justify-center mb-5">
+                        <svg class="h-7 w-7 text-amber-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2" data-i18n="act.echec_titre">Activation impossible</h2>
+                    <p id="echec-message" class="text-gray-600 mb-6"></p>
+
+                    <!-- Renvoi : affiché seulement quand le lien a expiré -->
+                    <div id="bloc-renvoi" class="hidden border-t border-gray-200 pt-5 mt-5">
+                        <label for="renvoi-email" class="block text-sm font-medium text-gray-700 text-left mb-1" data-i18n="act.renvoi_label">Votre adresse email</label>
+                        <input id="renvoi-email" type="email" class="block w-full border border-gray-300 rounded-lg px-3 py-2 mb-3">
+                        <button id="renvoi-bouton" onclick="renvoyer()" class="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700" data-i18n="act.renvoi_bouton">Recevoir un nouveau lien</button>
+                        <p id="renvoi-message" class="hidden text-sm text-green-700 mt-3"></p>
+                    </div>
+
+                    <a href="/login.html" class="inline-block mt-5 text-sm text-gray-500 hover:text-gray-700 underline" data-i18n="act.retour_connexion">Retour à la connexion</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Les textes de cette page, dans la forme attendue par i18n.js (le
+    // dictionnaire doit exister avant que ce script se charge).
+    window.PAYLOOP_I18N = {
+      fr: {
+        'act.meta_title': 'Activation du compte - PayLoop',
+        'act.en_cours': 'Activation de votre compte…',
+        'act.succes_titre': 'Compte activé',
+        'act.succes_texte': 'Votre adresse est confirmée. Vous pouvez maintenant vous connecter à PayLoop.',
+        'act.aller_connexion': 'Se connecter',
+        'act.echec_titre': 'Activation impossible',
+        'act.retour_connexion': 'Retour à la connexion',
+        'act.renvoi_label': 'Votre adresse email',
+        'act.renvoi_bouton': 'Recevoir un nouveau lien',
+        'act.renvoi_envoi': 'Envoi…',
+        'act.erreur_sans_jeton': 'Ce lien est incomplet. Ouvrez celui reçu par email, sans le modifier.',
+        'act.erreur_invalide': 'Ce lien est invalide, ou votre compte est déjà activé. Essayez de vous connecter.',
+        'act.erreur_expire': 'Ce lien a expiré. Indiquez votre adresse pour en recevoir un nouveau.',
+        'act.erreur_reseau': 'Impossible de joindre le serveur. Vérifiez votre connexion et réessayez.',
+        'act.renvoi_ok': 'Si un compte existe pour cette adresse et n\'est pas encore activé, un nouveau lien vient de partir.'
+      },
+      en: {
+        'act.meta_title': 'Account activation - PayLoop',
+        'act.en_cours': 'Activating your account…',
+        'act.succes_titre': 'Account activated',
+        'act.succes_texte': 'Your address is confirmed. You can now sign in to PayLoop.',
+        'act.aller_connexion': 'Sign in',
+        'act.echec_titre': 'Activation failed',
+        'act.retour_connexion': 'Back to sign in',
+        'act.renvoi_label': 'Your email address',
+        'act.renvoi_bouton': 'Send me a new link',
+        'act.renvoi_envoi': 'Sending…',
+        'act.erreur_sans_jeton': 'This link is incomplete. Open the one you received by email, unchanged.',
+        'act.erreur_invalide': 'This link is invalid, or your account is already active. Try signing in.',
+        'act.erreur_expire': 'This link has expired. Enter your address to receive a new one.',
+        'act.erreur_reseau': 'Could not reach the server. Check your connection and try again.',
+        'act.renvoi_ok': 'If an account exists for this address and is not yet active, a new link has just been sent.'
+      }
+    };
+    </script>
+    <script src="/i18n.js"></script>
+
+    <script>
+        const API_URL = 'https://payloop-api-production.up.railway.app/api';
+
+        const montrer = (id) => {
+            ['etat-attente', 'etat-succes', 'etat-echec']
+                .forEach(e => document.getElementById(e).classList.toggle('hidden', e !== id));
+        };
+
+        function echouer(cleMessage, proposerRenvoi, email) {
+            document.getElementById('echec-message').textContent = payloopT(cleMessage);
+            document.getElementById('bloc-renvoi').classList.toggle('hidden', !proposerRenvoi);
+            if (email) document.getElementById('renvoi-email').value = email;
+            montrer('etat-echec');
+        }
+
+        async function renvoyer() {
+            const champ = document.getElementById('renvoi-email');
+            const bouton = document.getElementById('renvoi-bouton');
+            const message = document.getElementById('renvoi-message');
+            if (!champ.value) { champ.focus(); return; }
+
+            bouton.disabled = true;
+            bouton.textContent = payloopT('act.renvoi_envoi');
+            try {
+                await fetch(`${API_URL}/auth/renvoyer-activation`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: champ.value, langue: getPayloopLang() })
+                });
+            } catch (e) { /* la réponse est neutre de toute façon */ }
+
+            // Message volontairement identique que le compte existe ou non :
+            // cette page ne doit pas permettre de savoir qui est inscrit.
+            message.textContent = payloopT('act.renvoi_ok');
+            message.classList.remove('hidden');
+            bouton.classList.add('hidden');
+        }
+
+        (async () => {
+            const jeton = new URLSearchParams(location.search).get('token');
+            if (!jeton) return echouer('act.erreur_sans_jeton', false);
+
+            try {
+                const r = await fetch(`${API_URL}/auth/activer/${encodeURIComponent(jeton)}`);
+                const d = await r.json().catch(() => ({}));
+
+                if (r.ok) return montrer('etat-succes');
+                if (d.code === 'JETON_EXPIRE') return echouer('act.erreur_expire', true, d.email);
+                return echouer('act.erreur_invalide', false);
+
+            } catch (e) {
+                echouer('act.erreur_reseau', false);
+            }
+        })();
+    </script>
+</body>
+</html>

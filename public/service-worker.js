@@ -59,12 +59,19 @@
 // doit impérativement être rechargé : il est servi depuis le cache en priorité, donc sans
 // cette incrémentation les navigateurs déjà venus afficheraient les noms de clés bruts
 // (« dash.set.conformite_ko ») à la place des textes.
-const CACHE_NAME = 'payloop-shell-v20';
+// Étape 21 : activation du compte par email — nouvelle page activer.html, et
+// i18n-login.js gagne les textes du lien d'activation et du renvoi. Les deux
+// doivent être rechargés, d'où l'incrémentation. activer.html rejoint aussi la
+// liste du précache : un utilisateur qui clique sur son lien d'activation sans
+// réseau verra la page, qui lui dira que le serveur est injoignable, plutôt
+// qu'une erreur de navigateur.
+const CACHE_NAME = 'payloop-shell-v21';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [
   '/dashboard.html',
   '/login.html',
+  '/activer.html',
   '/manifest.json',
   '/offline-store.js',
   '/images/logo.png',
