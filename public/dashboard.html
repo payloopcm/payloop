@@ -716,6 +716,7 @@
                                     <th class="px-6 py-3 text-left" data-i18n="dash.inv.col_subtotal">Montant HT</th>
                                     <th class="px-6 py-3 text-left" data-i18n="dash.inv.col_tax">TVA</th>
                                     <th class="px-6 py-3 text-left" data-i18n="dash.inv.col_total">Total TTC</th>
+                                    <th class="px-6 py-3 text-left" data-i18n="dash.inv.col_balance">Reste à payer</th>
                                     <th class="px-6 py-3 text-left" data-i18n="dash.inv.col_status">Statut</th>
                                     <th class="px-6 py-3 text-left" data-i18n="dash.inv.col_actions">Actions</th>
                                 </tr>
@@ -1645,15 +1646,35 @@ class PayloopApp {
             }));
 
             this.data.invoices = (invoicesRes?.invoices || []).map(inv => {
-                const subtotal = parseFloat(inv.total);
-                const tax = subtotal * (this.data.settings.taxRate / 100);
+                // Les montants viennent désormais du serveur, qui les a figés au
+                // moment de l'émission. Ils étaient jusqu'ici reconstitués ici en
+                // appliquant le taux de TVA du jour au montant hors taxes : une
+                // facture émise sous un autre taux, ou exonérée, s'affichait avec
+                // un total que son propre PDF contredisait.
+                //
+                // La TVA se déduit de l'écart plutôt que de se recalculer, pour
+                // que les trois colonnes s'additionnent toujours.
+                const subtotal = parseFloat(inv.montant_ht ?? inv.total);
+                const total = inv.montant_du !== undefined && inv.montant_du !== null
+                    ? parseFloat(inv.montant_du)
+                    : subtotal * (1 + this.data.settings.taxRate / 100);
+
                 return {
                     id: inv.id,
                     number: inv.numero_facture,
                     clientId: inv.client_id,
                     subtotal,
-                    tax,
-                    total: subtotal + tax,
+                    tax: total - subtotal,
+                    total,
+                    // Suivi des encaissements. `solde` reste à null pour une
+                    // source qui ne le fournit pas (instantané hors ligne) :
+                    // la colonne affiche alors un tiret plutôt qu'un zéro faux.
+                    solde: inv.solde !== undefined && inv.solde !== null ? parseFloat(inv.solde) : null,
+                    montantRegle: inv.montant_regle !== undefined && inv.montant_regle !== null
+                        ? parseFloat(inv.montant_regle) : 0,
+                    situation: inv.situation || null,
+                    enRetard: Boolean(inv.en_retard),
+                    joursRetard: inv.jours_retard || 0,
                     status: inv.statut,
                     dueDate: inv.date_echeance,
                     dateEmission: inv.date_emission,
@@ -2481,12 +2502,42 @@ class PayloopApp {
         lucide.createIcons();
     }
 
+    /**
+     * Colonne « Reste à payer ».
+     *
+     * C'est l'information que cherche un gérant en ouvrant cette liste :
+     * combien ce client doit encore, et depuis combien de temps. Le retard est
+     * mis en évidence parce que c'est lui qui déclenchera les relances — une
+     * facture échue qui se confond avec les autres ne se relance jamais.
+     */
+    renderSolde(invoice) {
+        const tiret = '<span class="text-gray-400">—</span>';
+
+        // Un brouillon n'est pas exigible, une facture annulée non plus.
+        if (invoice.status === 'brouillon' || invoice.status === 'annulee') return tiret;
+
+        // Instantané hors ligne : le solde n'a pas été transmis. Mieux vaut un
+        // tiret qu'un zéro, qui se lirait comme « rien à encaisser ».
+        if (invoice.solde === null || invoice.solde === undefined) return tiret;
+
+        if (invoice.solde <= 0) {
+            return `<span class="text-green-600 font-medium">${payloopT('dash.inv.balance_settled')}</span>`;
+        }
+
+        const retard = invoice.enRetard
+            ? `<div class="text-xs text-red-600 mt-0.5">${payloopTF('dash.inv.overdue_days', invoice.joursRetard)}</div>`
+            : '';
+
+        return `<span class="font-bold ${invoice.enRetard ? 'text-red-600' : 'text-gray-900'}">`
+             + `${this.formatCurrency(invoice.solde)}</span>${retard}`;
+    }
+
     updateInvoicesTable() {
         const tbody = document.getElementById('invoices-table');
         if (!tbody) return;
 
         if (this.data.invoices.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">${payloopT('dash.inv.empty')}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="px-6 py-4 text-center text-gray-500">${payloopT('dash.inv.empty')}</td></tr>`;
             return;
         }
 
@@ -2514,6 +2565,7 @@ class PayloopApp {
                     <td class="px-6 py-4">${this.formatCurrency(invoice.subtotal)}</td>
                     <td class="px-6 py-4">${this.formatCurrency(invoice.tax)}</td>
                     <td class="px-6 py-4 font-bold">${this.formatCurrency(invoice.total)}</td>
+                    <td class="px-6 py-4">${this.renderSolde(invoice)}</td>
                     <td class="px-6 py-4">
                         <select onchange="app.changeInvoiceStatus('${invoice.id}', this.value)" class="px-2 py-1 rounded-full text-xs border-0 cursor-pointer ${statusColors[invoice.status] || statusColors.brouillon}">
                             ${['brouillon', 'envoyee', 'en_attente_paiement', 'payee', 'annulee'].map(s =>
