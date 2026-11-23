@@ -2021,13 +2021,34 @@ class PayloopApp {
         }
 
         try {
-            await apiRequest(`/invoices/${invoiceId}/statut`, {
+            const rep = await apiRequest(`/invoices/${invoiceId}/statut`, {
                 method: 'PATCH',
                 body: JSON.stringify({ statut: newStatus })
             });
             invoice.status = newStatus;
+
+            // Le serveur renvoie le solde recalculé : marquer une facture
+            // « payée » y enregistre le reliquat, et le retirer annule cet
+            // enregistrement. Sans cette reprise, la colonne « Reste à payer »
+            // garderait l'ancien montant jusqu'au prochain rechargement.
+            const maj = rep && rep.invoice;
+            if (maj) {
+                if (maj.solde !== undefined && maj.solde !== null) invoice.solde = parseFloat(maj.solde);
+                if (maj.montant_regle !== undefined && maj.montant_regle !== null) {
+                    invoice.montantRegle = parseFloat(maj.montant_regle);
+                }
+                invoice.situation = maj.situation || invoice.situation;
+                invoice.enRetard = Boolean(maj.en_retard);
+                invoice.joursRetard = maj.jours_retard || 0;
+            }
+
             this.updateUI();
-            this.showNotification(payloopT('dash.inv.notif_status_updated'), 'success');
+            this.showNotification(
+                rep && rep.reglement_auto
+                    ? payloopTF('dash.inv.notif_status_paid_recorded', this.formatCurrency(rep.reglement_auto))
+                    : payloopT('dash.inv.notif_status_updated'),
+                'success'
+            );
         } catch (error) {
             // Étape 3 du mode hors-ligne : le serveur est injoignable — on applique quand
             // même le changement, et on l'enverra automatiquement au retour du réseau.
@@ -2520,8 +2541,11 @@ class PayloopApp {
         // tiret qu'un zéro, qui se lirait comme « rien à encaisser ».
         if (invoice.solde === null || invoice.solde === undefined) return tiret;
 
+        // Rien à payer : on affiche bien un zéro, pas un mot. La colonne est
+        // une colonne de montants, et l'œil qui la parcourt verticalement
+        // compare des chiffres — un libellé au milieu casse la lecture.
         if (invoice.solde <= 0) {
-            return `<span class="text-green-600 font-medium">${payloopT('dash.inv.balance_settled')}</span>`;
+            return `<span class="text-green-600 font-bold">${this.formatCurrency(0)}</span>`;
         }
 
         const retard = invoice.enRetard
