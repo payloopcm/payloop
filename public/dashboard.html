@@ -1927,7 +1927,13 @@ class PayloopApp {
                 invoice_id: parseInt(paymentData.invoiceId),
                 amount: parseFloat(paymentData.amount),
                 provider: paymentData.method || null,
-                provider_reference: paymentData.reference || null
+                provider_reference: paymentData.reference || null,
+                // Le formulaire propose un champ Date depuis toujours, mais il
+                // n'était pas transmis : tout encaissement était daté du jour
+                // de la saisie. Une somme reçue la semaine dernière et saisie
+                // aujourd'hui faussait d'autant le calcul des retards, donc les
+                // relances à venir.
+                date_reglement: paymentData.date || null
             })
         });
 

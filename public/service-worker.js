@@ -65,7 +65,7 @@
 // liste du précache : un utilisateur qui clique sur son lien d'activation sans
 // réseau verra la page, qui lui dira que le serveur est injoignable, plutôt
 // qu'une erreur de navigateur.
-const CACHE_NAME = 'payloop-shell-v21';
+const CACHE_NAME = 'payloop-shell-v22';
 
 // Fichiers indispensables pour que l'appli s'affiche même sans réseau.
 const PRECACHE_URLS = [
